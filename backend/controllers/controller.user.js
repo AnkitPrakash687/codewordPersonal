@@ -40,24 +40,27 @@ var signUp = (req,res) => {
 module.exports.signUp = signUp;
 
 var signIn = (req,res) => {
+    console.log('signIn working')
     var body = _.pick(req.body,['email','password']);
     console.log(body.email+"Controller user signin");
-    UserModel.findOne({emailKey: body.email}, function (err, User) {
-        if(err){
-            return res.json({ code: 200, message: 'Email id not registered!!'});
+    UserModel.findOne({email_id: body.email}, function (err, User) {
+        if(User == null){
+            return res.json({ code: 401, message: 'Email id not registered!!'});
         }
-        console.log(User.isInstructor+"Instructor status signIn controller user");
+        //console.log(User.role+"Instructor status signIn controller user");
         return bcrypt.compare(body.password,User.password,(err,result) => {
+            console.log(result)
             if(result){
                 var newToken = jwt.sign({email: body.email, id: User.id },'codewordnwmsu',{expiresIn:  10000 * 3000 }).toString();
+                console.log(newToken)
                 UserModel.updateOne({emailKey: body.email},{$set: {token: newToken}}, (err) =>{
                     if(err){
-                        return res.json({ code: 200, message: 'Unable to generate and update Token'});
+                        return res.json({ code: 401, message: 'Unable to generate and update Token'});
                     }
-                    return res.json({ code: 200, message: 'Signed in successfully. Redirecting.', token: newToken, isInstructor: User.isInstructor });
+                    return res.json({ code: 200, message: 'Signed in successfully. Redirecting.', token: newToken, role: User.role });
                 })
             }else{
-                return res.json({ code: 200, message: "Invalid User!!"})
+                return res.json({ code: 401, message: 'Invalid Password'})
             }
         })
     })

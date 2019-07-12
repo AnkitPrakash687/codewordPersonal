@@ -50,7 +50,7 @@ const MyAppBar = (props) => {
           <Typography variant="h6" className={classes.title}>
             CODEWORD
           </Typography>
-          { Boolean(props.isLoggedIn) ? (
+          { props.isLoggedIn == 'true' ? (
             <div>
               <IconButton
                 aria-label="Account of current user"
