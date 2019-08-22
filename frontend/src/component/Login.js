@@ -72,7 +72,7 @@ export default function SignIn() {
 //console.log(validation)
 //if (validation.isValid) {
      try {
-        const response = await API.post('/signin', data);
+        const response = await API.post('auth/signin', data);
         console.log('👉 Returned data:', response);
         console.log(response.data.code)
         if(response.data.code == 200){
@@ -85,7 +85,7 @@ export default function SignIn() {
           role: response.data.role,
           token: response.data.token
         })
-
+        localStorage.setItem('token', state.token)
     }else {
         setSuccess({
             status:true,

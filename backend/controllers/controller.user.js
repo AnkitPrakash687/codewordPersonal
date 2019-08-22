@@ -7,11 +7,12 @@ var { mongoose } = require('./../config/database')
 var mailController = require('../config/user.mail.js')
 var XLSX = require('xlsx')
 
+
 var signUp = (req,res) => {
     console.log('working')
     var body = _.pick(req.body,['firstName','lastName','email','password','instructor']);
-    var gen_token = jwt.sign({email: body.email },'codewordnwmsu',{expiresIn:  1* 300 }).toString();
-    body.token = gen_token;
+    // var gen_token = jwt.sign({email: body.email },'codewordnwmsu',{expiresIn:  1* 300 }).toString();
+    // body.token = gen_token;
     var date = new Date()
     console.log("controller signup"+ body.email+" "+body.password+" "+body.instructor);
     bcrypt.genSalt(10, (err,salt) => {

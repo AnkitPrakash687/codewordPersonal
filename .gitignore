@@ -5,8 +5,8 @@ frontend/node_modules
 backend/.env
 backend/logs/
 
-
-
+frontend/package-lock.json
+backend/package-lock.json
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
