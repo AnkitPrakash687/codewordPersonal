@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,19 +12,14 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom"
+import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom"
+import API from "../utils/API";
+import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import Dashboard from './Dashboard';
 
-function MadeWithLove() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Built with love by the '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Material-UI
-      </Link>
-      {' team.'}
-    </Typography>
-  );
-}
+
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -56,6 +51,67 @@ const useStyles = makeStyles(theme => ({
 
 export default function SignIn() {
   const classes = useStyles();
+  const [state, setState] = useState({
+    email:"",
+    password:"",
+    role:"",
+    token:""
+  })
+  const [success, setSuccess] = useState({
+    status: false,
+    message: '',
+    code:''
+  })
+  
+  async function handleSubmit(event){
+    event.preventDefault()
+     const data = state
+    // console.log(data)
+//const validation = validator.validate(state);
+//setState({ validation });
+//console.log(validation)
+//if (validation.isValid) {
+     try {
+        const response = await API.post('auth/signin', data);
+        console.log('👉 Returned data:', response);
+        console.log(response.data.code)
+        if(response.data.code == 200){
+        setSuccess({
+            status:true,
+            message: response.data.message,
+            code: response.data.code
+        })
+        setState({
+          role: response.data.role,
+          token: response.data.token
+        })
+        localStorage.setItem('token', state.token)
+    }else {
+        setSuccess({
+            status:true,
+            message: response.data.message,
+            code: response.data.code
+        })
+    }
+      } catch (e) {
+        console.log(`😱 Axios request failed: ${e}`);
+      }
+  //  }
+
+}
+
+const handleChange = name => (event) => {
+    console.log({[name]: event.target.value})
+    setState({ ...state, [name]: event.target.value });
+    // if([name]=='instructor'){
+    //     setState({ ...state, [name]: isChecked });
+    // }
+    
+}
+
+function handleClose(event, reason){
+    setSuccess({status: false})
+}
 
   return (
     <Grid   container
@@ -65,6 +121,7 @@ export default function SignIn() {
     style={{ minHeight: '100vh' }}>
     <Container component="main" maxWidth="xs">
          <CssBaseline />
+         {success.status==false || success.code != 200?
         <Paper className={classes.root}>
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -73,7 +130,7 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form onSubmit={handleSubmit.bind(this)} className={classes.form} >
           <TextField
             variant="outlined"
             margin="normal"
@@ -84,6 +141,8 @@ export default function SignIn() {
             name="email"
             autoComplete="email"
             autoFocus
+            value={state.email}
+            onChange={handleChange('email')}
           />
           <TextField
             variant="outlined"
@@ -95,6 +154,8 @@ export default function SignIn() {
             type="password"
             id="password"
             autoComplete="current-password"
+            value={state.password}
+            onChange={handleChange('password')}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
@@ -120,11 +181,48 @@ export default function SignIn() {
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
+             <Grid item>
+              <Link to={{pathname:"/dashboard", state: {isAuth:true}} }>
+                {"Dashboard"}
+              </Link>
+            </Grid> 
           </Grid>
         </form>
       </div>
-      </Paper>
+      </Paper>:<Typography>Dashboard</Typography>}
+      {
+      success.code == '200'? 
+     <Dashboard isAuth={success.status} role={state.role}/>
+:
+      <Snackbar
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'left',
+      }}
+      open={success.status}
+      autoHideDuration={6000}
+      variant="success"
+      onClose={handleClose}
+      message={success.message}
+      action={[
+          <IconButton
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            className={classes.close}
+            onClick={handleClose}
+          >
+            <CloseIcon />
+          </IconButton>,
+        ]}
+    >
+     
+    </Snackbar>
+      
+
+  }
     </Container>
+ 
     </Grid>
   );
 }

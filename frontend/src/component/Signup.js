@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
 
 
 
-export default function SignIn() {
+export default function Signup() {
   
     const classes = useStyles();
     const [state, setState] = useState({
