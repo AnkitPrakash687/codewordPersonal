@@ -17,9 +17,9 @@ export default function App()  {
     return ( 
       <Router >
         <AppBar isLoggedIn={state.loggedIn}/>
-      <Redirect to="/"/>  
+      <Redirect to="/login"/>  
       <Route path="/signup" component={Signup}/>
-      <Route path="/" component={Login}/> 
+      <Route path="/login" component={Login}/> 
       <Route path="/dashboard" render={(props) => <Dashboard {...props} />}></Route>
     </Router>
     ); 

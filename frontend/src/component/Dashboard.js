@@ -1,55 +1,58 @@
 import Typography from '@material-ui/core/Typography';
-import React, {useState} from 'react';
+import React, {useState, Component} from 'react';
 import API from "../utils/API";
 
 
-export default function Dashboard(props) {
+ class Dashboard extends Component{
 
-    const [state, setState] = useState({
-        isAuth: 'Auth: '+ localStorage.getItem('token',0)
-      })
+    constructor(props){
+        super(props);
+    this.state = {
+        id: '',
+        name: '',
+        role:'',
+        token: localStorage.getItem('token',0)
+      }
+    }
 
-    //   async function handleSubmit(event){
-    //     event.preventDefault()
-    //      const data = state
-    //     // console.log(data)
-    // //const validation = validator.validate(state);
-    // //setState({ validation });
-    // //console.log(validation)
-    // //if (validation.isValid) {
-    //      try {
-    //         const response = await API.get('dashboard/details', data);
-    //         console.log('👉 Returned data:', response);
-    //         console.log(response.data.code)
-    //         if(response.data.code == 200){
-    //         setSuccess({
-    //             status:true,
-    //             message: response.data.message,
-    //             code: response.data.code
-    //         })
-    //         setState({
-    //           role: response.data.role,
-    //           token: response.data.token
-    //         })
+     async getData(){
+        
+        const headers = {
+            'Content-Type': 'application/json',
+            'token':  this.state.token
+          };
+         
+        console.log(headers)
+         try {
+            const response = await API.get('dashboard/details', {headers});
+            console.log('👉 Returned data:', response);
+            console.log(response.data)
+            if(response.data.code == 200){
+            this.state = {
+              id: response.data.email_id,   
+              role: response.data.role,
+              name: response.data.first_name + ' ' + response.data.last_name
+            }
             
-    //     }else {
-    //         setSuccess({
-    //             status:true,
-    //             message: response.data.message,
-    //             code: response.data.code
-    //         })
-    //     }
-    //       } catch (e) {
-    //         console.log(`😱 Axios request failed: ${e}`);
-    //       }
-    //   //  }
+        }else {
+        
+        }
+          } catch (e) {
+            console.log(`😱 Axios request failed: ${e}`);
+          }
+      //  }
     
-    // }
+    }
 
+    componentDidMount(){
+        this.getData()
+    }
+    render(){
     return(
         <Typography>
-            Dashboard {state.isAuth}
+            Dashboard 
         </Typography>
     );
-
+    }
 }
+export default Dashboard;

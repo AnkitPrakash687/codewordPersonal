@@ -85,7 +85,7 @@ export default function SignIn() {
           role: response.data.role,
           token: response.data.token
         })
-        localStorage.setItem('token', state.token)
+        localStorage.setItem('token', response.data.token)
     }else {
         setSuccess({
             status:true,
@@ -192,7 +192,7 @@ function handleClose(event, reason){
       </Paper>:<Typography>Dashboard</Typography>}
       {
       success.code == '200'? 
-     <Dashboard isAuth={success.status} role={state.role}/>
+     <Redirect to='/dashboard'/>
 :
       <Snackbar
       anchorOrigin={{
