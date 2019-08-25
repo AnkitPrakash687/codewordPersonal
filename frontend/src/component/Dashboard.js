@@ -5,6 +5,8 @@ import Admin from './admin/AdminDashboard'
 import Student from './student/StudentDashboard'
 import Instructor from './instructor/InstructorDashboard'
 import AppBar from './MyAppBar'
+import {withRouter} from 'react-router-dom'
+
  class Dashboard extends Component{
 
     constructor(props){
@@ -49,10 +51,11 @@ import AppBar from './MyAppBar'
         this.getData()
     }
     render(){
-
+        const { match, location, history } = this.props;
     return(
         <div>
             <AppBar isLoggedIn = {true}></AppBar>
+        
             {this.state.role == 'admin'?
             <Admin></Admin>:
             this.state.role == 'instructor'?
@@ -62,4 +65,4 @@ import AppBar from './MyAppBar'
     );
     }
 }
-export default Dashboard;
+export default withRouter(Dashboard);

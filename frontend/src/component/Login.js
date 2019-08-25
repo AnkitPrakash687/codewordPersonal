@@ -12,7 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
-import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom"
+import { BrowserRouter as Router, Route, Link, Redirect, withRouter } from "react-router-dom"
 import API from "../utils/API";
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -123,9 +123,14 @@ class SignIn extends Component {
 
 
     const { classes } = this.props;
-
+    let { from } = this.props.location.state.from ||  "/" ;
+    console.log('from '+from)
     if (this.state.isLoggedIn) {
-      return <Redirect to='/'></Redirect>
+      return <Redirect to={{
+        pathname: from,
+        email: { id: '123' }
+    }}
+/>
     }
 
     return (
@@ -195,11 +200,6 @@ class SignIn extends Component {
                       {"Don't have an account? Sign Up"}
                     </Link>
                   </Grid>
-                  <Grid item>
-                    <Link to={{ pathname: "/dashboard", state: { isAuth: true } }}>
-                      {"Dashboard"}
-                    </Link>
-                  </Grid>
                 </Grid>
               </form>
             </div>
@@ -238,4 +238,4 @@ class SignIn extends Component {
 
   }
 }
-export default withStyles(useStyles)(SignIn)
+export default withRouter(withStyles(useStyles)(SignIn))
