@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -10,8 +10,10 @@ import Menu from '@material-ui/core/Menu';
 import Button from '@material-ui/core/Button';
 import green from '@material-ui/core/colors/green';
 import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import { Redirect } from "react-router-dom"
 
-const useStyles = makeStyles(theme => ({
+const useStyles = theme => ({
   root: {
     flexGrow: 1,
   },
@@ -25,21 +27,50 @@ const useStyles = makeStyles(theme => ({
       background: green[600]
   }
   
-}));
+});
 
-const MyAppBar = (props) => {
-  const classes = useStyles();
-  //const [auth, setAuth] = React.useState(true);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  console.log(props.isLoggedIn)  
 
-  function handleMenu(event) {
-    setAnchorEl(event.currentTarget);
+class MyAppBar extends Component{
+
+  constructor(props){
+    super(props)
+    this.state = {
+      isLoggedIn:this.props.isLoggedIn,
+      anchorEl:null,
+      logout:false
+    }
+
   }
 
+render(){
+ const {classes} = this.props
+  //const [auth, setAuth] = React.useState(true);
+ 
+
+  const open = Boolean(this.state.anchorEl); 
+
+
+  const logout = (event) => {
+   sessionStorage.removeItem('token')
+  this.setState({
+    logout: true
+  })
+   }
+
+  function handleMenu(event) {
+    this.setState({
+      anchorEl: (event.currentTarget)
+  })
+}
+
   function handleClose() {
-    setAnchorEl(null);
+    this.setState({
+      anchorEl: null
+  })
+  }
+
+  if(this.state.logout){
+    return (<Redirect to='/'></Redirect>)
   }
 
   return (
@@ -50,7 +81,7 @@ const MyAppBar = (props) => {
           <Typography variant="h6" className={classes.title}>
             CODEWORD
           </Typography>
-          { props.isLoggedIn == 'true' ? (
+          { this.state.isLoggedIn? 
             <div>
               <IconButton
                 aria-label="Account of current user"
@@ -63,7 +94,7 @@ const MyAppBar = (props) => {
               </IconButton>
               <Menu
                 id="menu-appbar"
-                anchorEl={anchorEl}
+                anchorEl={this.state.anchorEl}
                 anchorOrigin={{
                   vertical: 'top',
                   horizontal: 'right',
@@ -79,17 +110,13 @@ const MyAppBar = (props) => {
                 <MenuItem onClick={handleClose}>Profile</MenuItem>
                 <MenuItem onClick={handleClose}>My account</MenuItem>
               </Menu>
-              <Button color="inherit">Logout</Button>
+              <Button onClick={logout} color="inherit">Logout</Button>
             </div>
-          ):null}
+          :null}
         </Toolbar>
       </AppBar>
     </div>
   );
+ }
 }
-
-MyAppBar.prototype ={
-  isLoggedIn: PropTypes.bool
-};
-
-export default MyAppBar;
+export default withStyles(useStyles)(MyAppBar);

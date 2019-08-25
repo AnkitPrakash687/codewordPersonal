@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import NavBar from './component/Navbar'
@@ -7,22 +7,26 @@ import Login from './component/Login'
 import Dashboard from './component/Dashboard'
 import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom"
 import Signup from './component/Signup'
+//import history from './helper/history'
+import PrivateRoute from './component/PrivateRoute'
 
+class App extends Component {
 
-export default function App()  {
+ constructor(props){
+   super(props)
+ 
+ }
 
-    const [state, setState] = useState({
-      loggedIn:false
-    })
-    return ( 
-      <Router >
-        <AppBar isLoggedIn={state.loggedIn}/>
-      <Redirect to="/login"/>  
-      <Route path="/signup" component={Signup}/>
-      <Route path="/login" component={Login}/> 
-      <Route path="/dashboard" render={(props) => <Dashboard {...props} />}></Route>
+ 
+  render(){
+  
+  return (
+    <Router >
+        <PrivateRoute exact path="/" component={Dashboard} />
+        <Route path="/signin" component={Login} />
+        <Route path="/signup" component={Signup} />
     </Router>
-    ); 
+  );
 }
-
-//export default App;
+}
+export default App;
