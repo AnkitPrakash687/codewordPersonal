@@ -10,7 +10,10 @@ import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red } from '@material-ui/core/colors';
 import { Paper, Grid } from '@material-ui/core';
 import Card from './CourseCard'
-
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from '@material-ui/core/Dialog';
+import Button from '@material-ui/core/Button'
+import AddCourse from './AddCourse'
 const useStyles = theme => ({
     root: {
         margin: 30,
@@ -48,7 +51,8 @@ class InstructorDashboard extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            value: 0
+            value: 0,
+            open: false
         }
     }
 
@@ -88,6 +92,44 @@ class InstructorDashboard extends Component {
             this.setState({ value: newValue });
         }
 
+        function SimpleDialog(props) {
+        
+            const { onClose, open } = props;
+          
+            function handleClose() {
+              onClose();
+            }
+          
+            function handleListItemClick(value) {
+              onClose(value);
+            }
+          
+            return (
+              <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
+                <DialogTitle id="simple-dialog-title">Add Course</DialogTitle>
+               <AddCourse></AddCourse>
+              </Dialog>
+            );
+          }
+          
+          SimpleDialog.propTypes = {
+            onClose: PropTypes.func.isRequired,
+            open: PropTypes.bool.isRequired,
+            selectedValue: PropTypes.string.isRequired,
+          };
+
+          const handleClickOpen = () => {
+            this.setState({
+                open:true
+            })
+          }
+        
+          const handleClose = value => {
+            this.setState({
+                open:false
+            })
+          };
+
         return (
             <div className={classes.root}>
                 <AppBar position="static" className={classes.appBar}>
@@ -97,6 +139,12 @@ class InstructorDashboard extends Component {
                     </Tabs>
                 </AppBar>
                 <TabPanel value={this.state.value} index={0}>
+
+                <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+                    Open simple dialog
+                </Button>
+                <SimpleDialog open={this.state.open} onClose={handleClose} />
+
                     <Grid container spacing={3}>
 
                         <Card></Card>

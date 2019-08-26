@@ -5,9 +5,9 @@ var jwt = require('jsonwebtoken');
 const _ = require('lodash');
 
 var tokencheck = (req,res,next) => {
-    console.log("Token check")
+   // console.log("Token check")
     var token = req.header('token') || req.body.token || req.query.token ;
-    console.log(token+" token")
+   // console.log(token+" token")
     //console.log(jwt.)
     if(token)
     {
@@ -16,10 +16,10 @@ var tokencheck = (req,res,next) => {
         {
           return res.status(400).json({message: 'Unauthorized User.' });
         }
-        console.log(decoded)
+       // console.log(decoded)
         req.session = decoded
-        console.log("_id:"+ req.session.id);
-        console.log("email:"+req.session.email);
+      //  console.log("_id:"+ req.session.id);
+      //  console.log("email:"+req.session.email);
         next();
      });
     } else{
