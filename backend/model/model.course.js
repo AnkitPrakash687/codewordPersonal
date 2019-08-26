@@ -7,22 +7,23 @@ var CourseModel = mongoose.model('courseModel', {
     type: String,
     required: true,
     trim: true,
-    unique: true,
-    minlength: 5
+    unique: true
    },
    status:{
     isAssigned:{type: Boolean},
     codewordSetName:{type: String}
    },
+   students:[
+      {
+         type:String,
+         unique: true
+      }
+   ],
    Startdate: {
-    type: String,
-    required: true,
-    minlength: 5
+    type: Date
    },
    Enddate: {
-    type: String,
-    required: true,
-    minlength: 5
+    type: Date
    },
    PreSurveyURL: {
     type: String
