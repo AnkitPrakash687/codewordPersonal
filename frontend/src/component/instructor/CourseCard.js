@@ -83,7 +83,7 @@ const useStyles = theme => ({
        
         const {classes} = this.props
     return(
-        <Grid item xs={12} sm={4} md={4} lg={4}>
+        <Grid item xs={12} sm={3} md={3} lg={3}>
         <Paper className={classes.paper}>
             <div className={classes.appBar}>
                 <AppBar position="static" className={classes.appBar}>
@@ -106,12 +106,12 @@ const useStyles = theme => ({
             </Paper>
             <Grid  container spacing={0}>
             <Grid   item xs={12} sm={6} md={6} lg={6}>
-            <Typography align="center" variant="caption" className={classes.title}>
+            <Typography align="center" variant="button" className={classes.title}>
                 Start date: 06/12/2019
             </Typography>
            </Grid>
            <Grid item xs={12} sm={6} md={6} lg={6}>
-            <Typography align="right" variant="caption" className={classes.title}>
+            <Typography align="right" variant="button" className={classes.title}>
                 End Date: 09/12/2019
             </Typography>
             </Grid>

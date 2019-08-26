@@ -123,11 +123,10 @@ class SignIn extends Component {
 
 
     const { classes } = this.props;
-    let { from } = this.props.location.state.from ||  "/" ;
-    console.log('from '+from)
+  
     if (this.state.isLoggedIn) {
       return <Redirect to={{
-        pathname: from,
+        pathname: '/',
         email: { id: '123' }
     }}
 />
