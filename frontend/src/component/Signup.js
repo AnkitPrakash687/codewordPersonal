@@ -81,7 +81,7 @@ export default function Signup() {
     console.log(validation)
     if (validation.isValid) {
          try {
-            const response = await API.post('/signup', data);
+            const response = await API.post('auth/signup', data);
             console.log('👉 Returned data:', response);
             console.log(response.data.code)
             if(response.data.code == 200){

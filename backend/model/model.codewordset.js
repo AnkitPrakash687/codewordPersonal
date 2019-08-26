@@ -3,20 +3,17 @@ var mongoose = require('mongoose'),
 Schema = mongoose.Schema;
 
 var codeWordSetSchema = new Schema({
-        CodeWordSetName: {
+        codewordSetName: {
                 type: String,
                 require: true,
-                minlength: 5,
                 unique:true
         },
-        CodeWordCreator: {
-                type: String,
-                required: true,
-        },
-        isPermanent : {
-                type: Boolean,
-                default : false
-        }
+        codewords:[
+                {type: String,
+                 unique: true,
+                 min: 5       
+                }
+        ]
 });
 
 // create the model for users and expose it to our app
