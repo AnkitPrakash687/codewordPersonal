@@ -105,7 +105,7 @@ class InstructorDashboard extends Component {
             }
           
             return (
-              <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
+              <Dialog  onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
                 <DialogTitle id="simple-dialog-title">Add Course</DialogTitle>
                <AddCourse></AddCourse>
               </Dialog>

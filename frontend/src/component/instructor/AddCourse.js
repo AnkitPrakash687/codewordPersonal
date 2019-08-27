@@ -3,7 +3,7 @@ import React, { useState, Component, useEffect } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red } from '@material-ui/core/colors';
-import { Paper, Grid, Button, FormControl, InputLabel, MenuItem, OutlinedInput, Select, Input, FormHelperText } from '@material-ui/core';
+import { Paper, Grid, Button, FormControl, InputLabel, MenuItem, OutlinedInput, Select } from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
 import TextField from '@material-ui/core/TextField'
@@ -11,6 +11,7 @@ import Container from '@material-ui/core/Container'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import DateFnsUtils from '@date-io/date-fns';
 import { makeStyles } from '@material-ui/core/styles';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
@@ -49,6 +50,15 @@ const useStyles = makeStyles(theme => ({
   },
   formControl: {
     marginTop: theme.spacing(1),
+  },
+  input: {
+    display: 'none',
+  },
+  textField:{
+    marginTop: theme.spacing(2)
+  },
+  button:{
+    marginTop: theme.spacing(2)
   }
 }));
 
@@ -64,9 +74,11 @@ export default function AddCourse() {
     endDate: moment().add(4, 'months'),
     selectedDate: '',
     values: '',
-    studentFilename:''
+    studentFilename:'',
+    filename:''
   })
   const inputLabel = React.useRef(null);
+  const fileLabel = React.useRef(null)
   const [labelWidth, setLabelWidth] = React.useState(0);
   React.useEffect(() => {
     setLabelWidth(inputLabel.current.offsetWidth);
@@ -115,11 +127,12 @@ export default function AddCourse() {
     }
 
   }
+  const handleFileChange = name => (date) => {
+    if(fileLabel.current.files[0] && fileLabel.current.files[0].name)
+    setState({ ...state, [name]: fileLabel.current.files[0].name });
+  }
 
   const handleDateChange = name => (date) => {
-    if (name == 'endDate') {
-
-    }
     setState({ ...state, [name]: date });
   }
   return (
@@ -141,14 +154,39 @@ export default function AddCourse() {
             onChange={handleChange('courseName')}
             value={state.firstName}
           />
+   <input
+        accept=".csv"
+        className={classes.input}
+        id="text-button-file"
+        multiple
+        type="file"
+        ref={fileLabel}
+        onChange={handleFileChange('filename')}
+      />
+      <label htmlFor="text-button-file">
+      <Grid container spacing={1}>
+        <Grid item xs={6} sm={8} md={8} lg={6}>
+      <TextField className={classes.textField}
+            id="filename"
+            name="filename"
+            disabled="true"
+            margin="dense"
+            value={state.filename}
+          />
+          </Grid>
+          <Grid item xs={6} sm={4} md={4} lg={6}>
+      <Button variant="contained" component="span" color="primary" className={classes.button}>
+        Upload
+        <CloudUploadIcon className={classes.rightIcon} />
+      </Button>
+      </Grid>
+      </Grid>
+      
+      </label>
 
-<FormControl>
-  <InputLabel htmlFor="my-input">Email address</InputLabel>
-  <Input id="my-input" aria-describedby="my-helper-text" />
-  <FormHelperText id="my-helper-text">We'll never share your email.</FormHelperText>
-</FormControl>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <Grid container >
+            <Grid container spacing={5}>
+            <Grid item xs={6} sm={6} md={6} lg={6}>
               <KeyboardDatePicker
                 variant="normal"
                 format="MM/dd/yyyy"
@@ -161,6 +199,8 @@ export default function AddCourse() {
                   'aria-label': 'change date',
                 }}
               />
+              </Grid>
+              <Grid item xs={6} sm={6} md={6} lg={6}>
               <KeyboardDatePicker
                 variant="normal"
                 format="MM/dd/yyyy"
@@ -175,7 +215,7 @@ export default function AddCourse() {
                   'aria-label': 'change date',
                 }}
               />
-
+            </Grid>
 
             </Grid>
           </MuiPickersUtilsProvider>
@@ -222,9 +262,9 @@ export default function AddCourse() {
 
           <br></br><br></br>
           <Grid container spacing={24}>
-            <Grid item xs={6} sm={2} md={3} lg={3}></Grid>
-            <Grid item xs={6} sm={2} md={3} lg={3}></Grid>
-            <Grid item xs={6} sm={4} md={3} lg={3}>
+            <Grid item xs={6} sm={2} md={2} lg={2}></Grid>
+            <Grid item xs={6} sm={2} md={2} lg={2}></Grid>
+            <Grid item xs={6} sm={4} md={4} lg={4}>
               <Button
                 type="submit"
                 variant="contained"
@@ -235,7 +275,7 @@ export default function AddCourse() {
                 Cancel
           </Button>
             </Grid>
-            <Grid item xs={6} sm={4} md={3} lg={3}>
+            <Grid item xs={6} sm={4} md={4} lg={4}>
               <Button
                 type="submit"
                 variant="contained"
