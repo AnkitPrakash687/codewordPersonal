@@ -2,7 +2,7 @@ import Typography from '@material-ui/core/Typography';
 import React, { useState, Component, useEffect } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import { withStyles } from '@material-ui/core/styles';
-import { green, lightGreen, red } from '@material-ui/core/colors';
+import { green, lightGreen, red, grey } from '@material-ui/core/colors';
 import { Paper, Grid, Button, FormControl, InputLabel, MenuItem, OutlinedInput, Select, Box } from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
@@ -59,15 +59,27 @@ const useStyles = makeStyles(theme => ({
         marginTop: theme.spacing(2)
     },
     button: {
-        margin: theme.spacing(2)
+        margin: theme.spacing(1)
     },
     submit: {
         background: green[600],
-        margin: theme.spacing(1),
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2),
+        "&:hover": {
+            backgroundColor: "green"
+          }
     },
     cancel: {
         background: red[600],
-        margin: theme.spacing(1),
+        margin: theme.spacing(2),
+        "&:hover": {
+            backgroundColor: "red"
+          }
+    },
+    paper:{
+        background: grey[200],
+        padding: theme.spacing(1),
+        borderRadius: 5
     }
 }));
 
@@ -268,8 +280,8 @@ export default function AddCourse() {
                         onChange={handleChange('endSurvey')}
                         value={state.startSurvey}
                     />
-
-                    <br></br><br></br>
+                         </form>
+            </div>
                     <Box display="flex" justifyContent="flex-end">
 
 
@@ -297,8 +309,7 @@ export default function AddCourse() {
 
 
                     </Box>
-                </form>
-            </div>
+           
 
         </Container>
     );
