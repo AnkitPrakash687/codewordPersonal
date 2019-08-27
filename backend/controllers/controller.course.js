@@ -10,11 +10,12 @@ var { CourseStudentModel } = require('../model/model.coursestudent');
 const multer = require('multer')
 const csv=require('csvtojson')
 
+
 var uploadFile = multer(
     {
       storage: multer.memoryStorage(),
     })
-    .single('studentList');
+    .single('file');
 
 
 
@@ -28,6 +29,7 @@ let addCourse = (req, res) => {
           }
           
           var studentList =  req.file;
+          console.log(studentList)
           if (studentList) {
             var data = studentList.buffer.toString();
 
@@ -40,31 +42,37 @@ let addCourse = (req, res) => {
                 console.log(jsonObj)
                 
                 var students = jsonObj.map((data)=>{
-                    return data[0]
+                    return {
+                        name:data[0],
+                        isRevealed: false,
+                        codeword:''
+                        }
                 })
                 console.log(students)
                     var body = _.pick(req.body, ['courseNameKey',
                     'codeWordSetName', 'startDate', 'endDate', 'preSurveyURL', 'postSurveyURL']);
+                    //var body = req.
                     console.log(body)
-                // var courseModel = new CourseModel({
-                //     courseNameKey: body.courseNameKey,
-                //     students: students,
-                //     codeWordSetName: body.codeWordSetName,
-                //     Startdate: body.startDate,
-                //     Startdate: body.startDate,
-                //     Enddate: body.endDate,
-                //     PreSurveyURL: body.preSurveyURL,
-                //     PostSurveyURL: body.postSurveyURL
-                // });
-                // courseModel.save().then((user) => {
-                //     if (user)
-                //         return res.status(200).json({ message: "Course created successfully." });
-                // }).catch((error) => {
-                //     if (error.name === 'MongoError' && error.code === 11000) {
-                //         return res.status(403).json({ message: 'There was a duplicate course error' });
-                //     }
-                //     return res.status(403).json({ message: error.message });
-                // })
+                var courseModel = new CourseModel({
+                    courseNameKey: body.courseNameKey,
+                    students: students,
+                    codeWordSetName: body.codeWordSetName,
+                    Startdate: body.startDate,
+                    Startdate: body.startDate,
+                    Enddate: body.endDate,
+                    PreSurveyURL: body.preSurveyURL,
+                    PostSurveyURL: body.postSurveyURL
+                });
+                courseModel.save().then((user) => {
+                    if (user)
+                        return res.status(200).json({ message: "Course created successfully." });
+                }).catch((error) => {
+                    console.log(error)
+                    if (error.name === 'MongoError' && error.code === 11000) {
+                        return res.status(403).json({ message: 'There was a duplicate course error' });
+                    }
+                    return res.status(403).json({ message: error.message });
+                })
             })
            
           }

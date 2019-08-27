@@ -20,7 +20,7 @@ import {
 } from '@material-ui/pickers';
 
 var moment = require('moment');
-
+var _ =require("underscore");
 const useStyles = makeStyles(theme => ({
     root: {
         margin: 30,
@@ -92,7 +92,7 @@ export default function AddCourse(props) {
         courseName: '',
         startSurvey: '',
         endSurvey: '',
-        startDate: new Date(),
+        startDate: moment(),
         endDate: moment().add(4, 'months'),
         selectedDate: '',
         values: '',
@@ -158,7 +158,7 @@ export default function AddCourse(props) {
     const handleSubmit = (event) => {
         event.preventDefault()
         const headers = {
-            'Content-Type': 'application/json',
+            "Content-Type": "multipart/form-data",
             'token': sessionStorage.getItem('token')
         };
         var data = {
@@ -168,13 +168,17 @@ export default function AddCourse(props) {
             preSurveyURL: state.startSurvey,
             postSurveyURL: state.endSurvey,
             codeWordSetName: state.values,
-            studentList: state.selectedFile
 
         } 
         console.log(data)
-
-        
-             API.post('dashboard/addnewCourse', data,{headers:headers}).then(response =>{
+        var formData = new FormData()
+        formData.append('file', state.selectedFile)
+        _.each(data, (value, key)=>{
+            console.log(key+" "+value)
+            formData.append(key, value)
+        })
+    
+             API.post('dashboard/addnewCourse', formData,{headers:headers}).then(response =>{
                 console.log('👉 Returned data in :', response);
             })
             .catch(error=>{
@@ -199,7 +203,7 @@ export default function AddCourse(props) {
             <CssBaseline />
 
             <div className={classes.paper}>
-                <form onSubmit={handleSubmit} className={classes.form} >
+                <form enctype = "multipart/form-data" onSubmit={handleSubmit} className={classes.form} >
                     <TextField className={classes.textField}
                         variant="outlined"
                         required
@@ -316,7 +320,7 @@ export default function AddCourse(props) {
                         autoComplete="endSurvey"
                         margin="dense"
                         onChange={handleChange('endSurvey')}
-                        value={state.startSurvey}
+                        value={state.endSurvey}
                     />
              
             <Box display="flex" justifyContent="flex-end">

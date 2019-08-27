@@ -9,16 +9,19 @@ var CourseModel = mongoose.model('courseModel', {
     trim: true,
     unique: true
    },
-   status:{
-    isAssigned:{type: Boolean},
-    codewordSetName:{type: String}
-   },
    students:[
       {
-         type:String,
-         unique: true
+      name:{type:String},
+      isRevealed:{type: Boolean},
+      codeword:{type: String}
       }
    ],
+   codewordSet:{
+      type:String
+   },
+   isAssigned:{
+      type:Boolean
+   },
    Startdate: {
     type: Date
    },
