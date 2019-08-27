@@ -1,5 +1,6 @@
 import Typography from '@material-ui/core/Typography';
 import React, { useState, Component, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red, grey } from '@material-ui/core/colors';
@@ -67,23 +68,23 @@ const useStyles = makeStyles(theme => ({
         marginBottom: theme.spacing(2),
         "&:hover": {
             backgroundColor: "green"
-          }
+        }
     },
     cancel: {
         background: red[600],
         margin: theme.spacing(2),
         "&:hover": {
             backgroundColor: "red"
-          }
+        }
     },
-    paper:{
+    paper: {
         background: grey[200],
         padding: theme.spacing(1),
         borderRadius: 5
     }
 }));
 
-export default function AddCourse() {
+export default function AddCourse(props) {
     const classes = useStyles();
     const [state, setState] = useState({
         role: '',
@@ -96,7 +97,8 @@ export default function AddCourse() {
         selectedDate: '',
         values: '',
         studentFilename: '',
-        filename: ''
+        filename: '',
+        selectedFile:null
     })
     const inputLabel = React.useRef(null);
     const fileLabel = React.useRef(null)
@@ -136,10 +138,6 @@ export default function AddCourse() {
 
     })
 
-    const handleSubmit = (event) => {
-
-    }
-
     const handleChange = name => (event, isChecked) => {
         //console.log({[name]: event.target.value})
         setState({ ...state, [name]: event.target.value });
@@ -148,20 +146,60 @@ export default function AddCourse() {
         }
 
     }
-    const handleFileChange = name => (date) => {
+    const handleFileChange = (event) => {
         if (fileLabel.current.files[0] && fileLabel.current.files[0].name)
-            setState({ ...state, [name]: fileLabel.current.files[0].name });
+            setState({ ...state, filename: fileLabel.current.files[0].name, selectedFile: event.target.files[0]});
     }
 
     const handleDateChange = name => (date) => {
         setState({ ...state, [name]: date });
     }
+
+    const handleSubmit = (event) => {
+        event.preventDefault()
+        const headers = {
+            'Content-Type': 'application/json',
+            'token': sessionStorage.getItem('token')
+        };
+        var data = {
+            courseNameKey: state.courseName,
+            startDate: state.startDate,
+            endDate: state.endDate,
+            preSurveyURL: state.startSurvey,
+            postSurveyURL: state.endSurvey,
+            codeWordSetName: state.values,
+            studentList: state.selectedFile
+
+        } 
+        console.log(data)
+
+        
+             API.post('dashboard/addnewCourse', data,{headers:headers}).then(response =>{
+                console.log('👉 Returned data in :', response);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+            ;
+            
+     
+         
+    }
+
+    const handleClose = () => {
+        props.onClose()
+    }
+    AddCourse.propTypes = {
+        onClose: PropTypes.func.isRequired
+    };
+
+
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
 
             <div className={classes.paper}>
-                <form onSubmit={handleSubmit.bind(this)} className={classes.form} >
+                <form onSubmit={handleSubmit} className={classes.form} >
                     <TextField className={classes.textField}
                         variant="outlined"
                         required
@@ -182,7 +220,7 @@ export default function AddCourse() {
                         multiple
                         type="file"
                         ref={fileLabel}
-                        onChange={handleFileChange('filename')}
+                        onChange={handleFileChange}
                     />
                     <label htmlFor="text-button-file">
                         <Grid container spacing={1}>
@@ -198,7 +236,7 @@ export default function AddCourse() {
                             <Grid item xs={4} sm={4} md={4} lg={4}>
                                 <Button variant="contained" component="span" color="primary" className={classes.button}>
                                     Upload
-        <CloudUploadIcon className={classes.rightIcon} />
+                                    <CloudUploadIcon className={classes.rightIcon} />
                                 </Button>
                             </Grid>
                         </Grid>
@@ -280,37 +318,37 @@ export default function AddCourse() {
                         onChange={handleChange('endSurvey')}
                         value={state.startSurvey}
                     />
-                         </form>
+             
+            <Box display="flex" justifyContent="flex-end">
+
+
+                <Button
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    className={classes.cancel}
+                    onClick={handleClose}
+                >
+                    Cancel
+          </Button>
+
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    className={classes.submit}
+                >
+                    Add
+          </Button>
+
+
+
+            </Box>
+
+
+            </form>
             </div>
-                    <Box display="flex" justifyContent="flex-end">
-
-
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            size="large"
-                            className={classes.cancel}
-                        >
-                            Cancel
-          </Button>
-
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            size="large"
-                            className={classes.submit}
-                        >
-                            Add
-          </Button>
-
-
-
-
-                    </Box>
-           
-
         </Container>
     );
 }

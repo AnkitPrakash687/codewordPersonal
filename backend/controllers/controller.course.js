@@ -26,7 +26,8 @@ let addCourse = (req, res) => {
           } else if (error) {
             // An unknown error occurred when uploading.
           }
-          var studentList =  req.file || req.files.studentList || null;
+          
+          var studentList =  req.file;
           if (studentList) {
             var data = studentList.buffer.toString();
 
