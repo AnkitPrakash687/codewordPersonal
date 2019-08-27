@@ -7,11 +7,12 @@ var CourseModel = mongoose.model('courseModel', {
     type: String,
     required: true,
     trim: true,
-    unique: true
+    unique: true,
+    index:true
    },
    students:[
       {
-      name:{type:String},
+      email:{type:String},
       isRevealed:{type: Boolean},
       codeword:{type: String}
       }

@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red, grey } from '@material-ui/core/colors';
-import { Paper, Grid, Button, FormControl, InputLabel, MenuItem, OutlinedInput, Select, Box } from '@material-ui/core';
+import { Paper, Grid, Button, FormControl, InputLabel, 
+  MenuItem, OutlinedInput, Select, Box, Snackbar, IconButton } from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
 import TextField from '@material-ui/core/TextField'
@@ -12,7 +13,7 @@ import Container from '@material-ui/core/Container'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import DateFnsUtils from '@date-io/date-fns';
 import { makeStyles } from '@material-ui/core/styles';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import {CloudUploadIcon, CloseIcon} from '@material-ui/icons/';
 import { flexbox } from '@material-ui/system';
 import {
     MuiPickersUtilsProvider,
@@ -98,7 +99,10 @@ export default function AddCourse(props) {
         values: '',
         studentFilename: '',
         filename: '',
-        selectedFile:null
+        selectedFile:null,
+        status: false,
+        error: false,
+        message:''
     })
     const inputLabel = React.useRef(null);
     const fileLabel = React.useRef(null)
@@ -180,6 +184,12 @@ export default function AddCourse(props) {
     
              API.post('dashboard/addnewCourse', formData,{headers:headers}).then(response =>{
                 console.log('👉 Returned data in :', response);
+                if(response.status == 200){
+                  setState({
+                    status:true,
+                    message:response.data.message
+                  })
+                }
             })
             .catch(error=>{
                 console.log(error);
@@ -193,6 +203,10 @@ export default function AddCourse(props) {
     const handleClose = () => {
         props.onClose()
     }
+
+    function handleMessageClose(event, reason){
+      setState({status: false})
+  }
     AddCourse.propTypes = {
         onClose: PropTypes.func.isRequired
     };
@@ -353,6 +367,28 @@ export default function AddCourse(props) {
 
             </form>
             </div>
+            <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={state.status}
+        autoHideDuration={6000}
+        variant="success"
+        onClose={handleMessageClose}
+        message={state.message}
+        action={[
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              className={classes.close}
+              onClick={handleMessageClose}
+            >
+              <CloseIcon />
+            </IconButton>,
+          ]}
+      ></Snackbar>
         </Container>
     );
 }

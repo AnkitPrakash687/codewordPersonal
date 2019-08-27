@@ -43,7 +43,7 @@ let addCourse = (req, res) => {
                 
                 var students = jsonObj.map((data)=>{
                     return {
-                        name:data[0],
+                        email:data[0],
                         isRevealed: false,
                         codeword:''
                         }
