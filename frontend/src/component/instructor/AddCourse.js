@@ -103,7 +103,8 @@ export default function AddCourse(props) {
         selectedFile:null,
         status: false,
         error: false,
-        message:''
+        message:'',
+        reRender:false
     })
     const inputLabel = React.useRef(null);
     const fileLabel = React.useRef(null)
@@ -189,6 +190,7 @@ export default function AddCourse(props) {
                   setState({
                     status:true,
                     message:response.data.message,
+                    reRender:true
                   }) 
                 }else{
                   console.log('error')
@@ -198,7 +200,7 @@ export default function AddCourse(props) {
                     endDate: state.endDate,
                     status:true,
                     error:true,
-                    message:response.data.message
+                    message:response.data.message,
                   })
                 }
             })
