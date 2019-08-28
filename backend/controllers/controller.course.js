@@ -17,7 +17,36 @@ var uploadFile = multer(
     })
     .single('file');
 
-
+const saveCourseData=(students,req, res)=>{
+    var body = _.pick(req.body, ['courseNameKey',
+    'codeWordSetName', 'startDate', 'endDate', 'preSurveyURL', 'postSurveyURL']);
+    //var body = req.
+    console.log(body)
+var courseModel = new CourseModel({
+    courseNameKey: body.courseNameKey,
+    students: students,
+    codeWordSetName: body.codeWordSetName,
+    Startdate: body.startDate,
+    Startdate: body.startDate,
+    isAssigned: false,
+    createdBy: req.session.email,
+    Enddate: body.endDate,
+    PreSurveyURL: body.preSurveyURL,
+    PostSurveyURL: body.postSurveyURL
+});
+courseModel.save().then((user) => {
+    if (user)
+        return res.status(200).json({ message: "Course created successfully." });
+}).catch((error) => {
+    console.log(error)
+    console.log(error.name + ' '+error.code)
+    if (error.name == 'MongoError' && error.code == 11000) {
+        console.log('working')
+        return res.status(403).json({ message: 'There was a duplicate course error' });
+    }
+    return res.status(403).json({ message: error.message });
+})
+}
 
 let addCourse = (req, res) => {
 
@@ -49,32 +78,12 @@ let addCourse = (req, res) => {
                         }
                 })
                 console.log(students)
-                    var body = _.pick(req.body, ['courseNameKey',
-                    'codeWordSetName', 'startDate', 'endDate', 'preSurveyURL', 'postSurveyURL']);
-                    //var body = req.
-                    console.log(body)
-                var courseModel = new CourseModel({
-                    courseNameKey: body.courseNameKey,
-                    students: students,
-                    codeWordSetName: body.codeWordSetName,
-                    Startdate: body.startDate,
-                    Startdate: body.startDate,
-                    Enddate: body.endDate,
-                    PreSurveyURL: body.preSurveyURL,
-                    PostSurveyURL: body.postSurveyURL
-                });
-                courseModel.save().then((user) => {
-                    if (user)
-                        return res.status(200).json({ message: "Course created successfully." });
-                }).catch((error) => {
-                    console.log(error)
-                    if (error.name === 'MongoError' && error.code === 11000) {
-                        return res.status(403).json({ message: 'There was a duplicate course error' });
-                    }
-                    return res.status(403).json({ message: error.message });
-                })
+                   saveCourseData(students,req, res)
             })
            
+          }else{
+              console.log(req.body)
+              saveCourseData([],req, res)
           }
 
     })
@@ -84,12 +93,13 @@ module.exports.addCourse = addCourse;
 
 let getCourses = (req, res, next) => {
    // CourseModel.find({ emailKey: req.session.email }, function (err, courses) {
-    CourseModel.find({ emailKey: 'hoot@nwmissouri.edu' }, function (err, courses) {
+    CourseModel.find({ createdBy: req.session.email }, function (err, courses) {
         // if (courses)
         //     return res.json({ code: 200, data: courses });
         console.log(courses)
-            req.courses = courses;
-        next();
+           // req.courses = courses;
+     return res.json({ code: 200, data: courses });
+      //  next();
     }).catch((e) => {
         return res.json({ code: 400, message: e });
     })

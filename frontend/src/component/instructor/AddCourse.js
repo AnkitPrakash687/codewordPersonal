@@ -13,7 +13,8 @@ import Container from '@material-ui/core/Container'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import DateFnsUtils from '@date-io/date-fns';
 import { makeStyles } from '@material-ui/core/styles';
-import {CloudUploadIcon, CloseIcon} from '@material-ui/icons/';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import CloseIcon from '@material-ui/icons/Close';
 import { flexbox } from '@material-ui/system';
 import {
     MuiPickersUtilsProvider,
@@ -93,7 +94,7 @@ export default function AddCourse(props) {
         courseName: '',
         startSurvey: '',
         endSurvey: '',
-        startDate: moment(),
+        startDate: new Date(),
         endDate: moment().add(4, 'months'),
         selectedDate: '',
         values: '',
@@ -187,12 +188,31 @@ export default function AddCourse(props) {
                 if(response.status == 200){
                   setState({
                     status:true,
+                    message:response.data.message,
+                  }) 
+                }else{
+                  console.log('error')
+                  setState({
+                    courseName:state.courseName,
+                    startDate: state.startDate,
+                    endDate: state.endDate,
+                    status:true,
+                    error:true,
                     message:response.data.message
                   })
                 }
             })
             .catch(error=>{
-                console.log(error);
+              console.log(error)
+              console.log('error')
+              setState({
+                courseName:state.courseName,
+                    startDate: state.startDate,
+                    endDate: state.endDate,
+                status:true,
+                error:true,
+                message:error.message
+              })
             })
             ;
             
@@ -204,8 +224,15 @@ export default function AddCourse(props) {
         props.onClose()
     }
 
-    function handleMessageClose(event, reason){
-      setState({status: false})
+    const handleMessageClose=()=>{
+      setState({
+        courseName:state.courseName,
+        startDate: state.startDate,
+        endDate: state.endDate,
+        status: false})
+      if(!state.error){
+      props.onClose()
+      }
   }
     AddCourse.propTypes = {
         onClose: PropTypes.func.isRequired
@@ -373,7 +400,7 @@ export default function AddCourse(props) {
           horizontal: 'left',
         }}
         open={state.status}
-        autoHideDuration={6000}
+        autoHideDuration={2000}
         variant="success"
         onClose={handleMessageClose}
         message={state.message}

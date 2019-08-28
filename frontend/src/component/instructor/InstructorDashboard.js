@@ -1,5 +1,5 @@
 import Typography from '@material-ui/core/Typography';
-import React, { useState, Component } from 'react';
+import React, { useState, Component, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -14,7 +14,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button'
 import AddCourse from './AddCourse'
-const useStyles = theme => ({
+import API from '../../utils/API'
+
+const useStyles = makeStyles(theme => ({
     root: {
         margin: 30,
         flexGrow: 1,
@@ -42,22 +44,19 @@ const useStyles = theme => ({
         background: red[200],
         padding: 10
 
+    },
+    button:{
+        marginBottom: theme.spacing(2)
     }
-});
+}));
 
-class InstructorDashboard extends Component {
+export default function InstructorDashboard()  {
 
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            value: 0,
-            open: false
-        }
-    }
+    const [value, setValue] = useState(0);
+    const [open, setOpen] = useState(false)
 
-    render() {
-        const { classes } = this.props
+        const  classes  = useStyles();
         function TabPanel(props) {
             const { children, value, index, ...other } = props;
 
@@ -89,7 +88,7 @@ class InstructorDashboard extends Component {
         }
 
         const handleChange = (event, newValue) => {
-            this.setState({ value: newValue });
+            setValue(newValue);
         }
 
         function SimpleDialog(props) {
@@ -119,50 +118,119 @@ class InstructorDashboard extends Component {
           };
 
           const handleClickOpen = () => {
-            this.setState({
-                open:true
-            })
+            setOpen(true)
           }
         
           const handleClose = value => {
-            this.setState({
-                open:false
-            })
+            setOpen(false)
           };
 
+          const [courseData, setCourseData] = useState([{}])
+          useEffect(()=>{
+              console.log('inside effect')
+            const headers = {
+                'token': sessionStorage.getItem('token')
+            };
+            API.get('dashboard/getCourseList',{headers:headers}).then(response =>{
+                console.log('👉 Returned data in :', response);
+                
+                if(response.status == 200){
+                    console.log(response.data)
+                    var data = response.data.data
+                    var result = []
+                    data.map((course)=>{
+                        var ack = 0
+                        ack = course.students.reduce((acc,item)=>{
+                            if(item.isRevealed){
+                                return acc+1
+                            }else{
+                                return acc+0
+                            }
+                        },0)
+                        result.push({
+                            courseName:course.courseNameKey,
+                            startDate: (course.Startdate.toString()).substring(0,10),
+                            endDate:  (course.Startdate.toString()).substring(0,10),
+                            startSurvey: course.PreSurveyURL==''?'Unpublished':course.PreSurveyURL,
+                            endSurvey: course.PostSurveyURL==''?'Unpublished':course.PostSurveyURL,
+                            isAssigned: course.isAssigned,
+                            'ack':ack+'/'+course.students.length
+                        })
+                    })
+                   
+                    console.log(result)
+                    setCourseData(result)
+                //   setState({
+                //     status:true,
+                //     message:response.data.message,
+                //   }) 
+                // }else{
+                //   console.log('error')
+                //   setState({
+                //     courseName:state.courseName,
+                //     startDate: state.startDate,
+                //     endDate: state.endDate,
+                //     status:true,
+                //     error:true,
+                //     message:response.data.message
+                //   })
+                }
+            })
+            .catch(error=>{
+              console.log(error)
+            //   console.log('error')
+            //   setState({
+            //     courseName:state.courseName,
+            //         startDate: state.startDate,
+            //         endDate: state.endDate,
+            //     status:true,
+            //     error:true,
+            //     message:error.message
+            //   })
+            })
+          },[])
+
+          const listCourses = courseData.map((course)=>{
+           return <Card courseName={course.courseName}
+           ack={course.ack}
+            startDate={course.startDate}
+            endDate={course.endDate}
+            startSurvey={course.startSurvey}
+            endSurvey={course.endSurvey}
+            isAssigned={course.isAssigned}
+        ></Card>
+          })
+        
         return (
             <div className={classes.root}>
                 <AppBar position="static" className={classes.appBar}>
-                    <Tabs variant='fullWidth' centered={true} value={this.state.value} onChange={handleChange} aria-label="simple tabs example" >
+                    <Tabs variant='fullWidth' centered={true} value={value} onChange={handleChange} aria-label="simple tabs example" >
                         <Tab label="Course" {...a11yProps(0)} />
                         <Tab label="Codeword" {...a11yProps(1)} />
                     </Tabs>
                 </AppBar>
-                <TabPanel value={this.state.value} index={0}>
+                <TabPanel value={value} index={0}>
 
-                <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-                    Open simple dialog
+                <Button variant="contained" color="primary" className={classes.button} onClick={handleClickOpen}>
+                    Add Course
                 </Button>
-                <SimpleDialog open={this.state.open} onClose={handleClose} />
+                <SimpleDialog open={open} onClose={handleClose} />
 
-                    <Grid container spacing={3}>
+                    <Grid container spacing={5}>
 
-                        <Card></Card>
-                        <Card></Card>
-                        <Card></Card>
-                        <Card></Card>
+                        {
+                           listCourses
+                        }
 
                     </Grid>
 
                 </TabPanel>
-                <TabPanel value={this.state.value} index={1}>
+                <TabPanel value={value} index={1}>
                     Item Two
         </TabPanel>
 
             </div>
 
         );
-    }
+    
 }
-
-export default withStyles(useStyles)(InstructorDashboard)

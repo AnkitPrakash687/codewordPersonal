@@ -10,6 +10,7 @@ var CourseModel = mongoose.model('courseModel', {
     unique: true,
     index:true
    },
+   createdBy:{type: String},
    students:[
       {
       email:{type:String},
