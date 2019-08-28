@@ -233,7 +233,7 @@ export default function AddCourse(props) {
         endDate: state.endDate,
         status: false})
       if(!state.error){
-      props.onClose()
+      props.onClose(state.error)
       }
   }
     AddCourse.propTypes = {

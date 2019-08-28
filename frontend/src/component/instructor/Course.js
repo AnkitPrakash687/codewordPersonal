@@ -1,9 +1,10 @@
 import Typography from '@material-ui/core/Typography';
 import React, { useState, Component, useEffect } from 'react';
 import AppBar from '@material-ui/core/AppBar';
+import Appbar from '../MyAppBar'
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red } from '@material-ui/core/colors';
-import { Paper, Grid } from '@material-ui/core';
+import { Paper, Grid, Box, Button, Container, CssBaseline} from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
 import { makeStyles } from '@material-ui/core/styles';
@@ -12,9 +13,21 @@ import { Redirect } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
     root: {
-        margin: 30,
+        marginTop: 20,
         flexGrow: 1,
-        backgroundColor: theme.palette.background.paper,
+      //  background: theme.palette.background.paper,
+      background: lightGreen[200],
+      minHeight: 500
+
+    },
+    header:{
+        background: green[500],
+        border: 1,
+        borderRadius: 5,
+        minHeight: 80
+    },
+    button:{
+       margin: theme.spacing(1) 
     },
     appBar: {
         borderRadius: 5,
@@ -22,9 +35,7 @@ const useStyles = makeStyles(theme => ({
     },
     paper: {
         borderRadius: 5,
-        paddingBottom: 20,
-        maxWidth: 300,
-        minWidth:200
+        paddingBottom: 20
     },
     paper2: {
         padding: 10,
@@ -46,7 +57,7 @@ const useStyles = makeStyles(theme => ({
 
     }
 }));
-export default function CourseCard(props) {
+export default function Course(props) {
     const classes = useStyles();
     const [state, setState] = useState({
         role: '',
@@ -87,62 +98,77 @@ export default function CourseCard(props) {
 
     }
     if (redirect) {
-        return <Redirect to={'/course/' + props.id}></Redirect>
+        return <Redirect to="/signup"></Redirect>
     }
 
     return (
-
-        <Grid item xs={12} sm={3} md={3} lg={3}>
-            <CardActionArea onClick={handleCardClick}>
-                <Paper className={classes.paper}>
-                    <div className={classes.appBar}>
-                        <AppBar position="static" className={classes.appBar}>
-                            <Typography variant="h6" className={classes.title}>
-                                {props.courseName}
-                            </Typography>
-                        </AppBar>
-                    </div>
-
-                    <Paper className={classes.paper2}>
-                        <Typography variant="h8" className={classes.title}>
-                            Aknowledged: {props.ack}
-                        </Typography><br></br>
-                        <Typography variant="h8" className={classes.title}>
-                            Start Survey: {props.startSurvey}
-                        </Typography><br></br>
-                        <Typography variant="h8" className={classes.title}>
-                            End Survey: {props.endSurvey}
-                        </Typography>
-                    </Paper>
+        <div>
+            <Appbar isLoggedIn={true}></Appbar>
+            <Container component="main" maxWidth='xl'>
+          <CssBaseline />
+            <div className={classes.root}>
+               
+                <Box className={classes.header} >
+                    <Box minWidth="xs" display="flex" justifyContent="flex-start">
+                        <Typography variant="h6" className={classes.title}>
+                            44618-01/05-19Su PROJECT MGMT IN BUS & TECH
+                        </Typography> 
+                    </Box>
                     <Grid className={classes.dates} container spacing={0}>
-                        <Grid item xs={12} sm={6} md={6} lg={6}>
+                        <Grid item xs={12} sm={4} md={4} lg={4}>
                             <Typography variant="caption" className={classes.title}>
-                                Start date: {props.startDate}
+                                Start date: 09/20/2019
                             </Typography>
                         </Grid>
-                        <Grid item xs={12} sm={6} md={6} lg={6}>
+                        <Grid item xs={12}  sm={4} md={4} lg={4}>
                             <Typography variant="caption" className={classes.title}>
-                                End Date: {props.endDate}
+                                End Date: 09/20/2019
                             </Typography>
                         </Grid>
                     </Grid>
-                    {(props.isAssigned) ?
-                        <Paper className={classes.banner1}>
+                    <Box padding={2} display="flex" justifyContent="flex-end">
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        className={classes.button}
+                       
+                    >
+                        assign
+                    </Button>
 
-                            <Typography variant="h8" className={classes.title}>
-                                CODEWORD ASSIGNED
-                    </Typography>
-                        </Paper> :
-                        <Paper className={classes.banner2}>
-                            <Typography variant="h8" className={classes.title}>
-                                CODEWORD NOT ASSIGNED
-                    </Typography>
-                        </Paper>
-                    }
-                </Paper>
-            </CardActionArea>
-        </Grid>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        className={classes.edit}
+                    >
+                        edit 
+                    </Button>
 
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        size="large"
+                        className={classes.delete}
+                        background={green[500]}
+                    >
+                        delete
+                    </Button>
+
+                </Box>
+
+                </Box>
+                
+                <Grid container >
+                    <Grid item xs={12} sm={3} md={3} lg={3}>
+
+                    </Grid>
+                </Grid>
+            </div>
+            </Container>
+        </div>
     );
 
 }

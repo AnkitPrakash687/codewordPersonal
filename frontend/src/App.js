@@ -5,6 +5,7 @@ import NavBar from './component/Navbar'
 import AppBar from './component/MyAppBar'
 import Login from './component/Login'
 import Dashboard from './component/Dashboard'
+import Course from './component/instructor/Course'
 import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom"
 import Signup from './component/Signup'
 //import history from './helper/history'
@@ -23,6 +24,7 @@ class App extends Component {
   return (
     <Router >
         <PrivateRoute exact path="/" component={Dashboard} />
+        <PrivateRoute exact path="/course/:id" component={Course} />
         <Route path="/signin" component={Login} />
         <Route path="/signup" component={Signup} />
     </Router>

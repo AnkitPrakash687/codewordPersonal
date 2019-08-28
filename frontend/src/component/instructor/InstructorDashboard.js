@@ -45,121 +45,125 @@ const useStyles = makeStyles(theme => ({
         padding: 10
 
     },
-    button:{
+    button: {
         marginBottom: theme.spacing(2)
     }
 }));
 
-export default function InstructorDashboard()  {
+export default function InstructorDashboard() {
 
 
     const [value, setValue] = useState(0);
     const [open, setOpen] = useState(false)
 
-        const  classes  = useStyles();
-        function TabPanel(props) {
-            const { children, value, index, ...other } = props;
+    const classes = useStyles();
+    function TabPanel(props) {
+        const { children, value, index, ...other } = props;
 
-            return (
-                <Typography
-                    component="div"
-                    role="tabpanel"
-                    hidden={value !== index}
-                    id={`simple-tabpanel-${index}`}
-                    aria-labelledby={`simple-tab-${index}`}
-                    {...other}
-                >
-                    <Box bgcolor={lightGreen[100]} height={500} p={3}>{children}</Box>
-                </Typography>
-            );
-        }
+        return (
+            <Typography
+                component="div"
+                role="tabpanel"
+                hidden={value !== index}
+                id={`simple-tabpanel-${index}`}
+                aria-labelledby={`simple-tab-${index}`}
+                {...other}
+            >
+                <Box bgcolor={lightGreen[100]} height={500} p={3}>{children}</Box>
+            </Typography>
+        );
+    }
 
-        TabPanel.propTypes = {
-            children: PropTypes.node,
-            index: PropTypes.any.isRequired,
-            value: PropTypes.any.isRequired,
+    TabPanel.propTypes = {
+        children: PropTypes.node,
+        index: PropTypes.any.isRequired,
+        value: PropTypes.any.isRequired,
+    };
+
+    function a11yProps(index) {
+        return {
+            id: `simple-tab-${index}`,
+            'aria-controls': `simple-tabpanel-${index}`,
         };
+    }
+    const [render, setRender] = useState(false);
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    }
 
-        function a11yProps(index) {
-            return {
-                id: `simple-tab-${index}`,
-                'aria-controls': `simple-tabpanel-${index}`,
-            };
+    function SimpleDialog(props) {
+
+        const { onClose, open, render } = props;
+
+        const handleClose = (error) => {
+            console.log('render   ' + render)
+            setRender(!render)
+            onClose();
         }
 
-        const handleChange = (event, newValue) => {
-            setValue(newValue);
+        function handleListItemClick(value) {
+            onClose(value);
         }
 
-        function SimpleDialog(props) {
-        
-            const { onClose, open } = props;
-          
-            function handleClose() {
-              onClose();
-            }
-          
-            function handleListItemClick(value) {
-              onClose(value);
-            }
-          
-            return (
-              <Dialog  onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
+        return (
+            <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
                 <DialogTitle id="simple-dialog-title">Add Course</DialogTitle>
-               <AddCourse onClose={handleClose}></AddCourse>
-              </Dialog>
-            );
-          }
-          
-          SimpleDialog.propTypes = {
-            onClose: PropTypes.func.isRequired,
-            open: PropTypes.bool.isRequired,
-            selectedValue: PropTypes.string.isRequired,
-          };
+                <AddCourse onClose={handleClose}></AddCourse>
+            </Dialog>
+        );
+    }
 
-          const handleClickOpen = () => {
-            setOpen(true)
-          }
-        
-          const handleClose = value => {
-            setOpen(false)
-          };
+    SimpleDialog.propTypes = {
+        onClose: PropTypes.func.isRequired,
+        open: PropTypes.bool.isRequired,
+        render: PropTypes.bool.isRequired,
+    };
 
-          const [courseData, setCourseData] = useState([{}])
-          useEffect(()=>{
-              console.log('inside effect')
-            const headers = {
-                'token': sessionStorage.getItem('token')
-            };
-            API.get('dashboard/getCourseList',{headers:headers}).then(response =>{
-                console.log('👉 Returned data in :', response);
-                
-                if(response.status == 200){
-                    console.log(response.data)
-                    var data = response.data.data
-                    var result = []
-                    data.map((course)=>{
-                        var ack = 0
-                        ack = course.students.reduce((acc,item)=>{
-                            if(item.isRevealed){
-                                return acc+1
-                            }else{
-                                return acc+0
-                            }
-                        },0)
-                        result.push({
-                            courseName:course.courseNameKey,
-                            startDate: (course.Startdate.toString()).substring(0,10),
-                            endDate:  (course.Startdate.toString()).substring(0,10),
-                            startSurvey: course.PreSurveyURL==''?'Unpublished':course.PreSurveyURL,
-                            endSurvey: course.PostSurveyURL==''?'Unpublished':course.PostSurveyURL,
-                            isAssigned: course.isAssigned,
-                            'ack':ack+'/'+course.students.length
-                        })
+    const handleClickOpen = () => {
+        setOpen(true)
+    }
+
+    const handleClose = value => {
+        setOpen(false)
+    };
+
+    const [courseData, setCourseData] = useState([{}])
+    useEffect(() => {
+
+        console.log('inside effect')
+        const headers = {
+            'token': sessionStorage.getItem('token')
+        };
+        API.get('dashboard/getCourseList', { headers: headers }).then(response => {
+            console.log('👉 Returned data in :', response);
+
+            if (response.status == 200) {
+                console.log(response.data)
+                var data = response.data.data
+                var result = []
+                data.map((course) => {
+                    var ack = 0
+                    ack = course.students.reduce((acc, item) => {
+                        if (item.isRevealed) {
+                            return acc + 1
+                        } else {
+                            return acc + 0
+                        }
+                    }, 0)
+                    result.push({
+                        id: course._id,
+                        courseName: course.courseNameKey,
+                        startDate: (course.Startdate.toString()).substring(0, 10),
+                        endDate: (course.Enddate.toString()).substring(0, 10),
+                        startSurvey: course.PreSurveyURL == '' ? 'Unpublished' : course.PreSurveyURL,
+                        endSurvey: course.PostSurveyURL == '' ? 'Unpublished' : course.PostSurveyURL,
+                        isAssigned: course.isAssigned,
+                        'ack': ack + '/' + course.students.length
                     })
-                   
-                    console.log(result)
-                    setCourseData(result)
+                })
+
+                console.log(result)
+                setCourseData(result)
                 //   setState({
                 //     status:true,
                 //     message:response.data.message,
@@ -174,63 +178,64 @@ export default function InstructorDashboard()  {
                 //     error:true,
                 //     message:response.data.message
                 //   })
-                }
+            }
+        })
+            .catch(error => {
+                console.log(error)
+                //   console.log('error')
+                //   setState({
+                //     courseName:state.courseName,
+                //         startDate: state.startDate,
+                //         endDate: state.endDate,
+                //     status:true,
+                //     error:true,
+                //     message:error.message
+                //   })
             })
-            .catch(error=>{
-              console.log(error)
-            //   console.log('error')
-            //   setState({
-            //     courseName:state.courseName,
-            //         startDate: state.startDate,
-            //         endDate: state.endDate,
-            //     status:true,
-            //     error:true,
-            //     message:error.message
-            //   })
-            })
-          },[])
+    }, [render])
 
-          const listCourses = courseData.map((course)=>{
-           return <Card courseName={course.courseName}
-           ack={course.ack}
+    const listCourses = courseData.map((course) => {
+        return <Card id={course.id}
+            courseName={course.courseName}
+            ack={course.ack}
             startDate={course.startDate}
             endDate={course.endDate}
             startSurvey={course.startSurvey}
             endSurvey={course.endSurvey}
             isAssigned={course.isAssigned}
         ></Card>
-          })
-        
-        return (
-            <div className={classes.root}>
-                <AppBar position="static" className={classes.appBar}>
-                    <Tabs variant='fullWidth' centered={true} value={value} onChange={handleChange} aria-label="simple tabs example" >
-                        <Tab label="Course" {...a11yProps(0)} />
-                        <Tab label="Codeword" {...a11yProps(1)} />
-                    </Tabs>
-                </AppBar>
-                <TabPanel value={value} index={0}>
+    })
+
+    return (
+        <div className={classes.root}>
+            <AppBar position="static" className={classes.appBar}>
+                <Tabs variant='fullWidth' centered={true} value={value} onChange={handleChange} aria-label="simple tabs example" >
+                    <Tab label="Course" {...a11yProps(0)} />
+                    <Tab label="Codeword" {...a11yProps(1)} />
+                </Tabs>
+            </AppBar>
+            <TabPanel value={value} index={0}>
 
                 <Button variant="contained" color="primary" className={classes.button} onClick={handleClickOpen}>
                     Add Course
                 </Button>
-                <SimpleDialog open={open} onClose={handleClose} />
+                <SimpleDialog open={open} onClose={handleClose} render={render} />
 
-                    <Grid container spacing={5}>
+                <Grid container spacing={3}>
 
-                        {
-                           listCourses
-                        }
+                    {
+                        listCourses
+                    }
 
-                    </Grid>
+                </Grid>
 
-                </TabPanel>
-                <TabPanel value={value} index={1}>
-                    Item Two
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+                Item Two
         </TabPanel>
 
-            </div>
+        </div>
 
-        );
-    
+    );
+
 }
