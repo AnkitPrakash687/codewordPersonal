@@ -25,7 +25,7 @@ const saveCourseData=(students,req, res)=>{
 var courseModel = new CourseModel({
     courseNameKey: body.courseNameKey,
     students: students,
-    codeWordSetName: body.codeWordSetName,
+    codewordSet: body.codeWordSetName,
     Startdate: body.startDate,
     Startdate: body.startDate,
     isAssigned: false,
