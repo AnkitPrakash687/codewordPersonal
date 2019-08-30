@@ -10,7 +10,44 @@ import API from '../../utils/API'
 import { makeStyles } from '@material-ui/core/styles';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import { Redirect } from "react-router-dom";
+import MaterialTable from 'material-table';
+import { forwardRef } from 'react';
 
+import AddBox from '@material-ui/icons/AddBox';
+import ArrowUpward from '@material-ui/icons/ArrowUpward';
+import Check from '@material-ui/icons/Check';
+import ChevronLeft from '@material-ui/icons/ChevronLeft';
+import ChevronRight from '@material-ui/icons/ChevronRight';
+import Clear from '@material-ui/icons/Clear';
+import DeleteOutline from '@material-ui/icons/DeleteOutline';
+import Edit from '@material-ui/icons/Edit';
+import FilterList from '@material-ui/icons/FilterList';
+import FirstPage from '@material-ui/icons/FirstPage';
+import LastPage from '@material-ui/icons/LastPage';
+import Remove from '@material-ui/icons/Remove';
+import SaveAlt from '@material-ui/icons/SaveAlt';
+import Search from '@material-ui/icons/Search';
+import ViewColumn from '@material-ui/icons/ViewColumn';
+
+const tableIcons = {
+    Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
+    Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
+    Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
+    Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
+    DetailPanel: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
+    Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
+    Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
+    Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
+    FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
+    LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
+    NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
+    PreviousPage: forwardRef((props, ref) => <ChevronLeft {...props} ref={ref} />),
+    ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
+    Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
+    SortArrow: forwardRef((props, ref) => <ArrowUpward {...props} ref={ref} />),
+    ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
+    ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
+  };
 const useStyles = makeStyles(theme => ({
     root: {
         marginTop: 20,
@@ -36,7 +73,11 @@ const useStyles = makeStyles(theme => ({
         borderRadius: 10,
         minHeight: 100,
         maxWidth: 800,
-        padding:theme.spacing(2)
+        padding: theme.spacing(2)
+    },
+    table:{
+        
+        padding: theme.spacing(4)
     },
     assign: {
         margin: theme.spacing(1),
@@ -87,8 +128,17 @@ export default function Course(props) {
         startSurvey: '',
         endSurvey: '',
         isAssigned: '',
-        codewordset:'',
-        ack: ''
+        codewordset: '',
+        ack: '',
+    })
+
+   
+    const [table, setTable] = useState({
+        columns: [
+            { title: 'Name', field: 'name' },
+            { title: 'Email', field: 'email' }
+        ],
+        data: [],
     })
 
     useEffect(() => {
@@ -102,11 +152,16 @@ export default function Course(props) {
             if (response.status == 200) {
                 console.log(response.data)
                 var course = response.data.data
-                var students = course.students.map((student) => {
-                    return student.email
+                var studentList = course.students.map((student) => {
+                    return {email:student.email}
                 })
 
-
+                setTable({
+                    columns: [
+                        { title: 'Name', field: 'name' },
+                        { title: 'Email', field: 'email' }
+                    ],
+                    data:studentList})
                 var ack = course.students.reduce((acc, item) => {
                     if (item.isRevealed) {
                         return acc + 1
@@ -122,40 +177,14 @@ export default function Course(props) {
                     startSurvey: course.PreSurveyURL == '' ? 'Unpublished' : course.PreSurveyURL,
                     endSurvey: course.PostSurveyURL == '' ? 'Unpublished' : course.PostSurveyURL,
                     isAssigned: course.isAssigned,
-                    codewordset: course.codewordSet == ''?'Not Assigned':course.codewordset,
+                    codewordset: course.codewordSet == '' ? 'Not Assigned' : course.codewordset,
                     ack: ack + '/' + course.students.length
                 })
-
-
-                console.log(students)
-                // setCourseData(result)
-                //   setState({
-                //     status:true,
-                //     message:response.data.message,
-                //   }) 
-                // }else{
-                //   console.log('error')
-                //   setState({
-                //     courseName:state.courseName,
-                //     startDate: state.startDate,
-                //     endDate: state.endDate,
-                //     status:true,
-                //     error:true,
-                //     message:response.data.message
-                //   })
+                console.log(studentList)
             }
         })
             .catch(error => {
                 console.log(error)
-                //   console.log('error')
-                //   setState({
-                //     courseName:state.courseName,
-                //         startDate: state.startDate,
-                //         endDate: state.endDate,
-                //     status:true,
-                //     error:true,
-                //     message:error.message
-                //   })
             })
     }, [])
     const [redirect, setRedirect] = useState(false);
@@ -246,7 +275,7 @@ export default function Course(props) {
                                     <Grid item xs={12} >
                                         <Typography component="div">
                                             <Box fontSize="h6.body" fontWeight="fontWeightBold" m={1}>
-                                               Acknowledged: {state.ack}
+                                                Acknowledged: {state.ack}
                                             </Box>
                                         </Typography>
                                     </Grid>
@@ -278,8 +307,54 @@ export default function Course(props) {
                                 </Grid>
                             </Grid>
                         </Grid>
+
                     </div>
+            <div className={classes.table}>
+                <MaterialTable
+                icons={tableIcons}
+                title="Students"
+                columns={table.columns}
+                data={table.data}
+                options={{
+                    actionsColumnIndex: -1,
+                    headerStyle:{
+                        fontSize:15
+                    }
+                  }}
+                editable={{
+                  onRowAdd: newData =>
+                    new Promise(resolve => {
+                      setTimeout(() => {
+                        resolve();
+                        const data = [...table.data];
+                        data.push(newData);
+                        setState({ ...state, data });
+                      }, 600);
+                    }),
+                  onRowUpdate: (newData, oldData) =>
+                    new Promise(resolve => {
+                      setTimeout(() => {
+                        resolve();
+                        const data = [...table.data];
+                        data[data.indexOf(oldData)] = newData;
+                        setState({ ...table, data });
+                      }, 600);
+                    }),
+                  onRowDelete: oldData =>
+                    new Promise(resolve => {
+                      setTimeout(() => {
+                        resolve();
+                        const data = [...table.data];
+                        data.splice(data.indexOf(oldData), 1);
+                        setState({ ...table, data });
+                      }, 600);
+                    }),
+                    
+                }}
+                        />
+                        </div>  
                 </div>
+
             </Container>
         </div>
     );
