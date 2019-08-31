@@ -4,7 +4,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Appbar from '../MyAppBar'
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red, grey } from '@material-ui/core/colors';
-import { Paper, Grid, Box, Button, Container, CssBaseline } from '@material-ui/core';
+import { Paper, Grid, Box, Button, Container, CssBaseline, Snackbar, IconButton } from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
 import { makeStyles } from '@material-ui/core/styles';
@@ -12,7 +12,7 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import { Redirect } from "react-router-dom";
 import MaterialTable from 'material-table';
 import { forwardRef } from 'react';
-
+import CloseIcon from '@material-ui/icons/Close';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
 import Check from '@material-ui/icons/Check';
@@ -47,7 +47,7 @@ const tableIcons = {
     SortArrow: forwardRef((props, ref) => <ArrowUpward {...props} ref={ref} />),
     ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
-  };
+};
 const useStyles = makeStyles(theme => ({
     root: {
         marginTop: 20,
@@ -75,20 +75,26 @@ const useStyles = makeStyles(theme => ({
         maxWidth: 800,
         padding: theme.spacing(2)
     },
-    table:{
-        
+    table: {
+
         padding: theme.spacing(4)
     },
     assign: {
         margin: theme.spacing(1),
-        background: green[500]
+        background: green[500],
+        "&:hover": {
+            backgroundColor: "green"
+        }
     },
     edit: {
-        margin: theme.spacing(1),
+        margin: theme.spacing(1)
     },
     delete: {
         margin: theme.spacing(1),
-        background: red[700]
+        background: red[700],
+        "&:hover": {
+            backgroundColor: red[600]
+        }
     },
     appBar: {
         borderRadius: 5,
@@ -129,10 +135,13 @@ export default function Course(props) {
         endSurvey: '',
         isAssigned: '',
         codewordset: '',
-        ack: '',
+        ack: ''
     })
 
-   
+    const [snack, setSnack] = useState({
+        message:'',
+        open: false
+    })
     const [table, setTable] = useState({
         columns: [
             { title: 'Name', field: 'name' },
@@ -141,6 +150,7 @@ export default function Course(props) {
         data: [],
     })
 
+    const [render, setRender] = useState(false)
     useEffect(() => {
 
         const headers = {
@@ -153,7 +163,7 @@ export default function Course(props) {
                 console.log(response.data)
                 var course = response.data.data
                 var studentList = course.students.map((student) => {
-                    return {email:student.email}
+                    return { email: student.email }
                 })
 
                 setTable({
@@ -161,7 +171,8 @@ export default function Course(props) {
                         { title: 'Name', field: 'name' },
                         { title: 'Email', field: 'email' }
                     ],
-                    data:studentList})
+                    data: studentList
+                })
                 var ack = course.students.reduce((acc, item) => {
                     if (item.isRevealed) {
                         return acc + 1
@@ -186,7 +197,7 @@ export default function Course(props) {
             .catch(error => {
                 console.log(error)
             })
-    }, [])
+    }, [render])
     const [redirect, setRedirect] = useState(false);
     const handleCardClick = () => {
         console.log('click working')
@@ -197,7 +208,76 @@ export default function Course(props) {
         return <Redirect to="/signup"></Redirect>
     }
 
+    const handleMessageClose = () => {
+        
+        setSnack({
+            message: '',
+            open: false
+        })      
+    }
+    
+    const addCourseRow = (resolve, newData) => {
+        var data = {
+            id: state.id,
+            email: newData.email,
+            name: newData.name
+        }
+        const headers = {
+            'token': sessionStorage.getItem('token')
+        };
+        console.log(newData)   
+        API.post('dashboard/addstudent', data, { headers: headers }).then(response => {
+            console.log(response.data)
+            if(response.data.code == 200){
+                setSnack({
+                    message: response.data.message,
+                    open: true
+                })
+            const data = [...table.data];
+            data.push(newData);
+            setTable({ ...table, data });
+            console.log('render'+render)
+            setRender(!render)
+                resolve()
+            }else{
+                setSnack({
+                    message: response.data.message,
+                    open: true
+                })
+            resolve()
+            }
+        })
+    }
 
+    const deleteCourseRow = (resolve, oldData) => {
+        var data = {
+            id: state.id,
+            email: oldData.email
+        }
+        const headers = {
+            'token': sessionStorage.getItem('token')
+        };  
+        API.post('dashboard/deletestudent', data, { headers: headers }).then(response => {
+            console.log(response.data)
+            if(response.data.code == 200){
+                setSnack({
+                    message: response.data.message,
+                    open: true
+                })
+                const data = [...table.data];
+                data.splice(data.indexOf(oldData), 1);
+                setTable({ ...table, data });
+                setRender(!render)
+                resolve();
+            }else{
+                setSnack({
+                    message: response.data.message,
+                    open: true
+                })
+            resolve()
+            }
+        })
+    }
 
     return (
         <div>
@@ -309,50 +389,60 @@ export default function Course(props) {
                         </Grid>
 
                     </div>
-            <div className={classes.table}>
-                <MaterialTable
-                icons={tableIcons}
-                title="Students"
-                columns={table.columns}
-                data={table.data}
-                options={{
-                    actionsColumnIndex: -1,
-                    headerStyle:{
-                        fontSize:15
-                    }
-                  }}
-                editable={{
-                  onRowAdd: newData =>
-                    new Promise(resolve => {
-                      setTimeout(() => {
-                        resolve();
-                        const data = [...table.data];
-                        data.push(newData);
-                        setState({ ...state, data });
-                      }, 600);
-                    }),
-                  onRowUpdate: (newData, oldData) =>
-                    new Promise(resolve => {
-                      setTimeout(() => {
-                        resolve();
-                        const data = [...table.data];
-                        data[data.indexOf(oldData)] = newData;
-                        setState({ ...table, data });
-                      }, 600);
-                    }),
-                  onRowDelete: oldData =>
-                    new Promise(resolve => {
-                      setTimeout(() => {
-                        resolve();
-                        const data = [...table.data];
-                        data.splice(data.indexOf(oldData), 1);
-                        setState({ ...table, data });
-                      }, 600);
-                    }),
-                    
-                }}
+                    <div className={classes.table}>
+                        <MaterialTable
+                            icons={tableIcons}
+                            title="Students"
+                            columns={table.columns}
+                            data={table.data}
+                            options={{
+                                actionsColumnIndex: -1,
+                                headerStyle: {
+                                    fontSize: 15
+                                }
+                            }}
+                            editable={{
+                                onRowAdd: newData =>
+                                    new Promise(resolve => {
+                                        addCourseRow(resolve, newData)
+                                     
+                                    }),
+                                onRowUpdate: (newData, oldData) =>
+                                    new Promise(resolve => {
+                                        addCourseRow(resolve, newData, oldData)
+                                      
+                                    }),
+                                onRowDelete: oldData =>
+                                    new Promise(resolve => {
+                                        deleteCourseRow(resolve, oldData)
+                                    }),
+
+                            }}
                         />
-                        </div>  
+                        <Snackbar
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left',
+                            }}
+                            open={snack.open}
+                            autoHideDuration={2000}
+                            variant="success"
+                            onClose={handleMessageClose}
+                            message={snack.message}
+                            action={[
+                                <IconButton
+                                    key="close"
+                                    aria-label="Close"
+                                    color="inherit"
+                                    className={classes.close}
+                                    onClick={handleMessageClose}
+                                >
+                                    <CloseIcon />
+                                </IconButton>,
+                            ]}
+                        ></Snackbar>
+
+                    </div>
                 </div>
 
             </Container>

@@ -4,8 +4,10 @@ import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red, grey } from '@material-ui/core/colors';
-import { Paper, Grid, Button, FormControl, InputLabel, 
-  MenuItem, OutlinedInput, Select, Box, Snackbar, IconButton } from '@material-ui/core';
+import {
+    Paper, Grid, Button, FormControl, InputLabel,
+    MenuItem, OutlinedInput, Select, Box, Snackbar, IconButton
+} from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
 import TextField from '@material-ui/core/TextField'
@@ -22,7 +24,7 @@ import {
 } from '@material-ui/pickers';
 
 var moment = require('moment');
-var _ =require("underscore");
+var _ = require("underscore");
 const useStyles = makeStyles(theme => ({
     root: {
         margin: 30,
@@ -100,11 +102,11 @@ export default function AddCourse(props) {
         values: '',
         studentFilename: '',
         filename: '',
-        selectedFile:null,
+        selectedFile: null,
         status: false,
         error: false,
-        message:'',
-        reRender:false
+        message: '',
+        reRender: false
     })
     const inputLabel = React.useRef(null);
     const fileLabel = React.useRef(null)
@@ -154,7 +156,7 @@ export default function AddCourse(props) {
     }
     const handleFileChange = (event) => {
         if (fileLabel.current.files[0] && fileLabel.current.files[0].name)
-            setState({ ...state, filename: fileLabel.current.files[0].name, selectedFile: event.target.files[0]});
+            setState({ ...state, filename: fileLabel.current.files[0].name, selectedFile: event.target.files[0] });
     }
 
     const handleDateChange = name => (date) => {
@@ -175,67 +177,68 @@ export default function AddCourse(props) {
             postSurveyURL: state.endSurvey,
             codeWordSetName: state.values,
 
-        } 
+        }
         console.log(data)
         var formData = new FormData()
         formData.append('file', state.selectedFile)
-        _.each(data, (value, key)=>{
-            console.log(key+" "+value)
+        _.each(data, (value, key) => {
+            console.log(key + " " + value)
             formData.append(key, value)
         })
-    
-             API.post('dashboard/addnewCourse', formData,{headers:headers}).then(response =>{
-                console.log('👉 Returned data in :', response);
-                if(response.status == 200){
-                  setState({
-                    status:true,
-                    message:response.data.message,
-                    reRender:true
-                  }) 
-                }else{
-                  console.log('error')
-                  setState({
-                    courseName:state.courseName,
+
+        API.post('dashboard/addnewCourse', formData, { headers: headers }).then(response => {
+            console.log('👉 Returned data in :', response);
+            if (response.status == 200) {
+                setState({
+                    status: true,
+                    message: response.data.message,
+                    reRender: true
+                })
+            } else {
+                console.log('error')
+                setState({
+                    courseName: state.courseName,
                     startDate: state.startDate,
                     endDate: state.endDate,
-                    status:true,
-                    error:true,
-                    message:response.data.message,
-                  })
-                }
-            })
-            .catch(error=>{
-              console.log(error)
-              console.log('error')
-              setState({
-                courseName:state.courseName,
+                    status: true,
+                    error: true,
+                    message: response.data.message,
+                })
+            }
+        })
+            .catch(error => {
+                console.log(error)
+                console.log('error')
+                setState({
+                    courseName: state.courseName,
                     startDate: state.startDate,
                     endDate: state.endDate,
-                status:true,
-                error:true,
-                message:error.message
-              })
+                    status: true,
+                    error: true,
+                    message: error.message
+                })
             })
             ;
-            
-     
-         
+
+
+
     }
 
     const handleClose = () => {
         props.onClose()
     }
 
-    const handleMessageClose=()=>{
-      setState({
-        courseName:state.courseName,
-        startDate: state.startDate,
-        endDate: state.endDate,
-        status: false})
-      if(!state.error){
-      props.onClose(state.error)
-      }
-  }
+    const handleMessageClose = () => {
+        setState({
+            courseName: state.courseName,
+            startDate: state.startDate,
+            endDate: state.endDate,
+            status: false
+        })
+        if (!state.error) {
+            props.onClose(state.error)
+        }
+    }
     AddCourse.propTypes = {
         onClose: PropTypes.func.isRequired
     };
@@ -246,7 +249,7 @@ export default function AddCourse(props) {
             <CssBaseline />
 
             <div className={classes.paper}>
-                <form enctype = "multipart/form-data" onSubmit={handleSubmit} className={classes.form} >
+                <form enctype="multipart/form-data" onSubmit={handleSubmit} className={classes.form} >
                     <TextField className={classes.textField}
                         variant="outlined"
                         required
@@ -365,59 +368,59 @@ export default function AddCourse(props) {
                         onChange={handleChange('endSurvey')}
                         value={state.endSurvey}
                     />
-             
-            <Box display="flex" justifyContent="flex-end">
+
+                    <Box display="flex" justifyContent="flex-end">
 
 
-                <Button
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    className={classes.cancel}
-                    onClick={handleClose}
-                >
-                    Cancel
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            size="large"
+                            className={classes.cancel}
+                            onClick={handleClose}
+                        >
+                            Cancel
           </Button>
 
-                <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    className={classes.submit}
-                >
-                    Add
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            size="large"
+                            className={classes.submit}
+                        >
+                            Add
           </Button>
 
 
 
-            </Box>
+                    </Box>
 
 
-            </form>
+                </form>
             </div>
             <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        open={state.status}
-        autoHideDuration={2000}
-        variant="success"
-        onClose={handleMessageClose}
-        message={state.message}
-        action={[
-            <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              className={classes.close}
-              onClick={handleMessageClose}
-            >
-              <CloseIcon />
-            </IconButton>,
-          ]}
-      ></Snackbar>
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                open={state.status}
+                autoHideDuration={2000}
+                variant="success"
+                onClose={handleMessageClose}
+                message={state.message}
+                action={[
+                    <IconButton
+                        key="close"
+                        aria-label="Close"
+                        color="inherit"
+                        className={classes.close}
+                        onClick={handleMessageClose}
+                    >
+                        <CloseIcon />
+                    </IconButton>,
+                ]}
+            ></Snackbar>
         </Container>
     );
 }
