@@ -34,10 +34,11 @@ router.post('/getCodewords', codewordController.getCodewords)
 router.post('/deleteCodewords', codewordController.deleteCodewords)
 router.post('/updatecodeword', codewordController.updatecodeword);
 router.get('/getcodewordset', codewordsetController.getcodewordset)
-router.post('/updateCourseInfo', courseController.updateCourseInfo)
+router.post('/updateCourse', courseController.updateCourse)
 router.post('/deleteCourse', courseController.deleteCourse)
 router.post('/addstudent', courseController.addStudent)
 router.post('/deletestudent', courseController.deleteStudent)
+router.post('/editstudent', courseController.editStudent)
 // router.post('/addcodewords',multer().single('file'), codewordController.addcodewords);
 // router.post('/getdataxlsx',codewordsetController.getDataFromXLS);
 // router.post('/addnewcodewords', codewordController.addcodewords);

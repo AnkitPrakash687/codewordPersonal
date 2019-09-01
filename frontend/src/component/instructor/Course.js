@@ -2,9 +2,10 @@ import Typography from '@material-ui/core/Typography';
 import React, { useState, Component, useEffect } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Appbar from '../MyAppBar'
+import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red, grey } from '@material-ui/core/colors';
-import { Paper, Grid, Box, Button, Container, CssBaseline, Snackbar, IconButton } from '@material-ui/core';
+import { Paper, Grid, Box, Button, Container, CssBaseline, Snackbar, IconButton, Dialog, DialogTitle } from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
 import { makeStyles } from '@material-ui/core/styles';
@@ -12,6 +13,7 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import { Redirect } from "react-router-dom";
 import MaterialTable from 'material-table';
 import { forwardRef } from 'react';
+import EditCourse from './EditCourse'
 import CloseIcon from '@material-ui/icons/Close';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
@@ -28,6 +30,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -149,7 +152,7 @@ export default function Course(props) {
         ],
         data: [],
     })
-
+    const [open, setOpen] = useState(false)
     const [render, setRender] = useState(false)
     useEffect(() => {
 
@@ -249,6 +252,40 @@ export default function Course(props) {
         })
     }
 
+    const updateCourseRow = (resolve, newData, oldData) => {
+        var data = {
+            id: state.id,
+            newEmail: newData.email,
+            newName: newData.name,
+            oldEmail: oldData.email,
+            oldName: oldData.name
+        }
+        const headers = {
+            'token': sessionStorage.getItem('token')
+        };
+        console.log(newData)   
+        API.post('dashboard/editstudent', data, { headers: headers }).then(response => {
+            console.log(response.data)
+            if(response.data.code == 200){
+                setSnack({
+                    message: response.data.message,
+                    open: true
+                })
+                const data = [...table.data];
+                data[data.indexOf(oldData)] = newData;
+                setTable({ ...table, data });
+            setRender(!render)
+                resolve()
+            }else{
+                setSnack({
+                    message: response.data.message,
+                    open: true
+                })
+            resolve()
+            }
+        })
+    }
+
     const deleteCourseRow = (resolve, oldData) => {
         var data = {
             id: state.id,
@@ -278,6 +315,42 @@ export default function Course(props) {
             }
         })
     }
+
+    const handleClickOpen = () => {
+        setOpen(true)
+    }
+
+    const handleClickClose = value => {
+        setOpen(false)
+    };
+
+    function SimpleDialog(props) {
+
+        const { data, onClose, open, render } = props;
+
+        const handleClose = (error) => {
+            console.log('render   ' + render)
+            setRender(!render)
+            onClose();
+        }
+
+        function handleListItemClick(value) {
+            onClose(value);
+        }
+
+        return (
+            <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
+                <DialogTitle id="simple-dialog-title">Edit Course</DialogTitle>
+                <EditCourse data = {data} onClose={handleClose}></EditCourse>
+            </Dialog>
+        );
+    }
+
+    SimpleDialog.propTypes = {
+        onClose: PropTypes.func.isRequired,
+        open: PropTypes.bool.isRequired,
+        render: PropTypes.bool.isRequired,
+    };
 
     return (
         <div>
@@ -332,9 +405,12 @@ export default function Course(props) {
                                     variant="contained"
                                     color="primary"
                                     size="medium"
-                                    className={classes.edit}>
+                                    className={classes.edit}
+                                    onClick={handleClickOpen}
+                                    >
                                     edit
                                 </Button>
+                                <SimpleDialog data={state} open={open} onClose={handleClickClose} render={render} />
 
                                 <Button
                                     type="submit"
@@ -409,7 +485,7 @@ export default function Course(props) {
                                     }),
                                 onRowUpdate: (newData, oldData) =>
                                     new Promise(resolve => {
-                                        addCourseRow(resolve, newData, oldData)
+                                        updateCourseRow(resolve, newData, oldData)
                                       
                                     }),
                                 onRowDelete: oldData =>
