@@ -116,6 +116,7 @@ export default function EditCourse(props) {
         endSurvey: props.data.startSurvey=='Unpublished'?'':props.data.startSurvey,
         startDate: props.data.startDate,
         endDate:props.data.endDate,
+        codewordSet: props.data.codewordset
     })
     const inputLabel = React.useRef(null);
     const fileLabel = React.useRef(null)
@@ -130,13 +131,15 @@ export default function EditCourse(props) {
         startSurvey: props.data.startSurvey=='Unpublished'?'':props.data.startSurvey,
         endSurvey: props.data.startSurvey=='Unpublished'?'':props.data.startSurvey,
         startDate: props.data.startDate,
-        endDate:props.data.endDate
+        endDate:props.data.endDate,
+        codewordSet: props.data.codewordset
     }
     useEffect(() => {
        console.log(data)
        console.log(course)
         if(data.courseName == course.courseName && data.startSurvey == course.startSurvey
-            && data.endSurvey == course.endSurvey && data.startDate == course.startDate && data.endDate == course.endDate){
+            && data.endSurvey == course.endSurvey && data.startDate == course.startDate && 
+            data.endDate == course.endDate && data.codewordSet == course.codewordSet){
                 setDisableUpdate('true')
             }else{
                 setDisableUpdate(false)
@@ -173,7 +176,7 @@ export default function EditCourse(props) {
             endDate: course.endDate,
             preSurveyURL: course.startSurvey,
             postSurveyURL: course.endSurvey,
-            codeWordSetName: course.values,
+            codewordSetName: course.codewordSet,
 
         }
         console.log(data)
@@ -248,6 +251,31 @@ export default function EditCourse(props) {
         onClose: PropTypes.func.isRequired
     };
 
+    const [codeword, setCodeword] = useState([{
+        codewordSetName:'',
+        count:0
+    }])
+    useEffect(() => {
+        console.log('getdata')
+        const headers = {
+            'Content-Type': 'application/json',
+            'token':  state.token
+          };
+          API.get('dashboard/getcodewordset', { headers: headers }).then(response => {
+            if(response.data.code == 200){
+                setCodeword(
+                    response.data.data.map((codewordSet)=>{
+                        return {
+                            codewordSetName: codewordSet.codewordSetName,
+                            count: codewordSet.count
+                        }
+                    })
+                    )
+                    console.log(response.data.data)
+            }
+        })
+
+    },[])
 
     return (
         <Container component="main" maxWidth="xs">
@@ -339,16 +367,16 @@ export default function EditCourse(props) {
                             Codeword Set
         </InputLabel>
                         <Select
-                            value={state.values}
-                            onChange={handleChange('values')}
+                            value={course.codewordSet}
+                            onChange={handleChange('codewordSet')}
                             input={<OutlinedInput labelWidth={labelWidth} name="Codeword Set" id="outlined-age-simple" />}
                         >
                             <MenuItem value="">
                                 <em>None</em>
                             </MenuItem>
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
+                            {codeword.map((codewordSet)=>{
+                                return <MenuItem value={codewordSet.codewordSetName}>{codewordSet.codewordSetName}</MenuItem>
+                            })}
                         </Select>
                     </FormControl>
                     <TextField className={classes.textField}

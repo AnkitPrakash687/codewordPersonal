@@ -191,10 +191,10 @@ export default function Course(props) {
                     startSurvey: course.PreSurveyURL == '' ? 'Unpublished' : course.PreSurveyURL,
                     endSurvey: course.PostSurveyURL == '' ? 'Unpublished' : course.PostSurveyURL,
                     isAssigned: course.isAssigned,
-                    codewordset: course.codewordSet == '' ? 'Not Assigned' : course.codewordset,
+                    codewordset: course.codewordSet == '' ? 'Not Assigned' : course.codewordSet,
                     ack: ack + '/' + course.students.length
                 })
-                console.log(studentList)
+                console.log(course)
             }
         })
             .catch(error => {

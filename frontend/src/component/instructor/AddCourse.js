@@ -115,36 +115,31 @@ export default function AddCourse(props) {
         setLabelWidth(inputLabel.current.offsetWidth);
     }, []);
 
-
+    const [codeword, setCodeword] = useState([{
+        codewordSetName:'',
+        count:0
+    }])
     useEffect(() => {
-        // console.log('getdata')
-        // const headers = {
-        //     'Content-Type': 'application/json',
-        //     'token':  state.token
-        //   };
+        console.log('getdata')
+        const headers = {
+            'Content-Type': 'application/json',
+            'token':  state.token
+          };
+          API.get('dashboard/getcodewordset', { headers: headers }).then(response => {
+            if(response.data.code == 200){
+                setCodeword(
+                    response.data.data.map((codewordSet)=>{
+                        return {
+                            codewordSetName: codewordSet.codewordSetName,
+                            count: codewordSet.count
+                        }
+                    })
+                    )
+                    console.log(response.data.data)
+            }
+        })
 
-        // console.log(headers)
-        //  try {
-        //     const response = await API.get('dashboard/details', {headers});
-        //     console.log('👉 Returned data in :', response);
-        //     console.log(response.data)
-        //     if(response.status == 200){
-        //     setState( {
-        //       id: response.data.email_id,   
-        //       role: response.data.role,
-        //       name: response.data.first_name + ' ' + response.data.last_name
-        //     })
-        //     console.log('dashbaord : '+ state.role)
-
-        // }else {
-
-        // }
-        //   } catch (e) {
-        //     console.log(`😱 Axios request failed: ${e}`);
-        //   }
-
-
-    })
+    },[])
 
     const handleChange = name => (event, isChecked) => {
         //console.log({[name]: event.target.value})
@@ -341,9 +336,9 @@ export default function AddCourse(props) {
                             <MenuItem value="">
                                 <em>None</em>
                             </MenuItem>
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
+                            {codeword.map((codewordSet)=>{
+                                return <MenuItem value={codewordSet.codewordSetName}>{codewordSet.codewordSetName}</MenuItem>
+                            })}
                         </Select>
                     </FormControl>
                     <TextField className={classes.textField}

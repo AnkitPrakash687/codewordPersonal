@@ -82,9 +82,23 @@ let deletecodewordset = (req, res,next) => {
 module.exports.deletecodewordset = deletecodewordset;
 
 let getcodewordset = (req, res) => {
-    Codewordset.find({ $or: [{CodeWordCreator: req.session.email}, {defaultRow: true},{CodeWordCreator: 'twosets' }] } ).then((codes) => {
-        if (codes)
-            return res.json({ code: 200, data: codes });
+    console.log('get codewords')
+    Codewordset.find({ $or: [{"createdBy.email": req.session.email}, {"createdBy.role": 'admin'} ] } )
+    .then((codewordSet) => {
+
+        if (codewordSet.length > 0){
+            var data = []
+            for(var i in codewordSet){
+            console.log(codewordSet[i])
+            data.push({
+                codewordSetName: codewordSet[i].codewordSetName,
+                count: codewordSet[i].codewords.length,
+                codewords: codewordSet[i].codewords
+            })
+        }
+        return res.json({ code: 200, data:data });
+        }
+        return res.json({ code: 404, message: 'not found' });
     }).catch((e) => {
         console.log(e);
         return res.json({ code: 400, message: e });

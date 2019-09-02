@@ -8,6 +8,16 @@ var codeWordSetSchema = new Schema({
                 require: true,
                 unique:true
         },
+        createdBy: {
+             email:{
+                     type: String, 
+                     require: true
+                },
+             role:{
+                     type: String, 
+                     require: true
+                }  
+        },
         codewords:[
                 {type: String,
                  unique: true,

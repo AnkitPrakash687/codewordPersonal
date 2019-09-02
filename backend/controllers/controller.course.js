@@ -285,7 +285,7 @@ const updateCourseData = (students, course, req, res) => {
         { $set:
             {   courseNameKey: course.courseNameKey,
                 students: students,
-                codewordSetName: course.codeWordSetName,
+                codewordSet: course.codewordSet,
                 Startdate: course.Startdate,
                 Enddate: course.Enddate,
                 PreSurveyURL: course.PreSurveyURL,
@@ -309,7 +309,7 @@ let updateCourse = (req, res) => {
             // An unknown error occurred when uploading.
         }
         var body = _.pick(req.body, ['id','courseNameKey',
-        'codeWordSetName', 'startDate', 'endDate', 'preSurveyURL', 'postSurveyURL']);
+        'codewordSetName', 'startDate', 'endDate', 'preSurveyURL', 'postSurveyURL']);
      console.log('body--------------------------------------------------------------------/n'+body.courseNameKey)
     //var body = req.
     //    console.log(body)
@@ -319,7 +319,7 @@ let updateCourse = (req, res) => {
             id: body.id,
             courseNameKey: course.courseNameKey,
             students: course.students,
-            codewordSetName: course.codeWordSetName,
+            codewordSet: course.codewordSet,
             Startdate: course.Startdate,
             Enddate: course.Enddate,
             PreSurveyURL: course.PreSurveyURL,
@@ -329,8 +329,8 @@ let updateCourse = (req, res) => {
         if(course.courseNameKey != body.courseNameKey){
             courseData.courseNameKey = body.courseNameKey
         }
-        if(course.codewordSetName != body.codewordSetName){
-            courseData.codewordSetName = body.codeWordSetName
+        if(course.codewordSet != body.codewordSetName){
+            courseData.codewordSet = body.codewordSetName
         }
       //  console.log(course.Startdate.toISOString().substring(0,10) +'!='+ body.startDate)
          if(course.Startdate.toISOString().substring(0,10) != body.startDate){
