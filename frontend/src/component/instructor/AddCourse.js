@@ -23,6 +23,7 @@ import {
     KeyboardDatePicker
 } from '@material-ui/pickers';
 
+const Papa = require('papaparse')
 var moment = require('moment');
 var _ = require("underscore");
 const useStyles = makeStyles(theme => ({
@@ -123,6 +124,9 @@ export default function AddCourse(props) {
         codewordSetName:'',
         count:0
     }])
+
+    const [studentCount, setStudentCount] = useState()
+    const [codewordCount, SetCodewordCount] = useState()
     useEffect(() => {
         console.log('getdata')
         const headers = {
@@ -148,14 +152,33 @@ export default function AddCourse(props) {
     const handleChange = name => (event, isChecked) => {
         //console.log({[name]: event.target.value})
         setState({ ...state, [name]: event.target.value });
-        if ([name] == 'instructor') {
-            setState({ ...state, [name]: isChecked });
+        if([name] == 'values'){
+            console.log('inise code')
+            var count = codeword.filter((item)=>{
+                if(item.codewordSetName == event.target.value){
+                    return item.count
+                }
+            })
+          
+           SetCodewordCount(count[0].count)
         }
 
     }
     const handleFileChange = (event) => {
         if (fileLabel.current.files[0] && fileLabel.current.files[0].name){
             setState({ ...state, filename: fileLabel.current.files[0].name, selectedFile: event.target.files[0] });
+          Papa.parse(event.target.files[0],{
+              complete: function(results){
+                  console.log(results)
+                   var students = results.data.filter((item)=>{
+                      if(item[0] != ''){
+                          return item
+                      }
+                  })
+                  setStudentCount(students.length)
+              }
+          })
+
         }
     }
 
@@ -377,9 +400,8 @@ export default function AddCourse(props) {
                     <Box display="flex" justifyContent="flex-end">
                   { studentCount != null?  
                     <Chip
-                        label={studentCount}
+                        label={'No. of Students: '+studentCount}
                         size="small"
-                        onDelete={handleDelete}
                         className={classes.chip}
                         color="primary"
                         variant="outlined"
@@ -387,9 +409,8 @@ export default function AddCourse(props) {
                   }
                     { codewordCount != null?
                     <Chip
-                        label={codewordCount}
+                        label={'No. of Codewords: '+codewordCount}
                         size="small"
-                        onDelete={handleDelete}
                         className={classes.chip}
                         color="primary"
                         variant="outlined"
