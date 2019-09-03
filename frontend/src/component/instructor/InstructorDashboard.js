@@ -106,7 +106,7 @@ export default function InstructorDashboard() {
         }
 
         return (
-            <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
+            <Dialog fullWidth={true} disableBackdropClick={true} onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
                 <DialogTitle id="simple-dialog-title">Add Course</DialogTitle>
                 <AddCourse onClose={handleClose}></AddCourse>
             </Dialog>

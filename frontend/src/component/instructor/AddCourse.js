@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red, grey } from '@material-ui/core/colors';
 import {
     Paper, Grid, Button, FormControl, InputLabel,
-    MenuItem, OutlinedInput, Select, Box, Snackbar, IconButton
+    MenuItem, OutlinedInput, Select, Box, Snackbar, IconButton, Chip
 } from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
@@ -66,6 +66,10 @@ const useStyles = makeStyles(theme => ({
     button: {
         margin: theme.spacing(1)
     },
+    chip:{
+        marginTop: theme.spacing(3),
+        marginRight: theme.spacing(1)
+    },
     submit: {
         background: green[600],
         marginTop: theme.spacing(2),
@@ -82,7 +86,7 @@ const useStyles = makeStyles(theme => ({
         }
     },
     paper: {
-        background: grey[200],
+        background: lightGreen[100],
         padding: theme.spacing(1),
         borderRadius: 5
     }
@@ -150,8 +154,9 @@ export default function AddCourse(props) {
 
     }
     const handleFileChange = (event) => {
-        if (fileLabel.current.files[0] && fileLabel.current.files[0].name)
+        if (fileLabel.current.files[0] && fileLabel.current.files[0].name){
             setState({ ...state, filename: fileLabel.current.files[0].name, selectedFile: event.target.files[0] });
+        }
     }
 
     const handleDateChange = name => (date) => {
@@ -234,17 +239,22 @@ export default function AddCourse(props) {
             props.onClose(state.error)
         }
     }
+
+    const handleDelete = () =>{
+        
+    }
     AddCourse.propTypes = {
         onClose: PropTypes.func.isRequired
     };
 
 
     return (
-        <Container component="main" maxWidth="xs">
+        <Container component="main" maxWidth="sm">
             <CssBaseline />
 
-            <div className={classes.paper}>
+            
                 <form enctype="multipart/form-data" onSubmit={handleSubmit} className={classes.form} >
+                <div className={classes.paper}>
                     <TextField className={classes.textField}
                         variant="outlined"
                         required
@@ -363,10 +373,28 @@ export default function AddCourse(props) {
                         onChange={handleChange('endSurvey')}
                         value={state.endSurvey}
                     />
-
+  </div>
                     <Box display="flex" justifyContent="flex-end">
-
-
+                  { studentCount != null?  
+                    <Chip
+                        label={studentCount}
+                        size="small"
+                        onDelete={handleDelete}
+                        className={classes.chip}
+                        color="primary"
+                        variant="outlined"
+                    />: false
+                  }
+                    { codewordCount != null?
+                    <Chip
+                        label={codewordCount}
+                        size="small"
+                        onDelete={handleDelete}
+                        className={classes.chip}
+                        color="primary"
+                        variant="outlined"
+                    />: false
+                }
                         <Button
                             variant="contained"
                             color="primary"
@@ -393,7 +421,7 @@ export default function AddCourse(props) {
 
 
                 </form>
-            </div>
+          
             <Snackbar
                 anchorOrigin={{
                     vertical: 'bottom',
