@@ -6,7 +6,8 @@ import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red, grey } from '@material-ui/core/colors';
 import {
     Paper, Grid, Button, FormControl, InputLabel,
-    MenuItem, OutlinedInput, Select, Box, Snackbar, IconButton, Chip
+    MenuItem, OutlinedInput, Select, Box, Snackbar, IconButton, Chip, 
+    Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText
 } from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
@@ -67,7 +68,7 @@ const useStyles = makeStyles(theme => ({
     button: {
         margin: theme.spacing(1)
     },
-    chip:{
+    chip: {
         marginTop: theme.spacing(3),
         marginRight: theme.spacing(1)
     },
@@ -111,7 +112,8 @@ export default function AddCourse(props) {
         status: false,
         error: false,
         message: '',
-        reRender: false
+        reRender: false,
+        alertOpen: true
     })
     const inputLabel = React.useRef(null);
     const fileLabel = React.useRef(null)
@@ -121,63 +123,68 @@ export default function AddCourse(props) {
     }, []);
 
     const [codeword, setCodeword] = useState([{
-        codewordSetName:'',
-        count:0
+        codewordSetName: '',
+        count: 0
     }])
 
-    const [studentCount, setStudentCount] = useState()
-    const [codewordCount, SetCodewordCount] = useState()
+    const [studentCount, setStudentCount] = useState('empty')
+    const [codewordCount, SetCodewordCount] = useState('empty')
     useEffect(() => {
         console.log('getdata')
         const headers = {
             'Content-Type': 'application/json',
-            'token':  state.token
-          };
-          API.get('dashboard/getcodewordset', { headers: headers }).then(response => {
-            if(response.data.code == 200){
+            'token': state.token
+        };
+        API.get('dashboard/getcodewordset', { headers: headers }).then(response => {
+            if (response.data.code == 200) {
                 setCodeword(
-                    response.data.data.map((codewordSet)=>{
+                    response.data.data.map((codewordSet) => {
                         return {
                             codewordSetName: codewordSet.codewordSetName,
                             count: codewordSet.count
                         }
                     })
-                    )
-                    console.log(response.data.data)
+                )
+                console.log(response.data.data)
             }
         })
 
-    },[])
+    }, [])
 
     const handleChange = name => (event, isChecked) => {
         //console.log({[name]: event.target.value})
         setState({ ...state, [name]: event.target.value });
-        if([name] == 'values'){
+        if ([name] == 'values') {
             console.log('inise code')
-            var count = codeword.filter((item)=>{
-                if(item.codewordSetName == event.target.value){
+            var count = codeword.filter((item) => {
+                if (item.codewordSetName == event.target.value) {
                     return item.count
                 }
             })
+            
+            if(count.length > 0){
+                SetCodewordCount(count[0].count)
+            }else{
+                SetCodewordCount('empty')
+            }
           
-           SetCodewordCount(count[0].count)
         }
 
     }
     const handleFileChange = (event) => {
-        if (fileLabel.current.files[0] && fileLabel.current.files[0].name){
+        if (fileLabel.current.files[0] && fileLabel.current.files[0].name) {
             setState({ ...state, filename: fileLabel.current.files[0].name, selectedFile: event.target.files[0] });
-          Papa.parse(event.target.files[0],{
-              complete: function(results){
-                  console.log(results)
-                   var students = results.data.filter((item)=>{
-                      if(item[0] != ''){
-                          return item
-                      }
-                  })
-                  setStudentCount(students.length)
-              }
-          })
+            Papa.parse(event.target.files[0], {
+                complete: function (results) {
+                    console.log(results)
+                    var students = results.data.filter((item) => {
+                        if (item[0] != '') {
+                            return item
+                        }
+                    })
+                    setStudentCount(students.length)
+                }
+            })
 
         }
     }
@@ -248,7 +255,10 @@ export default function AddCourse(props) {
     }
 
     const handleClose = () => {
+        console.log(studentCount + '  '+codewordCount)
+        console.log(((parseFloat(studentCount)-parseFloat(codewordCount))/parseFloat(codewordCount)))
         props.onClose()
+    
     }
 
     const handleMessageClose = () => {
@@ -263,20 +273,48 @@ export default function AddCourse(props) {
         }
     }
 
-    const handleDelete = () =>{
-        
+    const handleDelete = () => {
+
     }
     AddCourse.propTypes = {
         onClose: PropTypes.func.isRequired
     };
 
+    
+    function countAlert(props) {
+        const { message, open, handleClose} = props
+        return(
+        <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+    >
+        <DialogTitle id="alert-dialog-title">{"Warning"}</DialogTitle>
+        <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+                {message}
+        </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={handleClose} color="primary" autoFocus>
+                OK
+            </Button>
+        </DialogActions>
+    </Dialog>
+        )
+    }
 
+    const [alertOpen, setAlertOpen] = useState(true)
+    const handleAlertClose = () =>{
+        setAlertOpen(false)
+    }
     return (
         <Container component="main" maxWidth="sm">
             <CssBaseline />
 
-            
-                <form enctype="multipart/form-data" onSubmit={handleSubmit} className={classes.form} >
+
+            <form enctype="multipart/form-data" onSubmit={handleSubmit} className={classes.form} >
                 <div className={classes.paper}>
                     <TextField className={classes.textField}
                         variant="outlined"
@@ -369,7 +407,7 @@ export default function AddCourse(props) {
                             <MenuItem value="">
                                 <em>None</em>
                             </MenuItem>
-                            {codeword.map((codewordSet)=>{
+                            {codeword.map((codewordSet) => {
                                 return <MenuItem value={codewordSet.codewordSetName}>{codewordSet.codewordSetName}</MenuItem>
                             })}
                         </Select>
@@ -396,53 +434,53 @@ export default function AddCourse(props) {
                         onChange={handleChange('endSurvey')}
                         value={state.endSurvey}
                     />
-  </div>
-                    <Box display="flex" justifyContent="flex-end">
-                  { studentCount != null?  
-                    <Chip
-                        label={'No. of Students: '+studentCount}
-                        size="small"
-                        className={classes.chip}
-                        color="primary"
-                        variant="outlined"
-                    />: false
-                  }
-                    { codewordCount != null?
-                    <Chip
-                        label={'No. of Codewords: '+codewordCount}
-                        size="small"
-                        className={classes.chip}
-                        color="primary"
-                        variant="outlined"
-                    />: false
-                }
-                        <Button
-                            variant="contained"
+                </div>
+                <Box display="flex" justifyContent="flex-end">
+                    {studentCount != 'empty' ?
+                        <Chip
+                            label={'No. of Students: ' + studentCount}
+                            size="small"
+                            className={classes.chip}
                             color="primary"
-                            size="large"
-                            className={classes.cancel}
-                            onClick={handleClose}
-                        >
-                            Cancel
+                            variant="outlined"
+                        /> : false
+                    }
+                    {codewordCount != 'empty' ?
+                        <Chip
+                            label={'No. of Codewords: ' + codewordCount}
+                            size="small"
+                            className={classes.chip}
+                            color="primary"
+                            variant="outlined"
+                        /> : false
+                    }
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        className={classes.cancel}
+                        onClick={handleClose}
+                    >
+                        Cancel
           </Button>
 
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            size="large"
-                            className={classes.submit}
-                        >
-                            Add
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        className={classes.submit}
+                    >
+                        Add
           </Button>
 
 
 
-                    </Box>
+                </Box>
 
 
-                </form>
-          
+            </form>
+
             <Snackbar
                 anchorOrigin={{
                     vertical: 'bottom',
@@ -465,6 +503,31 @@ export default function AddCourse(props) {
                     </IconButton>,
                 ]}
             ></Snackbar>
+            { 
+            ((parseFloat(studentCount)-parseFloat(codewordCount))/parseFloat(codewordCount)) < 0.1 ?
+            <Dialog
+        open={alertOpen}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+    >
+        <DialogTitle id="alert-dialog-title">{"Warning"}</DialogTitle>
+        <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+                {'message'}
+        </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={handleAlertClose} color="primary" autoFocus>
+                OK
+            </Button>
+        </DialogActions>
+    </Dialog>
+            :
+            (codewordCount-studentCount) < 0?
+            <countAlert open={true} handleClose={handleClose('alertOpen')} message="Student count exceeds codeword count"></countAlert>:false
+            }
+         
         </Container>
     );
 }
