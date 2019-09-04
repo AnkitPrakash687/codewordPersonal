@@ -39,6 +39,7 @@ router.post('/deleteCourse', courseController.deleteCourse)
 router.post('/addstudent', courseController.addStudent)
 router.post('/deletestudent', courseController.deleteStudent)
 router.post('/editstudent', courseController.editStudent)
+router.post('/assignCourse', courseController.assignCourse)
 // router.post('/addcodewords',multer().single('file'), codewordController.addcodewords);
 // router.post('/getdataxlsx',codewordsetController.getDataFromXLS);
 // router.post('/addnewcodewords', codewordController.addcodewords);

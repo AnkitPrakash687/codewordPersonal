@@ -154,6 +154,7 @@ export default function Course(props) {
     })
     const [open, setOpen] = useState(false)
     const [render, setRender] = useState(false)
+    const [disableEdit, setDisableEdit] = useState(false)
     useEffect(() => {
 
         const headers = {
@@ -195,12 +196,17 @@ export default function Course(props) {
                     ack: ack + '/' + course.students.length
                 })
                 console.log(course)
+                // if(course.isAssigned){
+                //     setDisableEdit(true)
+                // }
             }
         })
             .catch(error => {
                 console.log(error)
             })
     }, [render])
+
+  
     const [redirect, setRedirect] = useState(false);
     const handleCardClick = () => {
         console.log('click working')
@@ -324,6 +330,32 @@ export default function Course(props) {
         setOpen(false)
     };
 
+    
+    const handleAssign = value => {
+
+        var studentEmails = table.data.map((item)=>{
+            return item.email
+        })
+        const headers = {
+            'token': sessionStorage.getItem('token')
+        };  
+        API.post('dashboard/assignCourse', {id: props.match.params.id, studentEmails: studentEmails }, { headers: headers }).then(response => {
+            
+            if(response.data.code == 200){
+                setSnack({
+                    open: true,
+                    message: 'Course Assigned'
+                })
+                setDisableEdit(true)
+            }else{
+                setSnack({
+                    open: true,
+                    message: response.data.message
+                }) 
+            }
+        })
+    }
+
     function SimpleDialog(props) {
 
         const { data, onClose, open, render } = props;
@@ -396,7 +428,11 @@ export default function Course(props) {
                                     variant="contained"
                                     color="primary"
                                     size="medium"
-                                    className={classes.assign}>
+                                    className={classes.assign}
+                                    onClick={handleAssign}
+                                   // disabled={disableEdit}
+                                    >
+                                    
                                     assign
                                 </Button>
 
@@ -407,6 +443,7 @@ export default function Course(props) {
                                     size="medium"
                                     className={classes.edit}
                                     onClick={handleClickOpen}
+                                  //  disabled={disableEdit}
                                     >
                                     edit
                                 </Button>

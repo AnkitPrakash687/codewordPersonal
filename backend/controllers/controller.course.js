@@ -3,6 +3,7 @@ const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 var { CourseModel } = require('../model/model.course');
+var { UserModel } = require('../model/model.user');
 var { mongoose } = require('./../config/database')
 var mailController = require('../config/user.mail.js')
 let XLSX = require('xlsx')
@@ -382,3 +383,35 @@ let updateCourse = (req, res) => {
 
 }
 module.exports.updateCourse = updateCourse;
+
+let assignCourse = (req, res) => {
+
+    var body = _.pick(req.body, ['id', 'studentEmails']);
+    CourseModel.updateOne({_id: body.id, createdBy: req.session.email}, 
+        {$set:{
+            isAssigned: true
+        }}, (error, updateCourse) => {
+            if(error){
+                return res.json({ code: 400, message: err });
+            }
+            console.log('assigned*************************************')
+            console.log(updateCourse)
+            console.log(body.studentEmails)
+            UserModel.updateMany({email_id:{$in:[body.studentEmails]}}, 
+                {$push: {courses:{
+                    course_id: body.id
+                }}}, (error, updatedUser)=>{
+                    console.log('user*************************************')
+                    console.log(error)
+                    console.log(updatedUser)
+                    return res.json({ code: 200, message: 'Course Assigned' })
+                })
+    
+        })
+
+      
+        
+
+}
+
+module.exports.assignCourse = assignCourse

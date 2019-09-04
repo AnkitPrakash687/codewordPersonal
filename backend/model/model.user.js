@@ -32,15 +32,10 @@ var UserModel = mongoose.model('UserModel', {
         enum: ['admin', 'student', 'instructor'],
         require: true
     },
-    is_active: {
-        type: Boolean,
-        require: true,
-        default: false
-    },
     last_login: {
         type: Date,
     },
-    course: [
+    courses: [
         {
             course_id: { type: String },
             isRevealed: { type: Boolean }
