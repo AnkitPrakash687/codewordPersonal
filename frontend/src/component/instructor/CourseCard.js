@@ -93,8 +93,9 @@ export default function CourseCard(props) {
     return (
 
         <Grid item xs={12} sm={3} md={3} lg={3}>
-            <CardActionArea onClick={handleCardClick}>
+            
                 <Paper className={classes.paper}>
+                <CardActionArea onClick={handleCardClick}>
                     <div className={classes.appBar}>
                         <AppBar position="static" className={classes.appBar}>
                             <Typography variant="h6" className={classes.title}>
@@ -139,8 +140,9 @@ export default function CourseCard(props) {
                     </Typography>
                         </Paper>
                     }
+                     </CardActionArea>
                 </Paper>
-            </CardActionArea>
+           
         </Grid>
 
     );
