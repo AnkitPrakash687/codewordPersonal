@@ -263,18 +263,33 @@ let deleteStudent = (req, res) => {
 module.exports.deleteStudent = deleteStudent;
 
 let deleteCourse = (req, res) => {
-    var body = _.pick(req.body, ['id']);
+    var body = _.pick(req.body, ['id', 'studentEmails']);
     console.log(req.session.email)
-    CourseModel.deleteOne({ _id: body.id, createdBy: req.session.email }, function (err, deletecourse) {
-        console.log(deletecourse.deletedCount)
-        if (err) {
-            return res.json({ code: 400, message: err });
-        }
-        if (deletecourse.deletedCount > 0) {
-            return res.json({ code: 200, message: true })
-        } else {
-            return res.json({ code: 404, message: 'No course or unauthorized' })
-        }
+   
+            //return res.json({ code: 200, message: true })
+
+            UserModel.updateMany({email_id:{$in:body.studentEmails}}, 
+                {$pull: {courses:{
+                    course_id: body.id
+                }}}, (error, updatedUser)=>{
+                    console.log('user*************************************')
+                    if(error){
+                        return res.json({ code: 400, message: err });
+                    }
+                    console.log(updatedUser)
+                    CourseModel.deleteOne({ _id: body.id, createdBy: req.session.email }, function (err, deletecourse) {
+                        console.log(deletecourse.deletedCount)
+                        if (err) {
+                            return res.json({ code: 400, message: err });
+                        }
+                        if (deletecourse.deletedCount > 0) {
+                            return res.json({ code: 200, message: 'Course deleted' })
+                        } else {
+                            return res.json({ code: 404, message: 'No course or unauthorized' })
+                        }
+                   
+                })
+        
     })
 }
 
@@ -397,12 +412,14 @@ let assignCourse = (req, res) => {
             console.log('assigned*************************************')
             console.log(updateCourse)
             console.log(body.studentEmails)
-            UserModel.updateMany({email_id:{$in:[body.studentEmails]}}, 
+            UserModel.updateMany({email_id:{$in:body.studentEmails}}, 
                 {$push: {courses:{
                     course_id: body.id
                 }}}, (error, updatedUser)=>{
                     console.log('user*************************************')
-                    console.log(error)
+                    if(error){
+                        return res.json({ code: 400, message: err });
+                    }
                     console.log(updatedUser)
                     return res.json({ code: 200, message: 'Course Assigned' })
                 })

@@ -196,9 +196,9 @@ export default function Course(props) {
                     ack: ack + '/' + course.students.length
                 })
                 console.log(course)
-                // if(course.isAssigned){
-                //     setDisableEdit(true)
-                // }
+                if(course.isAssigned){
+                    setDisableEdit(true)
+                }
             }
         })
             .catch(error => {
@@ -214,7 +214,7 @@ export default function Course(props) {
 
     }
     if (redirect) {
-        return <Redirect to="/signup"></Redirect>
+        return <Redirect to="/"></Redirect>
     }
 
     const handleMessageClose = () => {
@@ -356,6 +356,30 @@ export default function Course(props) {
         })
     }
 
+    const handleDeleteCourse = value =>{
+        var studentEmails = table.data.map((item)=>{
+            return item.email
+        })
+        const headers = {
+            'token': sessionStorage.getItem('token')
+        };  
+        API.post('dashboard/deleteCourse', {id: props.match.params.id, studentEmails: studentEmails }, { headers: headers }).then(response => {
+            
+            if(response.data.code == 200){
+                setSnack({
+                    open: true,
+                    message: 'Course Deleted'
+                })
+                setRedirect(true)
+            }else{
+                setSnack({
+                    open: true,
+                    message: response.data.message
+                }) 
+            }
+        })
+    }
+
     function SimpleDialog(props) {
 
         const { data, onClose, open, render } = props;
@@ -430,7 +454,7 @@ export default function Course(props) {
                                     size="medium"
                                     className={classes.assign}
                                     onClick={handleAssign}
-                                   // disabled={disableEdit}
+                                    disabled={disableEdit}
                                     >
                                     
                                     assign
@@ -443,7 +467,7 @@ export default function Course(props) {
                                     size="medium"
                                     className={classes.edit}
                                     onClick={handleClickOpen}
-                                  //  disabled={disableEdit}
+                                    disabled={disableEdit}
                                     >
                                     edit
                                 </Button>
@@ -454,7 +478,8 @@ export default function Course(props) {
                                     variant="contained"
                                     color="primary"
                                     size="medium"
-                                    className={classes.delete} >
+                                    className={classes.delete}
+                                    onClick = {handleDeleteCourse} >
                                     delete
                                 </Button>
                             </Grid>
