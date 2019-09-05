@@ -19,7 +19,10 @@ var CourseModel = mongoose.model('courseModel', {
       }
    ],
    codewordSet:{
-      type:String
+      codewordSetName:{type:String},
+      codewords:[
+         {type: String, min:3}
+      ]
    },
    isAssigned:{
       type:Boolean

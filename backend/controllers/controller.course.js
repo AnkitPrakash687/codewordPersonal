@@ -20,13 +20,16 @@ var uploadFile = multer(
 
 const saveCourseData = (students, req, res) => {
     var body = _.pick(req.body, ['courseNameKey',
-        'codeWordSetName', 'startDate', 'endDate', 'preSurveyURL', 'postSurveyURL']);
+        'codeWordSetName', 'startDate', 'endDate', 'preSurveyURL', 'postSurveyURL', 'codewords']);
     //var body = req.
     console.log(body)
     var courseModel = new CourseModel({
         courseNameKey: body.courseNameKey,
         students: students,
-        codewordSet: body.codeWordSetName,
+        codewordSet: 
+        { codewordSetName: body.codeWordSetName,
+          codewords: body.codewords
+        }, 
         Startdate: body.startDate,
         Startdate: body.startDate,
         isAssigned: false,

@@ -124,7 +124,8 @@ export default function AddCourse(props) {
 
     const [codeword, setCodeword] = useState([{
         codewordSetName: '',
-        count: 0
+        count: 0,
+        codewords:[]
     }])
 
     const [studentCount, setStudentCount] = useState('empty')
@@ -141,7 +142,8 @@ export default function AddCourse(props) {
                     response.data.data.map((codewordSet) => {
                         return {
                             codewordSetName: codewordSet.codewordSetName,
-                            count: codewordSet.count
+                            count: codewordSet.count,
+                            codewords: codewordSet.codewords
                         }
                     })
                 )
@@ -215,6 +217,7 @@ export default function AddCourse(props) {
             console.log(key + " " + value)
             formData.append(key, value)
         })
+        formData.append('codewords', codeword.codewords)
 
         API.post('dashboard/addnewCourse', formData, { headers: headers }).then(response => {
             console.log('👉 Returned data in :', response);

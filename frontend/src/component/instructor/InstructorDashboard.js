@@ -9,7 +9,8 @@ import Box from '@material-ui/core/Box';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red } from '@material-ui/core/colors';
 import { Paper, Grid } from '@material-ui/core';
-import Card from './CourseCard'
+import CourseCard from './CourseCard'
+import CodewordsetCard from '../codewordset/CodewordsetCard'
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button'
@@ -128,6 +129,7 @@ export default function InstructorDashboard() {
     };
 
     const [courseData, setCourseData] = useState([{}])
+    const [codewordsetData, setCodewordsetData] = useState([{}])
     useEffect(() => {
 
         console.log('inside effect')
@@ -195,7 +197,7 @@ export default function InstructorDashboard() {
     }, [render])
 
     const listCourses = courseData.map((course) => {
-        return <Card id={course.id}
+        return <CourseCard id={course.id}
             courseName={course.courseName}
             ack={course.ack}
             startDate={course.startDate}
@@ -203,7 +205,7 @@ export default function InstructorDashboard() {
             startSurvey={course.startSurvey}
             endSurvey={course.endSurvey}
             isAssigned={course.isAssigned}
-        ></Card>
+        ></CourseCard>
     })
 
     return (
