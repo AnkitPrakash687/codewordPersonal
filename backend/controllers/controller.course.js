@@ -432,3 +432,26 @@ let assignCourse = (req, res) => {
 }
 
 module.exports.assignCourse = assignCourse
+
+let getStudentCourses = (req,res) =>{
+
+       UserModel.findOne({email_id: req.session.email}, (error, user)=>{
+           if(error){
+            return res.json({ code: 400, message: e });
+           }
+           console.log(user)
+           var courseList = user.courses.map((item)=>{
+               return item.course_id
+           })
+           console.log(courseList)
+           CourseModel.find({$and:[{ _id: {$in: courseList} }, {isAssigned: true}]}, function (err, courses) {
+            console.log(courses)
+            return res.json({ code: 200, data: courses });   
+        }).catch((e) => {
+            return res.json({ code: 400, message: e });
+        })
+       })
+         
+}
+
+module.exports.getStudentCourses = getStudentCourses
