@@ -75,7 +75,9 @@ var details = (req,res) => {
         return  res.status(400).send("User details not found!!");
     }
     console.log('user'+user);        
-    return res.send(user);
+    return res.send({email_id: user.email_id, 
+        name: user.first_name + ' '+ user.last_name, 
+        role:user.role});
     });
 }
 module.exports.details = details;
@@ -175,3 +177,4 @@ const reset = (req,res) => {
     })
 }
 module.exports.reset = reset
+

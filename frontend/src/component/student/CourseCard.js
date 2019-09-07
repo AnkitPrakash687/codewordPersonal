@@ -3,7 +3,7 @@ import React, { useState, Component, useEffect } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red } from '@material-ui/core/colors';
-import { Paper, Grid } from '@material-ui/core';
+import { Paper, Grid, Button, Zoom } from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
 import { makeStyles } from '@material-ui/core/styles';
@@ -52,42 +52,42 @@ export default function CourseCard(props) {
         role: '',
         token: sessionStorage.getItem('token')
     })
-
+    const [reveal, setReveal] = useState(true)
     useEffect(() => {
         // console.log('getdata')
         // const headers = {
         //     'Content-Type': 'application/json',
-        //     'token':  this.state.token
-        //   };
+        //     'token': state.token
+        // };
+       
+        // API.get('dashboard/getcodewordset', { headers: headers }).then(response => {
+        //     if (response.data.code == 200) {
+        //         setCodeword(
+        //             response.data.data.map((codewordSet) => {
+        //                 console.log(codewordSet)
+        //                 return {
+        //                     codewordSetName: codewordSet.codewordSetName,
+        //                     count: codewordSet.count,
+        //                     codewords: codewordSet.codewords
+        //                 }
+        //             })
+        //         )
+        //         console.log(response.data.data)
+        //     }
+        // })
+    },[])
+  
+    
+    const handleClickReveal =()=>{
+        setReveal(false)
+        const headers = {
+            'token': sessionStorage.getItem('token')
+        };
 
-        // console.log(headers)
-        //  try {
-        //     const response = await API.get('dashboard/details', {headers});
-        //     console.log('👉 Returned data in :', response);
-        //     console.log(response.data)
-        //     if(response.status == 200){
-        //     this.setState( {
-        //       id: response.data.email_id,   
-        //       role: response.data.role,
-        //       name: response.data.first_name + ' ' + response.data.last_name
-        //     })
-        //     console.log('dashbaord : '+ this.state.role)
+        API.post('dashboard/reveal',{courseId: props.id}, { headers: headers }).then(response => {
+            
+        })
 
-        // }else {
-
-        // }
-        //   } catch (e) {
-        //     console.log(`😱 Axios request failed: ${e}`);
-        //   }
-    })
-    const [redirect, setRedirect] = useState(false);
-    const handleCardClick = () => {
-        console.log('click working')
-        setRedirect(true)
-
-    }
-    if (redirect) {
-        return <Redirect to={'/course/' + props.id}></Redirect>
     }
 
     return (
@@ -95,7 +95,7 @@ export default function CourseCard(props) {
         <Grid item xs={12} sm={3} md={3} lg={3}>
             
                 <Paper className={classes.paper}>
-                <CardActionArea onClick={handleCardClick}>
+       
                     <div className={classes.appBar}>
                         <AppBar position="static" className={classes.appBar}>
                             <Typography variant="h6" className={classes.title}>
@@ -105,15 +105,11 @@ export default function CourseCard(props) {
                     </div>
 
                     <Paper className={classes.paper2}>
-                        <Typography variant="h8" className={classes.title}>
-                            Aknowledged: {props.ack}
-                        </Typography><br></br>
-                        <Typography variant="h8" className={classes.title}>
-                            Start Survey: {props.startSurvey}
-                        </Typography><br></br>
-                        <Typography variant="h8" className={classes.title}>
-                            End Survey: {props.endSurvey}
-                        </Typography>
+                        <Zoom in={reveal}>
+                    <Button variant="contained" color="primary" className={classes.button} onClick={handleClickReveal}>
+                    Reveal
+                </Button>
+                </Zoom>
                     </Paper>
                     <Grid className={classes.dates} container spacing={0}>
                         <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -127,20 +123,8 @@ export default function CourseCard(props) {
                             </Typography>
                         </Grid>
                     </Grid>
-                    {(props.isAssigned) ?
-                        <Paper className={classes.banner1}>
-
-                            <Typography variant="h8" className={classes.title}>
-                                CODEWORD ASSIGNED
-                    </Typography>
-                        </Paper> :
-                        <Paper className={classes.banner2}>
-                            <Typography variant="h8" className={classes.title}>
-                                CODEWORD NOT ASSIGNED
-                    </Typography>
-                        </Paper>
-                    }
-                     </CardActionArea>
+                   
+               
                 </Paper>
            
         </Grid>

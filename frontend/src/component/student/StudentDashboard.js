@@ -106,55 +106,54 @@ export default function StudentDashboard() {
         const headers = {
             'token': sessionStorage.getItem('token')
         };
-        API.get('dashboard/getStudentCourses', { headers: headers }).then(response => {
-            console.log('👉 Returned data in :', response);
 
-            if (response.status == 200) {
-                console.log(response.data)
-                var data = response.data.data
-                var result = []
-                data.map((course) => {
-
-                    result.push({
-                        id: course._id,
-                        courseName: course.courseNameKey,
-                        startDate: (course.Startdate.toString()).substring(0, 10),
-                        endDate: (course.Enddate.toString()).substring(0, 10),
-                        startSurvey: course.PreSurveyURL == '' ? 'Unpublished' : course.PreSurveyURL,
-                        endSurvey: course.PostSurveyURL == '' ? 'Unpublished' : course.PostSurveyURL
-                    })
-                })
-
-                console.log(result)
-                setCourseData(result)
-                //   setState({
-                //     status:true,
-                //     message:response.data.message,
-                //   }) 
-                // }else{
-                //   console.log('error')
-                //   setState({
-                //     courseName:state.courseName,
-                //     startDate: state.startDate,
-                //     endDate: state.endDate,
-                //     status:true,
-                //     error:true,
-                //     message:response.data.message
-                //   })
-            }
+        API.get('dashboard/details', { headers: headers }).then(response => {
+            console.log("me***********")
+            
+                return response.data
+            
+            // else{
+            //     return false
+            // }
         })
-            .catch(error => {
-                console.log(error)
-                //   console.log('error')
-                //   setState({
-                //     courseName:state.courseName,
-                //         startDate: state.startDate,
-                //         endDate: state.endDate,
-                //     status:true,
-                //     error:true,
-                //     message:error.message
-                //   })
+        .then(user => {
+
+
+            API.get('dashboard/getStudentCourses', { headers: headers }).then(response => {
+                console.log('👉 Returned data in :', response);
+    
+              
+                if (response.status == 200) {
+                    console.log(response.data)
+                    var data = response.data.data
+                    var result = []
+                    data.map((course) => {
+                        var student = course.students.filter((student)=>{
+                            if(user.email_id == student.email){
+                                return student
+                            }
+                        })
+                        result.push({
+                            id: course._id,
+                            courseName: course.courseNameKey,
+                            startDate: (course.Startdate.toString()).substring(0, 10),
+                            endDate: (course.Enddate.toString()).substring(0, 10),
+                            startSurvey: course.PreSurveyURL == '' ? 'Unpublished' : course.PreSurveyURL,
+                            endSurvey: course.PostSurveyURL == '' ? 'Unpublished' : course.PostSurveyURL,
+                            student: student[0]
+                        })
+                    })
+                    console.log("****result******")
+                    console.log(result)
+                    setCourseData(result)
+                }
             })
+                .catch(error => {
+                    console.log(error)
+                   
+                })
+        })
+       
     }, [render])
 
     const listCourses = courseData.map((course) => {

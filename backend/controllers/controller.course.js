@@ -461,3 +461,57 @@ let getStudentCourses = (req,res) =>{
 }
 
 module.exports.getStudentCourses = getStudentCourses
+
+const revealCodeword = (req, res) => {
+    var body = _.pick(req.body,['courseId']);
+console.log(body.courseId)
+
+    CourseModel.findOne({_id: body.courseId }, (error, course)=>{
+        if(error){
+            return res.json({ code: 400, message: e });
+        }
+        let index = getRandomIntInclusive(0, course.codewordSet.codewords.length-1)
+        console.log('index**********')
+        console.log(index)
+        let codeword = course.codewordSet.codewords[index]
+        console.log('codeword:  '+codeword)
+        // var bulk = CourseModel.collection.initializeOrderedBulkOp()
+        // bulk.find({_id: body.courseId }).updateOne({$pull:{"codewordSet.codewords": codeword}})
+        // bulk.find({_id: body.courseId, "students.email":req.session.email }).updateOne(
+        //     {$set:
+        //         {"students.$.codeword": codeword, 
+        //         "students.$.isRevealed": true}
+        //     })
+
+        // bulk.execute()
+        CourseModel.updateOne({_id: body.courseId },{$pull:{"codewordSet.codewords": codeword}}, (error, updated)=>{
+            if(error)
+            console.log(error)
+            else{
+                CourseModel.updateOne({_id: body.courseId, "students.email":req.session.email },
+                {$set:
+                            {"students.$.codeword": codeword, 
+                            "students.$.isRevealed": true
+                            }
+                        }, (error, updated) =>{
+
+                            if(error)
+                            console.log(error)
+                            else
+                            console.log(updated)
+                        }
+                )
+                    }
+        })
+
+    })
+    
+}
+
+module.exports.revealCodeword = revealCodeword
+
+function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
+  }
