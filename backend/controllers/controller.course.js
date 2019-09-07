@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 var { CourseModel } = require('../model/model.course');
 var { UserModel } = require('../model/model.user');
+var { CodewordSet } = require('../model/model.codewordset');
 var { mongoose } = require('./../config/database')
 var mailController = require('../config/user.mail.js')
 let XLSX = require('xlsx')
@@ -23,12 +24,14 @@ const saveCourseData = (students, req, res) => {
         'codeWordSetName', 'startDate', 'endDate', 'preSurveyURL', 'postSurveyURL', 'codewords']);
     //var body = req.
     console.log(body)
+
+    codewordArray = body.codewords.split(',')
     var courseModel = new CourseModel({
         courseNameKey: body.courseNameKey,
         students: students,
         codewordSet: 
         { codewordSetName: body.codeWordSetName,
-          codewords: body.codewords
+          codewords: codewordArray
         }, 
         Startdate: body.startDate,
         Startdate: body.startDate,

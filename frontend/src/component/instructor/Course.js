@@ -192,7 +192,7 @@ export default function Course(props) {
                     startSurvey: course.PreSurveyURL == '' ? 'Unpublished' : course.PreSurveyURL,
                     endSurvey: course.PostSurveyURL == '' ? 'Unpublished' : course.PostSurveyURL,
                     isAssigned: course.isAssigned,
-                    codewordset: course.codewordSet == '' ? 'Not Assigned' : course.codewordSet,
+                    codewordset: course.codewordSet.codewordSetName == '' ? 'Not Assigned' : course.codewordSet.codewordSetName,
                     ack: ack + '/' + course.students.length
                 })
                 console.log(course)

@@ -140,6 +140,7 @@ export default function AddCourse(props) {
             if (response.data.code == 200) {
                 setCodeword(
                     response.data.data.map((codewordSet) => {
+                        console.log(codewordSet)
                         return {
                             codewordSetName: codewordSet.codewordSetName,
                             count: codewordSet.count,
@@ -217,7 +218,12 @@ export default function AddCourse(props) {
             console.log(key + " " + value)
             formData.append(key, value)
         })
-        formData.append('codewords', codeword.codewords)
+        for(var i in codeword){
+            if(state.values == codeword[i].codewordSetName){
+                formData.append('codewords', codeword[i].codewords)
+            }
+        }
+        
 
         API.post('dashboard/addnewCourse', formData, { headers: headers }).then(response => {
             console.log('👉 Returned data in :', response);
@@ -506,7 +512,7 @@ export default function AddCourse(props) {
                     </IconButton>,
                 ]}
             ></Snackbar>
-            { 
+            {/* { 
             ((parseFloat(studentCount)-parseFloat(codewordCount))/parseFloat(codewordCount)) < 0.1 ?
             <Dialog
         open={alertOpen}
@@ -530,7 +536,7 @@ export default function AddCourse(props) {
             (codewordCount-studentCount) < 0?
             <countAlert open={true} handleClose={handleClose('alertOpen')} message="Student count exceeds codeword count"></countAlert>:false
             }
-         
+          */}
         </Container>
     );
 }
