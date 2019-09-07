@@ -85,7 +85,7 @@ export default function StudentDashboard() {
             'aria-controls': `simple-tabpanel-${index}`,
         };
     }
-    const [render, setRender] = useState(false);
+    
     const handleChange = (event, newValue) => {
         setValue(newValue);
     }
@@ -140,7 +140,8 @@ export default function StudentDashboard() {
                             endDate: (course.Enddate.toString()).substring(0, 10),
                             startSurvey: course.PreSurveyURL == '' ? 'Unpublished' : course.PreSurveyURL,
                             endSurvey: course.PostSurveyURL == '' ? 'Unpublished' : course.PostSurveyURL,
-                            student: student[0]
+                            isRevealed: student[0].isRevealed,
+                            codeword: student[0].codeword
                         })
                     })
                     console.log("****result******")
@@ -154,8 +155,9 @@ export default function StudentDashboard() {
                 })
         })
        
-    }, [render])
+    }, [])
 
+  
     const listCourses = courseData.map((course) => {
         return <Card id={course.id}
             courseName={course.courseName}
@@ -165,6 +167,8 @@ export default function StudentDashboard() {
             startSurvey={course.startSurvey}
             endSurvey={course.endSurvey}
             isAssigned={course.isAssigned}
+            isRevealed = {course.isRevealed}
+            codeword = {course.codeword}
         ></Card>
     })
 

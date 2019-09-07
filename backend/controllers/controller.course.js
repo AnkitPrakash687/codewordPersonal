@@ -495,10 +495,13 @@ console.log(body.courseId)
                             }
                         }, (error, updated) =>{
 
-                            if(error)
-                            console.log(error)
-                            else
+                            if(error){
+                                return res.json({ code: 400, message: error });
+                            }
+                            else{
                             console.log(updated)
+                            return res.json({ code: 200, codeword: codeword });  
+                            }
                         }
                 )
                     }

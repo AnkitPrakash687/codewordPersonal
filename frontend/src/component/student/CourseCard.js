@@ -52,8 +52,11 @@ export default function CourseCard(props) {
         role: '',
         token: sessionStorage.getItem('token')
     })
-    const [reveal, setReveal] = useState(true)
+    const [reveal, setReveal] = useState(props.isRevealed)
+    const [codeword, setCodeword] = useState(props.codeword)
     useEffect(() => {
+        console.log(props.isRevealed)
+       // setReveal(props.student.isRevealed)
         // console.log('getdata')
         // const headers = {
         //     'Content-Type': 'application/json',
@@ -79,13 +82,18 @@ export default function CourseCard(props) {
   
     
     const handleClickReveal =()=>{
-        setReveal(false)
+        
         const headers = {
             'token': sessionStorage.getItem('token')
         };
 
+        console.log(props)
+
         API.post('dashboard/reveal',{courseId: props.id}, { headers: headers }).then(response => {
-            
+            if(response.data.code == 200){
+                setReveal(true)
+                setCodeword(response.data.codeword)
+            }
         })
 
     }
@@ -104,13 +112,20 @@ export default function CourseCard(props) {
                         </AppBar>
                     </div>
 
-                    <Paper className={classes.paper2}>
-                        <Zoom in={reveal}>
+                  
+                        <Zoom in={!reveal}>
                     <Button variant="contained" color="primary" className={classes.button} onClick={handleClickReveal}>
                     Reveal
                 </Button>
                 </Zoom>
+                <Zoom in={reveal}>
+                <Paper className={classes.paper2}>
+                <Typography variant="caption" className={classes.title}>
+                            {codeword
+                            }
+                            </Typography>
                     </Paper>
+                    </Zoom>
                     <Grid className={classes.dates} container spacing={0}>
                         <Grid item xs={12} sm={6} md={6} lg={6}>
                             <Typography variant="caption" className={classes.title}>
