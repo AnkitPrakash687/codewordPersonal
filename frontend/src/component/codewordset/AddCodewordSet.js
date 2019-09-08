@@ -144,32 +144,54 @@ export default function AddCodewordSet(props) {
     const handleChange = name => (event, isChecked) => {
         //console.log({[name]: event.target.value})
         setState({ ...state, [name]: event.target.value });
-        if ([name] == 'values') {
-            console.log('inise code')
-            var count = codeword.filter((item) => {
-                if (item.codewordSetName == event.target.value) {
-                    return item.count
-                }
-            })
-          
-        }
 
     }
     const handleFileChange = (event) => {
         if (fileLabel.current.files[0] && fileLabel.current.files[0].name) {
             setState({ ...state, filename: fileLabel.current.files[0].name, selectedFile: event.target.files[0] });
-            Papa.parse(event.target.files[0], {
-                complete: function (results) {
-                    console.log(results)
-                    var students = results.data.filter((item) => {
-                        if (item[0] != '') {
-                            return item
-                        }
-                    })
+            let file = event.target.files[0]
+            let fileExt = file.name.split('.')[1]
+            if(fileExt == 'csv'){
+            // Papa.parse(event.target.files[0], {
+            //     complete: function (results) {
+            //         console.log(results)
+            //         var students = results.data.filter((item) => {
+            //             if (item[0] != '') {
+            //                 return item
+            //             }
+            //         })
                 
+            //     }
+            // })
+            }else if(fileExt == 'txt'){
+                
+                let reader = new FileReader()
+                reader.readAsText(file)
+                reader.onload = () =>{
+                     var result = reader.result.split('\n')
+                     console.log(result)
+                    
                 }
-            })
+               
+                
+            }else{
 
+            }
+
+        }
+
+        const filterData = (array) => {
+            let lessThanThree = []
+            let moreThanThree = []
+            let duplicateWords = []
+            let result = []
+            for(let i in array){
+                if(array[i].length < 4){
+
+                }
+            }
+
+            
         }
     }
 
@@ -269,35 +291,6 @@ export default function AddCodewordSet(props) {
         onClose: PropTypes.func.isRequired
     };
 
-    
-    function countAlert(props) {
-        const { message, open, handleClose} = props
-        return(
-        <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-    >
-        <DialogTitle id="alert-dialog-title">{"Warning"}</DialogTitle>
-        <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-                {message}
-        </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-            <Button onClick={handleClose} color="primary" autoFocus>
-                OK
-            </Button>
-        </DialogActions>
-    </Dialog>
-        )
-    }
-
-    const [alertOpen, setAlertOpen] = useState(true)
-    const handleAlertClose = () =>{
-        setAlertOpen(false)
-    }
     return (
         <Container component="main" maxWidth="sm">
             <CssBaseline />
@@ -318,7 +311,7 @@ export default function AddCodewordSet(props) {
                         value={state.firstName}
                     />
                     <input
-                        accept=".csv"
+                        accept=".txt,.csv"
                         className={classes.input}
                         id="text-button-file"
                         multiple
@@ -399,31 +392,6 @@ export default function AddCodewordSet(props) {
                     </IconButton>,
                 ]}
             ></Snackbar>
-            {/* { 
-            ((parseFloat(studentCount)-parseFloat(codewordCount))/parseFloat(codewordCount)) < 0.1 ?
-            <Dialog
-        open={alertOpen}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-    >
-        <DialogTitle id="alert-dialog-title">{"Warning"}</DialogTitle>
-        <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-                {'message'}
-        </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-            <Button onClick={handleAlertClose} color="primary" autoFocus>
-                OK
-            </Button>
-        </DialogActions>
-    </Dialog>
-            :
-            (codewordCount-studentCount) < 0?
-            <countAlert open={true} handleClose={handleClose('alertOpen')} message="Student count exceeds codeword count"></countAlert>:false
-            }
-          */}
         </Container>
     );
 }

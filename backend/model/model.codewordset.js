@@ -21,9 +21,10 @@ var codeWordSetSchema = new Schema({
         codewords:[
                 {type: String,
                  unique: true,
-                 min: 5       
+                 min: 3       
                 }
-        ]
+        ],
+        isPublished:{type: Boolean}
 });
 
 // create the model for users and expose it to our app
