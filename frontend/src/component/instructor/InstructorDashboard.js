@@ -11,6 +11,7 @@ import { green, lightGreen, red } from '@material-ui/core/colors';
 import { Paper, Grid } from '@material-ui/core';
 import CourseCard from './CourseCard'
 import CodewordsetCard from '../codewordset/CodewordsetCard'
+import AddCodewordSet from '../codewordset/AddCodewordSet'
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button'
@@ -105,11 +106,14 @@ export default function InstructorDashboard() {
         function handleListItemClick(value) {
             onClose(value);
         }
-
+        
         return (
-            <Dialog fullWidth={true} disableBackdropClick={true} onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
-                <DialogTitle id="simple-dialog-title">Add Course</DialogTitle>
+
+            <Dialog fullWidth={true} disableBackdropClick={true} onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>    
+                 <div>
+                 <DialogTitle id="simple-dialog-title">Add Course</DialogTitle>
                 <AddCourse onClose={handleClose}></AddCourse>
+                </div>         
             </Dialog>
         );
     }
@@ -118,6 +122,7 @@ export default function InstructorDashboard() {
         onClose: PropTypes.func.isRequired,
         open: PropTypes.bool.isRequired,
         render: PropTypes.bool.isRequired,
+
     };
 
     const handleClickOpen = () => {
@@ -130,6 +135,15 @@ export default function InstructorDashboard() {
 
     const [courseData, setCourseData] = useState([{}])
     const [codewordsetData, setCodewordsetData] = useState([{}])
+    const [openCodeword, setOpenCodeword] = useState()
+
+    const handleCodewordClickOpen = () =>{
+        setOpenCodeword(true)
+    }
+
+    const handleCodewordClose = () => {
+        setOpenCodeword(false)
+    }
     useEffect(() => {
 
         console.log('inside effect')
@@ -166,33 +180,12 @@ export default function InstructorDashboard() {
 
                 console.log(result)
                 setCourseData(result)
-                //   setState({
-                //     status:true,
-                //     message:response.data.message,
-                //   }) 
-                // }else{
-                //   console.log('error')
-                //   setState({
-                //     courseName:state.courseName,
-                //     startDate: state.startDate,
-                //     endDate: state.endDate,
-                //     status:true,
-                //     error:true,
-                //     message:response.data.message
-                //   })
+              
             }
         })
             .catch(error => {
                 console.log(error)
-                //   console.log('error')
-                //   setState({
-                //     courseName:state.courseName,
-                //         startDate: state.startDate,
-                //         endDate: state.endDate,
-                //     status:true,
-                //     error:true,
-                //     message:error.message
-                //   })
+          
             })
     }, [render])
 
@@ -233,7 +226,16 @@ export default function InstructorDashboard() {
 
             </TabPanel>
             <TabPanel value={value} index={1}>
-                Item Two
+            <Button variant="contained" color="primary" className={classes.button} onClick={handleCodewordClickOpen}>
+                    Add codeword Set
+            </Button>
+           
+            <Dialog fullWidth={true} disableBackdropClick={true} onClose={handleCodewordClose} aria-labelledby="simple-dialog-title" open={openCodeword}>    
+                 <div>
+                 <DialogTitle id="simple-dialog-title">Add Codeword Set</DialogTitle>
+                <AddCodewordSet onClose={handleCodewordClose}></AddCodewordSet>
+                </div>         
+            </Dialog>
         </TabPanel>
 
         </div>
