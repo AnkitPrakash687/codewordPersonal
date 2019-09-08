@@ -9,22 +9,16 @@ var codeWordSetSchema = new Schema({
                 unique:true
         },
         createdBy: {
-             email:{
                      type: String, 
                      require: true
                 },
-             role:{
-                     type: String, 
-                     require: true
-                }  
-        },
         codewords:[
                 {type: String,
                  unique: true,
                  min: 3       
                 }
         ],
-        isPublished:{type: Boolean}
+        isPublished:{type: Boolean, default: false}
 });
 
 // create the model for users and expose it to our app

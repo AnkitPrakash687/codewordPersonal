@@ -99,7 +99,7 @@ export default function AddCodewordSet(props) {
     const [state, setState] = useState({
         role: '',
         token: sessionStorage.getItem('token'),
-        courseName: '',
+        codewordSetName: '',
         studentFilename: '',
         filename: '',
         selectedFile: null,
@@ -110,42 +110,21 @@ export default function AddCodewordSet(props) {
         alertOpen: true
     })
    
+    const [hardRuleData, setHardRuleData] = useState({
+        moreThanThree: [],
+        lessThanThree: [],
+        duplicates: [],
+        filteredData: []
+    })
+
     const fileLabel = React.useRef(null)
-    const [codeword, setCodeword] = useState([{
-        codewordSetName: '',
-        count: 0,
-        codewords:[]
-    }])
-
-    useEffect(() => {
-        console.log('getdata')
-        const headers = {
-            'Content-Type': 'application/json',
-            'token': state.token
-        };
-        API.get('dashboard/getcodewordset', { headers: headers }).then(response => {
-            if (response.data.code == 200) {
-                setCodeword(
-                    response.data.data.map((codewordSet) => {
-                        console.log(codewordSet)
-                        return {
-                            codewordSetName: codewordSet.codewordSetName,
-                            count: codewordSet.count,
-                            codewords: codewordSet.codewords
-                        }
-                    })
-                )
-                console.log(response.data.data)
-            }
-        })
-
-    }, [])
 
     const handleChange = name => (event, isChecked) => {
         //console.log({[name]: event.target.value})
         setState({ ...state, [name]: event.target.value });
 
     }
+
     const handleFileChange = (event) => {
         if (fileLabel.current.files[0] && fileLabel.current.files[0].name) {
             setState({ ...state, filename: fileLabel.current.files[0].name, selectedFile: event.target.files[0] });
@@ -170,10 +149,9 @@ export default function AddCodewordSet(props) {
                 reader.onload = () =>{
                      var result = reader.result.split('\n')
                      console.log(result)
-                    
+                    filterData(result)
                 }
                
-                
             }else{
 
             }
@@ -183,13 +161,28 @@ export default function AddCodewordSet(props) {
         const filterData = (array) => {
             let lessThanThree = []
             let moreThanThree = []
-            let duplicateWords = []
-            let result = []
+            let duplicateWords = array.filter((item, index) => 
+                array.indexOf(item) !== index
+            )
+    
             for(let i in array){
                 if(array[i].length < 4){
-
+                    lessThanThree.push(array[i])
+                }else{
+                    moreThanThree.push(array[i])
                 }
             }
+            
+            let filteredData = moreThanThree.filter((item, index) => 
+                array.indexOf(item) === index
+            )
+
+            setHardRuleData({
+                moreThanThree: moreThanThree,
+                lessThanThree: lessThanThree,
+                duplicates: duplicateWords,
+                filteredData: filteredData
+            })
 
             
         }
@@ -206,34 +199,17 @@ export default function AddCodewordSet(props) {
             'token': sessionStorage.getItem('token')
         };
         var data = {
-            courseNameKey: state.courseName,
-            startDate: state.startDate,
-            endDate: state.endDate,
-            preSurveyURL: state.startSurvey,
-            postSurveyURL: state.endSurvey,
-            codeWordSetName: state.values,
-
+            codeWordSetName: state.codewordSetName,
+            codewords: hardRuleData.filteredData
         }
         console.log(data)
-        var formData = new FormData()
-        formData.append('file', state.selectedFile)
-        _.each(data, (value, key) => {
-            console.log(key + " " + value)
-            formData.append(key, value)
-        })
-        for(var i in codeword){
-            if(state.values == codeword[i].codewordSetName){
-                formData.append('codewords', codeword[i].codewords)
-            }
-        }
         
-
-        API.post('dashboard/addnewCourse', formData, { headers: headers }).then(response => {
+        API.post('dashboard/addcodewordset', data, { headers: headers }).then(response => {
             console.log('👉 Returned data in :', response);
             if (response.status == 200) {
                 setState({
                     status: true,
-                    message: response.data.message,
+                    message: 'Codeword Set created',
                     reRender: true
                 })
             } else {
@@ -252,9 +228,7 @@ export default function AddCodewordSet(props) {
                 console.log(error)
                 console.log('error')
                 setState({
-                    courseName: state.courseName,
-                    startDate: state.startDate,
-                    endDate: state.endDate,
+                    codewordSetName: state.codewordSetName,
                     status: true,
                     error: true,
                     message: error.message
@@ -284,9 +258,7 @@ export default function AddCodewordSet(props) {
         }
     }
 
-    const handleDelete = () => {
 
-    }
     AddCodewordSet.propTypes = {
         onClose: PropTypes.func.isRequired
     };
@@ -308,7 +280,7 @@ export default function AddCodewordSet(props) {
                         autoFocus
                         margin="dense"
                         onChange={handleChange('codewordSetName')}
-                        value={state.firstName}
+                        value={state.codewordSetName}
                     />
                     <input
                         accept=".txt,.csv"
@@ -343,6 +315,24 @@ export default function AddCodewordSet(props) {
                   
                 </div>
                 <Box display="flex" justifyContent="flex-end">
+                       { (hardRuleData.duplicates.length > 0) &&
+                        <Chip
+                            label={'No. of duplicate: ' + hardRuleData.duplicates.length}
+                            size="small"
+                            className={classes.chip}
+                            color="primary"
+                            variant="outlined"
+                        /> 
+                       }
+                       { (hardRuleData.lessThanThree.length > 0) &&
+                        <Chip
+                            label={'Less than 3 letters: ' + hardRuleData.lessThanThree.length}
+                            size="small"
+                            className={classes.chip}
+                            color="primary"
+                            variant="outlined"
+                        /> 
+                       } 
                     <Button
                         variant="contained"
                         color="primary"
