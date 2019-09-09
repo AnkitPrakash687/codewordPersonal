@@ -7,7 +7,7 @@ import { green, lightGreen, red, grey } from '@material-ui/core/colors';
 import {
     Paper, Grid, Button, FormControl, InputLabel,
     MenuItem, OutlinedInput, Select, Box, Snackbar, IconButton, Chip, 
-    Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText
+    Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Slide, Divider
 } from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
@@ -112,6 +112,7 @@ export default function AddCodewordSet(props) {
         alertOpen: true
     })
    
+    const [openReport, setOpenReport] = useState(false)
     const [hardRuleData, setHardRuleData] = useState({
         moreThanThree: [],
         lessThanThree: [],
@@ -119,6 +120,10 @@ export default function AddCodewordSet(props) {
         filteredData: [],
         invalidCodewords: []
     })
+
+    const Transition = React.forwardRef(function Transition(props, ref) {
+        return <Slide direction="up" ref={ref} {...props} />;
+      });
 
     const fileLabel = React.useRef(null)
 
@@ -221,11 +226,17 @@ export default function AddCodewordSet(props) {
         API.post('dashboard/addcodewordset',  data, { headers: headers }).then(response => {
             console.log('👉 Returned data in :', response);
             if (response.status == 200) {
-                setState({
-                    status: true,
-                    message: 'Codeword Set created',
-                    reRender: true
-                })
+              
+                if(hardRuleData.lessThanThree.length > 0 || hardRuleData.invalidCodewords.length > 0
+                    || hardRuleData.duplicates.length > 0){
+                setOpenReport(true)
+                    }else{
+                        setState({
+                            status: true,
+                            message: "Codeword Set created!",
+                            reRender: true
+                        })
+                    }
             } else {
                 console.log('error')
                 setState({
@@ -252,6 +263,14 @@ export default function AddCodewordSet(props) {
 
     }
 
+    const handleReportClose = () =>{
+        setOpenReport(false)
+        setState({
+            status: true,
+            message: "Codeword Set created!",
+            reRender: true
+        })
+    }
     const handleClose = () => {
        
         props.onClose()
@@ -386,6 +405,69 @@ export default function AddCodewordSet(props) {
                
             </form>
 
+            <Dialog
+           fullWidth={true} 
+        open={openReport}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle id="alert-dialog-slide-title">{"Report"}</DialogTitle>
+        <Divider />
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            Duplicate Codewords: {hardRuleData.duplicates.length}
+            </DialogContentText>
+            <Grid container >
+           { hardRuleData.duplicates.map((item)=>{
+                   return  <Typography component="div">
+                    <Box fontSize="caption.fontSize" fontWeight="fontWeightBold" m={1}>
+                        {item}
+                    </Box>
+                </Typography>
+                })
+            }
+          </Grid>
+    
+          <DialogContentText id="alert-dialog-slide-description">
+            Codewords with less than three letters: {hardRuleData.lessThanThree.length}
+            </DialogContentText>
+            <Grid container >
+            {
+                hardRuleData.lessThanThree.map((item)=>{
+                   return <Typography component="div">
+                    <Box fontSize="caption.fontSize" fontWeight="fontWeightBold" m={1}>
+                        {item}
+                    </Box>
+                </Typography>
+                })
+            }
+            </Grid>
+        
+            <DialogContentText id="alert-dialog-slide-description">
+            Invalid codewords: {hardRuleData.invalidCodewords.length}
+            </DialogContentText>
+            <Grid container >
+            { hardRuleData.invalidCodewords.map((item)=>{
+                   return  <Typography component="div">
+                    <Box fontSize="caption.fontSize" fontWeight="fontWeightBold" m={1}>
+                        {item}
+                    </Box>
+                </Typography>
+                })
+            }
+           </Grid>
+           
+        </DialogContent>
+        <Divider />
+        <DialogActions>
+          <Button onClick={handleReportClose} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
             <Snackbar
                 anchorOrigin={{
                     vertical: 'bottom',
