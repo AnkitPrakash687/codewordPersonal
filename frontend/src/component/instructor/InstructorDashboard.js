@@ -16,6 +16,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button'
 import AddCourse from './AddCourse'
+import {CircularProgress} from '@material-ui/core'
 import API from '../../utils/API'
 
 const useStyles = makeStyles(theme => ({
@@ -47,6 +48,13 @@ const useStyles = makeStyles(theme => ({
         padding: 10
 
     },
+    fabProgress: {
+        color: green[500],
+        position: 'absolute',
+        top: -6,
+        left: -6,
+        zIndex: 1,
+      },
     button: {
         marginBottom: theme.spacing(2)
     }
@@ -90,6 +98,7 @@ export default function InstructorDashboard() {
     }
     const [render, setRender] = useState(false);
     const [renderCodewordSet, setRenderCodewordSet] = useState(false)
+    const [loading, setLoading] = useState(false)
     const handleChange = (event, newValue) => {
         setValue(newValue);
     }
@@ -147,6 +156,7 @@ export default function InstructorDashboard() {
     }
     useEffect(() => {
 
+        setLoading(true)
         console.log('inside effect')
         const headers = {
             'token': sessionStorage.getItem('token')
@@ -181,7 +191,7 @@ export default function InstructorDashboard() {
 
                 console.log(result)
                 setCourseData(result)
-              
+                setLoading(false)
             }
         })
             .catch(error => {
@@ -250,6 +260,7 @@ export default function InstructorDashboard() {
                     <Tab label="Codeword" {...a11yProps(1)} />
                 </Tabs>
             </AppBar>
+            {loading && <CircularProgress size={68} className={classes.fabProgress} />}
             <TabPanel value={value} index={0}>
 
                 <Button variant="contained" color="primary" className={classes.button} onClick={handleClickOpen}>

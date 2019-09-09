@@ -8,6 +8,7 @@ import Dashboard from './component/Dashboard'
 import Course from './component/instructor/Course'
 import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom"
 import Signup from './component/Signup'
+import CodewordSet from './component/codewordset/CodewordSet'
 //import history from './helper/history'
 import PrivateRoute from './component/PrivateRoute'
 
@@ -25,6 +26,7 @@ class App extends Component {
     <Router >
         <PrivateRoute exact path="/" component={Dashboard} />
         <PrivateRoute exact path="/course/:id" component={Course} />
+        <PrivateRoute exact path="/codewordset/:id" component={CodewordSet} />
         <Route path="/signin" component={Login} />
         <Route path="/signup" component={Signup} />
     </Router>

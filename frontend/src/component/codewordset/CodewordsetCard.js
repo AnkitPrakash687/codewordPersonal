@@ -87,7 +87,7 @@ export default function CourseCard(props) {
 
     }
     if (redirect) {
-        return <Redirect to={'/course/' + props.id}></Redirect>
+        return <Redirect to={'/codewordset/' + props.id}></Redirect>
     }
 
     return (

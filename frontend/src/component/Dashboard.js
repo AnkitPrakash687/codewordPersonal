@@ -58,8 +58,8 @@ import {withRouter} from 'react-router-dom'
             {this.state.role == 'admin'?
             <Admin></Admin>:
             this.state.role == 'instructor'?
-            <Instructor></Instructor>:
-            <Student></Student>}
+            <Instructor></Instructor>:this.state.role == 'student'?
+            <Student></Student>:false}
         </div>
     );
     }
