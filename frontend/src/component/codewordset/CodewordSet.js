@@ -80,7 +80,9 @@ const useStyles = makeStyles(theme => ({
     },
     table: {
 
-        padding: theme.spacing(4)
+        padding: theme.spacing(4),
+        maxWidth: 600
+        
     },
     assign: {
         margin: theme.spacing(1),
@@ -156,7 +158,7 @@ export default function CodewordSet(props) {
         const headers = {
             'token': sessionStorage.getItem('token')
         };
-        API.get('dashboard/getacodewordset/' + state.id, { headers: headers }).then(response => {
+        API.get('dashboard/getacodewordset/' + props.match.params.id, { headers: headers }).then(response => {
             console.log('👉 Returned data in :', response);
 
             if (response.status == 200) {
@@ -175,7 +177,7 @@ export default function CodewordSet(props) {
       
                 setState({
                     id: codewordSet._id,
-                    codewordset: codewordSet.codewordSetName,
+                    codewordSetName: codewordSet.codewordSetName,
                     count: codewordSet.count
                 })
                 console.log(codewordSet)
@@ -208,17 +210,48 @@ export default function CodewordSet(props) {
         })      
     }
     
-    const addCourseRow = (resolve, newData) => {
+    const checkCodeword = (codeword) =>{
+            console.log('check')
+            let codewords = table.data.map((item)=>{
+                return item.codeword
+            })
+            console.log(codewords)
+            codewords.push(codeword)
+            console.log(codeword.length)
+            var letters = /[!@#$%^&*(),.?":;'{}|<>0-9]/
+            let duplicateWords = codewords.filter((item, index) => 
+            codewords.indexOf(item) !== index
+            )
+            console.log(duplicateWords)
+            if(codeword.length < 3){
+                return 'Codeword less than 3 letters'
+            }
+            
+            else if(codeword.search(letters) != -1){
+                return 'Codeword contains invalid character'
+            } 
+            else if(duplicateWords.length > 0){
+                return 'Codeword already present'
+            }else{
+                return 'true'
+            }
+           
+
+           
+    }
+
+    const addCodewordRow = (resolve, newData) => {
         var data = {
-            id: state.id,
-            email: newData.email,
-            name: newData.name
+            id: props.match.params.id,
+            codeword: newData.codeword,   
         }
         const headers = {
             'token': sessionStorage.getItem('token')
         };
-        console.log(newData)   
-        API.post('dashboard/addstudent', data, { headers: headers }).then(response => {
+        console.log(newData) 
+        var check = checkCodeword(newData.codeword)
+        if(check === 'true'){
+        API.post('dashboard/addcodeword', data, { headers: headers }).then(response => {
             console.log(response.data)
             if(response.data.code == 200){
                 setSnack({
@@ -239,6 +272,13 @@ export default function CodewordSet(props) {
             resolve()
             }
         })
+        }else{
+            setSnack({
+                open: true,
+                message: check
+            }) 
+            resolve()
+        }
     }
 
     const updateCourseRow = (resolve, newData, oldData) => {
@@ -405,22 +445,13 @@ export default function CodewordSet(props) {
                                     <Grid item>
                                         <Typography component="div">
                                             <Box fontSize="h6.fontSize" fontWeight="fontWeightBold" m={1}>
-                                                {state.courseName}
+                                               {state.codewordSetName}
                                             </Box>
                                         </Typography>
                                     </Grid>
                                     <Grid item>
                                         <Grid container>
-                                            <Grid item>
-                                                <Typography variant="caption" className={classes.title}>
-                                                    Start Date: {state.startDate}
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item>
-                                                <Typography variant="caption" className={classes.title}>
-                                                    End date: {state.endDate}
-                                                </Typography>
-                                            </Grid>
+                                          
 
                                         </Grid>
                                     </Grid>
@@ -476,14 +507,14 @@ export default function CodewordSet(props) {
                                     <Grid item xs={12} >
                                         <Typography component="div">
                                             <Box fontSize="h6.body" fontWeight="fontWeightBold" m={1}>
-                                                Acknowledged: {state.codewordSetName}
+                                                Number of codewords: {state.count}
                                             </Box>
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12} >
                                         <Typography component="div">
                                             <Box fontSize="h6.body" fontWeight="fontWeightBold" m={1}>
-                                                Codeword Set: {state.count}
+                                                 {state.isPublished}
                                             </Box>
                                         </Typography>
                                     </Grid>
@@ -493,7 +524,10 @@ export default function CodewordSet(props) {
                         </Grid>
 
                     </div>
-                    <div className={classes.table}>
+                    <Grid container>
+                        <Grid item sm={3}></Grid>
+                        <Grid item >
+                    <div  className={classes.table}>
                         <MaterialTable
                             icons={tableIcons}
                             title="Codewords"
@@ -508,7 +542,7 @@ export default function CodewordSet(props) {
                             editable={{
                                 onRowAdd: newData =>
                                     new Promise(resolve => {
-                                        addCourseRow(resolve, newData)
+                                        addCodewordRow(resolve, newData)
                                      
                                     }),
                                 onRowUpdate: (newData, oldData) =>
@@ -520,10 +554,13 @@ export default function CodewordSet(props) {
                                     new Promise(resolve => {
                                         deleteCourseRow(resolve, oldData)
                                     }),
-
                             }}
+                           
                         />
-                        <Snackbar
+                    </div>
+                    </Grid>
+                    </Grid>
+                    <Snackbar
                             anchorOrigin={{
                                 vertical: 'bottom',
                                 horizontal: 'left',
@@ -545,8 +582,6 @@ export default function CodewordSet(props) {
                                 </IconButton>,
                             ]}
                         ></Snackbar>
-
-                    </div>
                 </div>
 
             </Container>

@@ -10,7 +10,7 @@ let XLSX = require('xlsx')
 
 let addcodewords = (req, res) => {
      var codewords = [];
-    var body = _.pick(req.body,['CodeWordSetName','Codewords']);
+    var body = _.pick(req.body,['id','codewords']);
     codewords = body.Codewords;
     codewords = _.map(codewords, function(codeword){
         return {
@@ -25,6 +25,21 @@ let addcodewords = (req, res) => {
         console.log(e);
         return res.json({ code: 400, message: e });
     })
+}
+module.exports.addcodewords = addcodewords;
+
+
+let addcodeword = (req, res) => {
+   
+   var body = _.pick(req.body,['id','codeword']);
+
+   code.insertMany(codewords).then((user) => {
+       if (user)
+           return res.json({ code: 200, message: true });
+   }).catch((e) => {
+       console.log(e);
+       return res.json({ code: 400, message: e });
+   })
 }
 module.exports.addcodewords = addcodewords;
 

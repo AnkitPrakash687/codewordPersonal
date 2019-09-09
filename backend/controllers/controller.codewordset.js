@@ -84,7 +84,7 @@ let deletecodewordset = (req, res,next) => {
 module.exports.deletecodewordset = deletecodewordset;
 
 let getcodewordset = (req, res) => {
-    console.log('get codewords')
+    //console.log('get codewords')
 
     UserModel.find({role: 'admin'}, (error,users)=>{
         if(!error){
@@ -129,25 +129,65 @@ let getacodewordset = (req, res) => {
         
                 if (codewordSet){
                     var data = []
-                    for(var i in codewordSet){
-                    console.log(codewordSet[i])
+                   
                     var data = {
                         codewordSetName: codewordSet.codewordSetName,
                         count: codewordSet.codewords.length,
                         codewords: codewordSet.codewords
                     }
-                }
+                
                 return res.json({ code: 200, data:data });
                 }
                 return res.json({ code: 404, message: 'not found' });
             }).catch((e) => {
-                console.log(e);
+               // console.log(e);
                 return res.json({ code: 400, message: e });
             })
      
 
 }
 module.exports.getacodewordset = getacodewordset;
+
+
+let addcodeword = (req, res) => {
+   console.log('************add code word**************')
+    var body = _.pick(req.body,['id','codeword']);
+    console.log(body)
+
+    Codewordset.findOne({_id: body.id}, (error, codewordset)=>{
+        if(!error){
+           var newCodeword = codewordset.codewords
+           newCodeword.push(body.codeword)
+           Codewordset.updateOne({_id: body.id}, {
+               $set:{
+                   codewords: newCodeword
+               }
+              
+           }, (error, updatedCodewordSet) => {
+                  if(!error){
+                      console.log(updatedCodewordSet)
+                      return res.json({ code: 200, message: 'Codeword added' });
+                  } 
+
+                  return res.json({ code: 400, message: error });
+        })
+        }
+    })
+
+    // Codewordset.findByIdAndUpdate({_id: body.id},{
+    //     $push:{
+    //         codewords: body.codeword
+    //     }
+    // }, (error, updatedCodewordSet) => {
+    // console.log(updatedCodewordSet)
+    //     if (!error)
+    //         return res.json({ code: 200, message: 'Codeword added' });
+    // }).catch((e) => {
+    //     console.log(e);
+    //     return res.json({ code: 400, message: e });
+    // })
+ }
+ module.exports.addcodeword = addcodeword;
 
 
 
