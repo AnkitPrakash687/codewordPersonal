@@ -47,6 +47,9 @@ const useStyles = makeStyles(theme => ({
     title: {
         padding: 10
     },
+    chipContainer:{
+        margin: theme.spacing(2)
+    },
     banner1: {
         background: lightGreen[200],
         paddingLeft: 20
@@ -69,7 +72,6 @@ const useStyles = makeStyles(theme => ({
         margin: theme.spacing(1)
     },
     chip: {
-        marginTop: theme.spacing(3),
         marginRight: theme.spacing(1)
     },
     submit: {
@@ -114,7 +116,8 @@ export default function AddCodewordSet(props) {
         moreThanThree: [],
         lessThanThree: [],
         duplicates: [],
-        filteredData: []
+        filteredData: [],
+        invalidCodewords: []
     })
 
     const fileLabel = React.useRef(null)
@@ -158,9 +161,21 @@ export default function AddCodewordSet(props) {
 
         }
 
-        const filterData = (array) => {
+        const filterData = (result) => {
             let lessThanThree = []
             let moreThanThree = []
+            var letters = /[!@#$%^&*(),.?":;'{}|<>0-9]/
+
+            let invalidCodewords = result.filter((item)=>{
+                return item.search(letters) != -1
+            })
+            let array = result.filter((item, index)=>{
+                 return item.search(letters) == -1
+            })
+            console.log('******array********')
+            console.log(array)
+            console.log(invalidCodewords)
+
             let duplicateWords = array.filter((item, index) => 
                 array.indexOf(item) !== index
             )
@@ -173,15 +188,15 @@ export default function AddCodewordSet(props) {
                 }
             }
             
-            let filteredData = moreThanThree.filter((item, index) => 
-                array.indexOf(item) === index
-            )
-
+            let filteredData = Array.from(new Set(moreThanThree))
+            console.log(moreThanThree)
+            console.log(filteredData)
             setHardRuleData({
                 moreThanThree: moreThanThree,
                 lessThanThree: lessThanThree,
                 duplicates: duplicateWords,
-                filteredData: filteredData
+                filteredData: filteredData,
+                invalidCodewords: invalidCodewords
             })
 
             
@@ -195,16 +210,15 @@ export default function AddCodewordSet(props) {
     const handleSubmit = (event) => {
         event.preventDefault()
         const headers = {
-            "Content-Type": "multipart/form-data",
             'token': sessionStorage.getItem('token')
         };
         var data = {
-            codeWordSetName: state.codewordSetName,
+            codewordSetName: state.codewordSetName,
             codewords: hardRuleData.filteredData
         }
         console.log(data)
         
-        API.post('dashboard/addcodewordset', data, { headers: headers }).then(response => {
+        API.post('dashboard/addcodewordset',  data, { headers: headers }).then(response => {
             console.log('👉 Returned data in :', response);
             if (response.status == 200) {
                 setState({
@@ -215,9 +229,7 @@ export default function AddCodewordSet(props) {
             } else {
                 console.log('error')
                 setState({
-                    courseName: state.courseName,
-                    startDate: state.startDate,
-                    endDate: state.endDate,
+                    codewordSetName: state.codewordSetName,
                     status: true,
                     error: true,
                     message: response.data.message,
@@ -248,9 +260,7 @@ export default function AddCodewordSet(props) {
 
     const handleMessageClose = () => {
         setState({
-            courseName: state.courseName,
-            startDate: state.startDate,
-            endDate: state.endDate,
+            codewordSetName: state.codewordSetName,
             status: false
         })
         if (!state.error) {
@@ -314,8 +324,9 @@ export default function AddCodewordSet(props) {
 
                   
                 </div>
-                <Box display="flex" justifyContent="flex-end">
+                <Grid container className={classes.chipContainer}>
                        { (hardRuleData.duplicates.length > 0) &&
+                       <Grid item>
                         <Chip
                             label={'No. of duplicate: ' + hardRuleData.duplicates.length}
                             size="small"
@@ -323,8 +334,10 @@ export default function AddCodewordSet(props) {
                             color="primary"
                             variant="outlined"
                         /> 
+                        </Grid>
                        }
                        { (hardRuleData.lessThanThree.length > 0) &&
+                        <Grid item>
                         <Chip
                             label={'Less than 3 letters: ' + hardRuleData.lessThanThree.length}
                             size="small"
@@ -332,7 +345,22 @@ export default function AddCodewordSet(props) {
                             color="primary"
                             variant="outlined"
                         /> 
+                        </Grid>
                        } 
+                       { (hardRuleData.invalidCodewords.length > 0) &&
+                        <Grid item>
+                        <Chip
+                            label={'Invalid Codewords: ' + hardRuleData.invalidCodewords.length}
+                            size="small"
+                            className={classes.chip}
+                            color="primary"
+                            variant="outlined"
+                        /> 
+                        </Grid>
+                       } 
+                       </Grid>
+                <Box display="flex" justifyContent="flex-end">
+                   
                     <Button
                         variant="contained"
                         color="primary"
@@ -353,11 +381,9 @@ export default function AddCodewordSet(props) {
                         Add
           </Button>
 
-
-
                 </Box>
 
-
+               
             </form>
 
             <Snackbar
