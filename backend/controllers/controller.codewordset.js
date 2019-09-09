@@ -2,6 +2,7 @@ const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 var Codewordset = require('../model/model.codewordset');
+var {UserModel} = require('../model/model.user')
 var { mongoose } = require('./../config/database')
 var mailController = require('../config/user.mail.js')
 let xlsx2json = require('xlsx2json'); // added by Ujjawal Kumar
@@ -84,26 +85,38 @@ module.exports.deletecodewordset = deletecodewordset;
 
 let getcodewordset = (req, res) => {
     console.log('get codewords')
-    Codewordset.find({ $or: [{"createdBy.email": req.session.email}, {"createdBy.role": 'admin'} ] } )
-    .then((codewordSet) => {
 
-        if (codewordSet.length > 0){
-            var data = []
-            for(var i in codewordSet){
-            console.log(codewordSet[i])
-            data.push({
-                codewordSetName: codewordSet[i].codewordSetName,
-                count: codewordSet[i].codewords.length,
-                codewords: codewordSet[i].codewords
+    UserModel.find({role: 'admin'}, (error,users)=>{
+        if(!error){
+          let usersEmail = users.map((item)=>{
+               return item.email_id 
+            })
+           
+            usersEmail.push(req.session.email)
+            Codewordset.find({ createdBy: {$in: usersEmail}} )
+            .then((codewordSet) => {
+        
+                if (codewordSet.length > 0){
+                    var data = []
+                    for(var i in codewordSet){
+                    console.log(codewordSet[i])
+                    data.push({
+                        id: codewordSet[i]._id,
+                        codewordSetName: codewordSet[i].codewordSetName,
+                        count: codewordSet[i].codewords.length,
+                        codewords: codewordSet[i].codewords
+                    })
+                }
+                return res.json({ code: 200, data:data });
+                }
+                return res.json({ code: 404, message: 'not found' });
+            }).catch((e) => {
+                console.log(e);
+                return res.json({ code: 400, message: e });
             })
         }
-        return res.json({ code: 200, data:data });
-        }
-        return res.json({ code: 404, message: 'not found' });
-    }).catch((e) => {
-        console.log(e);
-        return res.json({ code: 400, message: e });
     })
+
 }
 module.exports.getcodewordset = getcodewordset;
 

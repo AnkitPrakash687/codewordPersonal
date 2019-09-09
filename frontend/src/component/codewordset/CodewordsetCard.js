@@ -99,47 +99,17 @@ export default function CourseCard(props) {
                     <div className={classes.appBar}>
                         <AppBar position="static" className={classes.appBar}>
                             <Typography variant="h6" className={classes.title}>
-                                {props.courseName}
+                                {props.codewordSetName}
                             </Typography>
                         </AppBar>
                     </div>
 
                     <Paper className={classes.paper2}>
                         <Typography variant="h8" className={classes.title}>
-                            Aknowledged: {props.ack}
+                            Count: {props.count}
                         </Typography><br></br>
-                        <Typography variant="h8" className={classes.title}>
-                            Start Survey: {props.startSurvey}
-                        </Typography><br></br>
-                        <Typography variant="h8" className={classes.title}>
-                            End Survey: {props.endSurvey}
-                        </Typography>
                     </Paper>
-                    <Grid className={classes.dates} container spacing={0}>
-                        <Grid item xs={12} sm={6} md={6} lg={6}>
-                            <Typography variant="caption" className={classes.title}>
-                                Start date: {props.startDate}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={6} lg={6}>
-                            <Typography variant="caption" className={classes.title}>
-                                End Date: {props.endDate}
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                    {(props.isAssigned) ?
-                        <Paper className={classes.banner1}>
-
-                            <Typography variant="h8" className={classes.title}>
-                                CODEWORD ASSIGNED
-                    </Typography>
-                        </Paper> :
-                        <Paper className={classes.banner2}>
-                            <Typography variant="h8" className={classes.title}>
-                                CODEWORD NOT ASSIGNED
-                    </Typography>
-                        </Paper>
-                    }
+                    
                      </CardActionArea>
                 </Paper>
            

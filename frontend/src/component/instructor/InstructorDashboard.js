@@ -89,6 +89,7 @@ export default function InstructorDashboard() {
         };
     }
     const [render, setRender] = useState(false);
+    const [renderCodewordSet, setRenderCodewordSet] = useState(false)
     const handleChange = (event, newValue) => {
         setValue(newValue);
     }
@@ -187,7 +188,41 @@ export default function InstructorDashboard() {
                 console.log(error)
           
             })
+
+            
+
+
     }, [render])
+
+
+    useEffect(() => {
+
+        console.log('inside effect')
+        const headers = {
+            'token': sessionStorage.getItem('token')
+        };
+        API.get('dashboard/getcodewordset', { headers: headers }).then(response => {
+            console.log('👉 Returned data in :', response);
+            let data = response.data.data
+            let result = []
+            data.map((item)=>{
+                result.push({
+                    id: item.id,
+                    codewordSetName: item.codewordSetName,
+                    count: item.count
+                })
+            })
+            setCodewordsetData(result)
+        })
+            .catch(error => {
+                console.log(error)
+          
+            })
+
+            
+
+
+    }, [renderCodewordSet])
 
     const listCourses = courseData.map((course) => {
         return <CourseCard id={course.id}
@@ -201,6 +236,12 @@ export default function InstructorDashboard() {
         ></CourseCard>
     })
 
+    const listCodewordSet = codewordsetData.map((item) => {
+        return <CodewordsetCard id={item.id}
+            codewordSetName={item.codewordSetName}
+            count={item.count}
+        ></CodewordsetCard>
+    })
     return (
         <div className={classes.root}>
             <AppBar position="static" className={classes.appBar}>
@@ -236,6 +277,13 @@ export default function InstructorDashboard() {
                 <AddCodewordSet onClose={handleCodewordClose}></AddCodewordSet>
                 </div>         
             </Dialog>
+               <Grid container spacing={3}>
+
+                    {
+                        listCodewordSet
+                    }
+
+                </Grid>
         </TabPanel>
 
         </div>
