@@ -131,14 +131,10 @@ export default function CodewordSet(props) {
     const classes = useStyles();
     const [state, setState] = useState({
         id: props.match.params.id,
-        courseName: '',
-        startDate: '',
-        endDate: '',
-        startSurvey: '',
-        endSurvey: '',
+        codewordSetName: '',
+        count: 0,
         isAssigned: '',
-        codewordset: '',
-        ack: ''
+     
     })
 
     const [snack, setSnack] = useState({
@@ -165,38 +161,25 @@ export default function CodewordSet(props) {
 
             if (response.status == 200) {
                 console.log(response.data)
-                var course = response.data.data
-                var studentList = course.students.map((student) => {
-                    return { email: student.email }
+                var codewordSet = response.data.data
+                var codewords = codewordSet.codewords.map((item)=>{
+                    return {codeword: item}
                 })
 
                 setTable({
                     columns: [
-                        { title: 'Name', field: 'name' },
-                        { title: 'Email', field: 'email' }
+                        { title: 'Codeword', field: 'codeword' },
                     ],
-                    data: studentList
+                    data: codewords
                 })
-                var ack = course.students.reduce((acc, item) => {
-                    if (item.isRevealed) {
-                        return acc + 1
-                    } else {
-                        return acc + 0
-                    }
-                }, 0)
+      
                 setState({
-                    id: course._id,
-                    courseName: course.courseNameKey,
-                    startDate: (course.Startdate.toString()).substring(0, 10),
-                    endDate: (course.Enddate.toString()).substring(0, 10),
-                    startSurvey: course.PreSurveyURL == '' ? 'Unpublished' : course.PreSurveyURL,
-                    endSurvey: course.PostSurveyURL == '' ? 'Unpublished' : course.PostSurveyURL,
-                    isAssigned: course.isAssigned,
-                    codewordset: course.codewordSet.codewordSetName == '' ? 'Not Assigned' : course.codewordSet.codewordSetName,
-                    ack: ack + '/' + course.students.length
+                    id: codewordSet._id,
+                    codewordset: codewordSet.codewordSetName,
+                    count: codewordSet.count
                 })
-                console.log(course)
-                if(course.isAssigned){
+                console.log(codewordSet)
+                if(codewordSet.isAssigned){
                     setDisableEdit(true)
                 }
             }
@@ -493,44 +476,27 @@ export default function CodewordSet(props) {
                                     <Grid item xs={12} >
                                         <Typography component="div">
                                             <Box fontSize="h6.body" fontWeight="fontWeightBold" m={1}>
-                                                Acknowledged: {state.ack}
+                                                Acknowledged: {state.codewordSetName}
                                             </Box>
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12} >
                                         <Typography component="div">
                                             <Box fontSize="h6.body" fontWeight="fontWeightBold" m={1}>
-                                                Codeword Set: {state.codewordset}
+                                                Codeword Set: {state.count}
                                             </Box>
                                         </Typography>
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid item sm={6} md={6} lg={6}>
-                                <Grid container direction="column">
-                                    <Grid item xs={12} >
-                                        <Typography component="div">
-                                            <Box fontSize="h6.body" fontWeight="fontWeightBold" m={1}>
-                                                Start Survey: {state.startSurvey}
-                                            </Box>
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography component="div">
-                                            <Box fontSize="h6.body" fontWeight="fontWeightBold" m={1}>
-                                                End Survey: {state.endSurvey}
-                                            </Box>
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
+                        
                         </Grid>
 
                     </div>
                     <div className={classes.table}>
                         <MaterialTable
                             icons={tableIcons}
-                            title="Students"
+                            title="Codewords"
                             columns={table.columns}
                             data={table.data}
                             options={{
