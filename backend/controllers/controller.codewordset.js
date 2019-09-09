@@ -173,19 +173,7 @@ let addcodeword = (req, res) => {
         })
         }
     })
-
-    // Codewordset.findByIdAndUpdate({_id: body.id},{
-    //     $push:{
-    //         codewords: body.codeword
-    //     }
-    // }, (error, updatedCodewordSet) => {
-    // console.log(updatedCodewordSet)
-    //     if (!error)
-    //         return res.json({ code: 200, message: 'Codeword added' });
-    // }).catch((e) => {
-    //     console.log(e);
-    //     return res.json({ code: 400, message: e });
-    // })
+ 
  }
  module.exports.addcodeword = addcodeword;
 
