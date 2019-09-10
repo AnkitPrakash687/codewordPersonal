@@ -177,5 +177,37 @@ let addcodeword = (req, res) => {
  }
  module.exports.addcodeword = addcodeword;
 
+ let updatecodeword = (req, res) => {
+    console.log('************update code word**************')
+     var body = _.pick(req.body,['id','newCodeword', 'oldCodeword']);
+     console.log(body)
+ 
+     Codewordset.findOne({_id: body.id}, (error, codewordset)=>{
+         if(!error){
+            var newCodewords = codewordset.codewords.filter((item)=>{
+                if(item != body.oldCodeword){
+                    return item
+                }
+            })
+            newCodewords.push(body.newCodeword)
+            Codewordset.updateOne({_id: body.id}, {
+                $set:{
+                    codewords: newCodewords
+                }
+               
+            }, (error, updatedCodewordSet) => {
+                   if(!error){
+                       console.log(updatedCodewordSet)
+                       return res.json({ code: 200, message: 'Codeword updated' });
+                   } 
+ 
+                   return res.json({ code: 400, message: error });
+         })
+         }
+     })
+  
+  }
+  module.exports.updatecodeword = updatecodeword;
+
 
 

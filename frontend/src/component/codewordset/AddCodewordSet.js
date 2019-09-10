@@ -156,8 +156,12 @@ export default function AddCodewordSet(props) {
                 reader.readAsText(file)
                 reader.onload = () =>{
                      var result = reader.result.split('\n')
-                     console.log(result)
-                    filterData(result)
+                     
+                     var codewordSetData = result.map((item)=>{
+                         return item.replace(/[\r]+/g,"")
+                     })
+                     console.log(codewordSetData)
+                    filterData(codewordSetData)
                 }
                
             }else{
@@ -169,7 +173,7 @@ export default function AddCodewordSet(props) {
         const filterData = (result) => {
             let lessThanThree = []
             let moreThanThree = []
-            var letters = /[!@#$%^&*(),.?":;'{}|<>0-9]/
+            var letters = /[/\s/\t/!@#$%^&*(),.?":;'{}|<>0-9\\\\]/
 
             let invalidCodewords = result.filter((item)=>{
                 return item.search(letters) != -1

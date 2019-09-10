@@ -28,6 +28,7 @@ router.post('/addnewCourse', courseController.addCourse);
 router.get('/getCourseList', courseController.getCourses/*,courseController.getCoursesAckData*/);
 router.post('/addcodewordset',codewordsetController.addcodewordset);
 router.post('/addcodeword', codewordsetController.addcodeword)
+router.post('/updatecodeword', codewordsetController.updatecodeword)
 router.post('/deletecodewordset',codewordsetController.deletecodewordset,codewordController.deleteCodewordsForSet);
 router.post('/getdataxlsx',codewordsetController.getDataFromXLS);
 router.post('/addnewcodewords',multer().single('file'), codewordController.addcodewords)

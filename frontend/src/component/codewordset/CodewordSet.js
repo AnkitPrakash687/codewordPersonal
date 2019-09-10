@@ -283,17 +283,18 @@ export default function CodewordSet(props) {
 
     const updateCourseRow = (resolve, newData, oldData) => {
         var data = {
-            id: state.id,
-            newEmail: newData.email,
-            newName: newData.name,
-            oldEmail: oldData.email,
-            oldName: oldData.name
+            id:  props.match.params.id,
+            newCodeword: newData.codeword,
+            oldCodeword: oldData.codeword,
         }
+
+        var check = checkCodeword(newData.codeword)
+        if(check === 'true'){
         const headers = {
             'token': sessionStorage.getItem('token')
         };
         console.log(newData)   
-        API.post('dashboard/editstudent', data, { headers: headers }).then(response => {
+        API.post('dashboard/updatecodeword', data, { headers: headers }).then(response => {
             console.log(response.data)
             if(response.data.code == 200){
                 setSnack({
@@ -313,6 +314,13 @@ export default function CodewordSet(props) {
             resolve()
             }
         })
+    }else{
+        setSnack({
+            open: true,
+            message: check
+        }) 
+        resolve()
+    }
     }
 
     const deleteCourseRow = (resolve, oldData) => {
