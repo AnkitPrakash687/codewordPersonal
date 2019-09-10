@@ -444,8 +444,10 @@ export default function CodewordSet(props) {
         'token': sessionStorage.getItem('token')
     }; 
     API.post('dashboard/generateReport', {id: props.match.params.id }, { headers: headers }).then(response => {
-    
-    
+        console.log(response.data)       
+        if(response.data.code == 200){
+                    console.log(response.data.data)
+                }
     })
 
    }

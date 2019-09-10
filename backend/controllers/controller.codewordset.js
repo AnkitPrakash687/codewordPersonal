@@ -269,7 +269,7 @@ let addcodeword = (req, res) => {
            var output = []
            output.push(result[i].word)
            for(var i in ratings){
-                if(ratings[i].rating > 0.6){
+                if(ratings[i].rating > 0.7){
                     output.push(ratings[i].target)
                     checkerArray.push(ratings[i].target)
                     }
@@ -284,8 +284,9 @@ let addcodeword = (req, res) => {
                return item
            }
        })
-       console.log(Array.from(new Set(final.map(JSON.stringify)), JSON.parse))
-
+      // console.log(Array.from(new Set(final.map(JSON.stringify)), JSON.parse))
+      var data = Array.from(new Set(final.map(JSON.stringify)), JSON.parse)
+      return res.json({ code: 200, data: data });
     })
   }
 
