@@ -210,4 +210,32 @@ let addcodeword = (req, res) => {
   module.exports.updatecodeword = updatecodeword;
 
 
+  let deletecodeword = (req, res) => {
+    console.log('************delete code word**************')
+     var body = _.pick(req.body,['id','codeword']);
+     console.log(body)
+ 
+     Codewordset.findOne({_id: body.id}, (error, codewordset)=>{
+         if(!error){
+            // var newCodeword = codewordset.codewords
+            // newCodeword.push(body.codeword)
+            Codewordset.updateOne({_id: body.id}, {
+                $pull:{
+                    codewords: body.codeword
+                }
+               
+            }, (error, updatedCodewordSet) => {
+                   if(!error){
+                       console.log(updatedCodewordSet)
+                       return res.json({ code: 200, message: 'Codeword deleted' });
+                   } 
+ 
+                   return res.json({ code: 400, message: error });
+         })
+         }
+     })
+  
+  }
+  module.exports.deletecodeword = deletecodeword;
+
 

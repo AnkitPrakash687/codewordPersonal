@@ -218,7 +218,7 @@ export default function CodewordSet(props) {
             console.log(codewords)
             codewords.push(codeword)
             console.log(codeword.length)
-            var letters = /[!@#$%^&*(),.?":;'{}|<>0-9]/
+            var letters = /[/\s/\t/!@#$%^&*(),.?":;'{}|<>0-9\\\\]/
             let duplicateWords = codewords.filter((item, index) => 
             codewords.indexOf(item) !== index
             )
@@ -323,15 +323,15 @@ export default function CodewordSet(props) {
     }
     }
 
-    const deleteCourseRow = (resolve, oldData) => {
+    const deleteCodewordRow = (resolve, oldData) => {
         var data = {
-            id: state.id,
-            email: oldData.email
+            id: props.match.params.id,
+            codeword: oldData.codeword
         }
         const headers = {
             'token': sessionStorage.getItem('token')
         };  
-        API.post('dashboard/deletestudent', data, { headers: headers }).then(response => {
+        API.post('dashboard/deletecodeword', data, { headers: headers }).then(response => {
             console.log(response.data)
             if(response.data.code == 200){
                 setSnack({
@@ -560,7 +560,7 @@ export default function CodewordSet(props) {
                                     }),
                                 onRowDelete: oldData =>
                                     new Promise(resolve => {
-                                        deleteCourseRow(resolve, oldData)
+                                        deleteCodewordRow(resolve, oldData)
                                     }),
                             }}
                            
