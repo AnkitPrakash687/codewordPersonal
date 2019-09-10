@@ -439,6 +439,17 @@ export default function CodewordSet(props) {
         render: PropTypes.bool.isRequired,
     };
 
+   const handleReport = () =>{
+    const headers = {
+        'token': sessionStorage.getItem('token')
+    }; 
+    API.post('dashboard/generateReport', {id: props.match.params.id }, { headers: headers }).then(response => {
+    
+    
+    })
+
+   }
+
     return (
         <div>
             <Appbar isLoggedIn={true}></Appbar>
@@ -469,6 +480,18 @@ export default function CodewordSet(props) {
 
                             </Grid>
                             <Grid item sm={3}>
+
+                            <Button
+                                    variant="contained"
+                                    color="primary"
+                                    size="medium"
+                                    className={classes.report}
+                                    onClick={handleReport}
+                                   // disabled={disableEdit}
+                                    >
+                                    
+                                    Report
+                                </Button>
 
                                 <Button
                                     variant="contained"

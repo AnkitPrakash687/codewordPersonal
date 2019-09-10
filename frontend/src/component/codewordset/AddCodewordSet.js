@@ -156,7 +156,7 @@ export default function AddCodewordSet(props) {
                 reader.readAsText(file)
                 reader.onload = () =>{
                      var result = reader.result.split('\n')
-                     
+                     console.log(result)
                      var codewordSetData = result.map((item)=>{
                          return item.replace(/[\r]+/g,"")
                      })
@@ -171,6 +171,7 @@ export default function AddCodewordSet(props) {
         }
 
         const filterData = (result) => {
+
             let lessThanThree = []
             let moreThanThree = []
             var letters = /[/\s/\t/!@#$%^&*(),.?":;'{}|<>0-9\\\\]/
@@ -190,7 +191,7 @@ export default function AddCodewordSet(props) {
             )
     
             for(let i in array){
-                if(array[i].length < 4){
+                if(array[i].length < 3){
                     lessThanThree.push(array[i])
                 }else{
                     moreThanThree.push(array[i])

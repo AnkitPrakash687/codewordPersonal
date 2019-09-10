@@ -7,7 +7,7 @@ var { mongoose } = require('./../config/database')
 var mailController = require('../config/user.mail.js')
 let xlsx2json = require('xlsx2json'); // added by Ujjawal Kumar
 multer = require('multer')
-
+const stringSimilarity = require('string-similarity')
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './data')
@@ -238,4 +238,64 @@ let addcodeword = (req, res) => {
   }
   module.exports.deletecodeword = deletecodeword;
 
+  let generateReport = (req, res) =>{
 
+    var body = _.pick(req.body,['id']);
+    Codewordset.findOne({_id: body.id}, (error, codewordset)=>{
+        if(error){
+            return res.json({ code: 400, message: error });
+        }
+
+        var codewords = codewordset.codewords
+        var result = []
+        //console.log(codewords)
+        for(var i in codewords){
+            var targetCodewords = codewords.filter((item, index)=>{
+                if(index != i){
+                    return item
+                }
+            })
+
+            result.push({word: codewords[i], similarity: stringSimilarity.findBestMatch(codewords[i], targetCodewords)})
+        }
+
+        var similars = []
+        var checkerArray = []
+       for(var i in result){
+
+        if(!checker(checkerArray, result[i].word)){
+          // console.log(result[i])
+           var ratings = result[i].similarity.ratings
+           var output = []
+           output.push(result[i].word)
+           for(var i in ratings){
+                if(ratings[i].rating > 0.6){
+                    output.push(ratings[i].target)
+                    checkerArray.push(ratings[i].target)
+                    }
+                }
+           }
+           
+           similars.push(output)
+        
+       }
+       let final = similars.filter((item)=>{
+           if(item.length > 1){
+               return item
+           }
+       })
+       console.log(Array.from(new Set(final.map(JSON.stringify)), JSON.parse))
+
+    })
+  }
+
+  module.exports.generateReport = generateReport
+
+const checker = (checkerArray, str) =>{
+    for(var i in checkerArray){
+        if(checkerArray[i] == str){
+            return true
+        }
+    }
+    return false
+}
