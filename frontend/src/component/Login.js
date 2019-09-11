@@ -19,7 +19,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Dashboard from './Dashboard';
 import { withStyles } from '@material-ui/core/styles';
-
+import history from '../history'
 
 const useStyles = theme => ({
   '@global': {
@@ -125,6 +125,7 @@ class SignIn extends Component {
     const { classes } = this.props;
   
     if (this.state.isLoggedIn) {
+      history.push('/')
       return <Redirect to={{
         pathname: '/',
         email: { id: '123' }
