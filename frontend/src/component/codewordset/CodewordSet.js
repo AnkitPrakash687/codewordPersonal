@@ -623,7 +623,7 @@ export default function CodewordSet(props) {
                         ></Snackbar>
                 </div>
 
-                <Dialog  fullScreen = {true} disableBackdropClick={true} onClose={handleReportClose} aria-labelledby="simple-dialog-title" open={openReport}>    
+                <Dialog  fullScreen={true}  disableBackdropClick={true} onClose={handleReportClose} aria-labelledby="simple-dialog-title" open={openReport}>    
                  <div>
                  <DialogTitle id="simple-dialog-title">Report </DialogTitle>
                 <Report id={props.match.params.id}></Report>

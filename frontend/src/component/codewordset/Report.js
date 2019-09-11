@@ -2,7 +2,7 @@ import React, { useState, Component, useEffect } from 'react';
 import { green, lightGreen, red, grey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import API from '../../utils/API'
-import { Paper, Grid, Box, Button, Container, CssBaseline, Snackbar, IconButton, Dialog, DialogTitle } from '@material-ui/core';
+import { Paper, Grid, Box, Typography, Button, Container, CssBaseline, Snackbar, IconButton, Dialog, DialogTitle } from '@material-ui/core';
 import ReportCard from './ReportCard'
 const useStyles = makeStyles(theme => ({
     root: {
@@ -15,17 +15,23 @@ const useStyles = makeStyles(theme => ({
     },
     paper: {
         borderRadius: 5,
-        paddingBottom: 20,
-        maxWidth: 300,
-        minWidth:200
+        background: lightGreen[300],
+        padding: theme.spacing(2),
+    },
+
+    heading:{
+        borderRadius: 5,
+        background: green[600],
+        padding: theme.spacing(1)
+
     }
 }));
 
 export default function Report(props) {
     const classes = useStyles();
     const [render, setRender] = useState(false);
-    const [similarCodewords, setSimilarCodewords] = useState([['Apple','Banana']]);
-    useEffect(()=>{
+    const [similarCodewords, setSimilarCodewords] = useState([]);
+    useEffect(() => {
         console.log('report')
         console.log(props.id)
         const headers = {
@@ -35,26 +41,46 @@ export default function Report(props) {
             console.log(response.data)
             if (response.data.code == 200) {
                 console.log(response.data.data)
-               setSimilarCodewords(response.data.data)
+                setSimilarCodewords(response.data.data)
             }
         })
-    }, [])
+    }, [render])
 
 
-    const listCodeword = 
-        similarCodewords.map((item)=>{
-         return <ReportCard items={item}></ReportCard>
+    const listCodeword =
+        similarCodewords.map((item) => {
+            return <ReportCard items={item}></ReportCard>
         })
-    
-    return(
+    // const handleClick = () =>{
+    //     setRender(!render)
+    //     console.log(render)
+    // }
+
+    return (
         <div>
-            <Grid container >
-               
-            {
-                listCodeword
-            }
-        
-            </Grid>
+
+            <Container component="main" maxWidth="lg">
+                <CssBaseline />
+                <Paper>
+                <Box className={classes.heading}>
+                        <Typography component="div">
+                            <Box fontSize="h6.fontSize"  m={1}>
+                                Similar Codewords
+                            </Box>
+                        </Typography>
+                    </Box>
+                    </Paper>
+                <Paper className={classes.paper}>
+                  
+                    <Grid container >
+
+                        {
+                            listCodeword
+                        }
+
+                    </Grid>
+                </Paper>
+            </Container>
         </div>
     )
 }

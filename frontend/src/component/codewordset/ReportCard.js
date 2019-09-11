@@ -2,7 +2,7 @@ import React, { useState, Component, useEffect } from 'react';
 import { green, lightGreen, red, grey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import API from '../../utils/API'
-import {List, ListItem, ListItemText, Chip, Paper } from '@material-ui/core';
+import {List, Grid,ListItem, ListItemText, Chip, Paper } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -43,6 +43,7 @@ export default function ReportCard(props) {
         <List dense={true}>
 
             <Paper className={classes.paper}>
+                <Grid container direction="column">
           {
               chipData.map((item)=>(                       
                   <Chip
@@ -55,6 +56,7 @@ export default function ReportCard(props) {
                 onDelete = {handleDelete(item)}
             /> ))
           }
+          </Grid>
       </Paper>
         </List>
     )
