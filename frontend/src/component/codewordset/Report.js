@@ -31,6 +31,7 @@ export default function Report(props) {
     const classes = useStyles();
     const [render, setRender] = useState(false);
     const [similarCodewords, setSimilarCodewords] = useState([]);
+    const [anagrams, setAnagrams] = useState([])
     useEffect(() => {
         console.log('report')
         console.log(props.id)
@@ -41,7 +42,8 @@ export default function Report(props) {
             console.log(response.data)
             if (response.data.code == 200) {
                 console.log(response.data.data)
-                setSimilarCodewords(response.data.data)
+                setSimilarCodewords(response.data.data.similars)
+                setAnagrams(response.data.data.anagrams)
             }
         })
     }, [render])
@@ -57,7 +59,10 @@ export default function Report(props) {
     //     setRender(!render)
     //     console.log(render)
     // }
-
+    const listAnagrams =
+    anagrams.map((item) => {
+        return <ReportCard id={props.id} items={item} render={handleRender}></ReportCard>
+    })
     return (
         <div>
 
@@ -78,6 +83,26 @@ export default function Report(props) {
 
                         {
                             listCodeword
+                        }
+
+                    </Grid>
+                </Paper>
+
+                <Paper>
+                <Box className={classes.heading}>
+                        <Typography component="div">
+                            <Box fontSize="h6.fontSize"  m={1}>
+                                Anagrams
+                            </Box>
+                        </Typography>
+                    </Box>
+                    </Paper>
+                <Paper className={classes.paper}>
+                  
+                    <Grid container >
+
+                        {
+                            listAnagrams
                         }
 
                     </Grid>

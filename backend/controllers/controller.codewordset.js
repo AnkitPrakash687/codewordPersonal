@@ -8,6 +8,8 @@ var mailController = require('../config/user.mail.js')
 let xlsx2json = require('xlsx2json'); // added by Ujjawal Kumar
 multer = require('multer')
 const stringSimilarity = require('string-similarity')
+const anagramFinder = require('anagram-finder')
+
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './data')
@@ -285,7 +287,18 @@ let addcodeword = (req, res) => {
            }
        })
       // console.log(Array.from(new Set(final.map(JSON.stringify)), JSON.parse))
-      var data = Array.from(new Set(final.map(JSON.stringify)), JSON.parse)
+     
+      
+     var anagrams = anagramFinder.find(codewords).filter((item)=>{
+         if(item.length > 1){
+             return item
+         }
+     })
+
+     var data ={similars: Array.from(new Set(final.map(JSON.stringify)), JSON.parse),
+                anagrams: anagrams}
+     console.log('************ANAGRAMS******************')
+     console.log(anagrams)
       return res.json({ code: 200, data: data });
     })
   }

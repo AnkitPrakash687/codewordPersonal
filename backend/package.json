@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "anagram-finder": "^1.0.2",
     "axios": "^0.18.0",
     "bcrypt": "^3.0.4",
     "bcryptjs": "^2.4.3",

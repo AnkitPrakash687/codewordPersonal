@@ -58,11 +58,12 @@ export default function ReportCard(props) {
     }
     return (
         <List dense={true}>
-
+           {chipData.length > 0 &&
             <Paper className={classes.paper}>
                 <Grid container direction="column">
                     {
                         chipData.map((item) => (
+                            
                             <Chip
                                 key={item.key}
                                 label={item.label}
@@ -75,6 +76,7 @@ export default function ReportCard(props) {
                     }
                 </Grid>
             </Paper>
+           }
         </List>
     )
 }
