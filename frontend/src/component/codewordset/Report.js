@@ -46,10 +46,12 @@ export default function Report(props) {
         })
     }, [render])
 
-
+    const handleRender = () =>{
+        setRender(!render)
+    }
     const listCodeword =
         similarCodewords.map((item) => {
-            return <ReportCard items={item}></ReportCard>
+            return <ReportCard id={props.id} items={item} render={handleRender}></ReportCard>
         })
     // const handleClick = () =>{
     //     setRender(!render)
