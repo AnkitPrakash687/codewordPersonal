@@ -28,7 +28,11 @@ const useStyles = makeStyles(theme => ({
     },
     progress:{
         margin: theme.spacing(2),
+    },
+    formControl:{
+        minWidth: 250
     }
+
 }));
 
 export default function Report(props) {
@@ -131,9 +135,13 @@ export default function Report(props) {
                             <MenuItem value="">
                                 <em>None</em>
                             </MenuItem>
-                            {/* {codeword.map((codewordSet)=>{
-                                return <MenuItem value={codewordSet.codewordSetName}>{codewordSet.codewordSetName}</MenuItem>
-                            })} */}
+                        
+                                <MenuItem value={0}>Level 1 - Lowest</MenuItem>
+                                <MenuItem value={1}>Level 2 - Low</MenuItem>
+                                <MenuItem value={2}>Level 3 - Medium</MenuItem>
+                                <MenuItem value={3}>Level 3 - High</MenuItem>
+                                <MenuItem value={4}>Level 4 - Highest</MenuItem>
+                          
                         </Select>
                     </FormControl>
 
