@@ -30,7 +30,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-
+import Report from './Report'
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -153,6 +153,7 @@ export default function CodewordSet(props) {
     const [open, setOpen] = useState(false)
     const [render, setRender] = useState(false)
     const [disableEdit, setDisableEdit] = useState(false)
+    const [openReport, setOpenReport] = useState(false)
     useEffect(() => {
 
         const headers = {
@@ -440,16 +441,21 @@ export default function CodewordSet(props) {
     };
 
    const handleReport = () =>{
-    const headers = {
-        'token': sessionStorage.getItem('token')
-    }; 
-    API.post('dashboard/generateReport', {id: props.match.params.id }, { headers: headers }).then(response => {
-        console.log(response.data)       
-        if(response.data.code == 200){
-                    console.log(response.data.data)
-                }
-    })
+    // const headers = {
+    //     'token': sessionStorage.getItem('token')
+    // }; 
+    // API.post('dashboard/generateReport', {id: props.match.params.id }, { headers: headers }).then(response => {
+    //     console.log(response.data)       
+    //     if(response.data.code == 200){
+    //                 console.log(response.data.data)
+    //             }
+    // })
+    setOpenReport(true)
 
+   }
+
+   const handleReportClose = () => {
+       setOpenReport(false)
    }
 
     return (
@@ -617,6 +623,12 @@ export default function CodewordSet(props) {
                         ></Snackbar>
                 </div>
 
+                <Dialog  fullScreen = {true} disableBackdropClick={true} onClose={handleReportClose} aria-labelledby="simple-dialog-title" open={openReport}>    
+                 <div>
+                 <DialogTitle id="simple-dialog-title">Report </DialogTitle>
+                <Report id={props.match.params.id}></Report>
+                </div>         
+                </Dialog>
             </Container>
         </div>
     );
