@@ -9,6 +9,7 @@ import API from '../../utils/API'
 import { makeStyles } from '@material-ui/core/styles';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import { Redirect } from "react-router-dom";
+import history from '../../history'
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -87,6 +88,7 @@ export default function CourseCard(props) {
 
     }
     if (redirect) {
+        history.push('/course'+props.id)
         return <Redirect to={'/course/' + props.id}></Redirect>
     }
 

@@ -9,11 +9,11 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-d
 import * as serviceWorker from './serviceWorker';
 import { Provider } from "react-redux";
 import store from "./store/index";
-
+import history from './history'
 ReactDOM.render((
-   <Provider store={store}>
+   <Router history={history}>
      <App/>
-   </Provider>
+    </Router>
   ), document.getElementById('root'))
 
   

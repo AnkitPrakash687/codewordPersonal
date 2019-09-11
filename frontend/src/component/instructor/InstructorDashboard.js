@@ -199,9 +199,6 @@ export default function InstructorDashboard() {
           
             })
 
-            
-
-
     }, [render])
 
 
@@ -228,9 +225,6 @@ export default function InstructorDashboard() {
                 console.log(error)
           
             })
-
-            
-
 
     }, [renderCodewordSet])
 
