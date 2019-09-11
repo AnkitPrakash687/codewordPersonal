@@ -3,7 +3,7 @@ import { green, lightGreen, red, grey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import API from '../../utils/API'
 import { Paper, Grid, Box, Typography,CircularProgress, Button, Container, CssBaseline, 
-    Select, MenuItem, FormControl, FormHelperText, InputLabel } from '@material-ui/core';
+    Select, MenuItem, FormControl, OutlinedInput, FormHelperText, InputLabel } from '@material-ui/core';
 import ReportCard from './ReportCard'
 const useStyles = makeStyles(theme => ({
     root: {
@@ -37,7 +37,18 @@ export default function Report(props) {
     const [similarCodewords, setSimilarCodewords] = useState([]);
     const [anagrams, setAnagrams] = useState([])
     const [loading, setLoading] = useState()
-    const [level, setLevel] = useState()
+    const [level, setLevel] = useState({
+        age: '',
+        name: 'hai',
+      })
+
+      const inputLabel = React.useRef(null);
+      const [disableUpdate, setDisableUpdate] = useState('true')
+      const [labelWidth, setLabelWidth] = React.useState(0);
+      React.useEffect(() => {
+          setLabelWidth(inputLabel.current.offsetWidth);
+      }, []);
+
     useEffect(() => {
         setLoading(true)
         console.log('report')
@@ -74,10 +85,10 @@ export default function Report(props) {
     })
 
  
-    const handleChange = (event) => {
+    const handleChange = name => (event) => {
         setLevel(oldValues => ({
             ...oldValues,
-            [event.target.name]: event.target.value,
+            [name]: event.target.value,
           }));
     }
     return (
@@ -108,25 +119,23 @@ export default function Report(props) {
                     </Paper>
                 <Paper className={classes.paper}>
                   
-                <FormControl className={classes.formControl}>
-        <InputLabel htmlFor="age-helper">Age</InputLabel>
-        <Select
-          value={level}
-          onChange={handleChange}
-          inputProps={{
-            name: 'age',
-            id: 'age-helper',
-          }}
-        >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
-        </Select>
-        <FormHelperText>Some important helper text</FormHelperText>
-      </FormControl>
+                <FormControl margin='dense' variant="outlined" className={classes.formControl}>
+                        <InputLabel ref={inputLabel} htmlFor="outlined-age-simple">
+                            Select Level of similarity
+                        </InputLabel>
+                        <Select
+                            value={level}
+                            onChange={handleChange('level')}
+                            input={<OutlinedInput labelWidth={labelWidth} name="level" id="outlined-age-simple" />}
+                        >
+                            <MenuItem value="">
+                                <em>None</em>
+                            </MenuItem>
+                            {/* {codeword.map((codewordSet)=>{
+                                return <MenuItem value={codewordSet.codewordSetName}>{codewordSet.codewordSetName}</MenuItem>
+                            })} */}
+                        </Select>
+                    </FormControl>
 
                     <Grid container >
 
