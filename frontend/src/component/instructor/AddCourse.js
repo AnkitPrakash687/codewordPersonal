@@ -130,6 +130,9 @@ export default function AddCourse(props) {
 
     const [studentCount, setStudentCount] = useState('empty')
     const [codewordCount, SetCodewordCount] = useState('empty')
+    const [publishedCodewordset, SetPublishedCodewordset] = useState([{
+        codeWordSetName:''
+    }])
     useEffect(() => {
         console.log('getdata')
         const headers = {
@@ -144,10 +147,24 @@ export default function AddCourse(props) {
                         return {
                             codewordSetName: codewordSet.codewordSetName,
                             count: codewordSet.count,
-                            codewords: codewordSet.codewords
+                            codewords: codewordSet.codewords,
+                            isPublished: codewordSet.isPublished
                         }
                     })
                 )
+                console.log('*******published codewordset')
+                console.log(response.data.data.filter((item)=>{
+                    if(item.isPublished){
+                        return item
+                    }
+                }
+                ))
+               SetPublishedCodewordset(response.data.data.filter((item)=>{
+                    if(item.isPublished){
+                        return {codewordSetName: item.codewordSetName}
+                    }
+                }
+                ))
                 console.log(response.data.data)
             }
         })
@@ -416,7 +433,7 @@ export default function AddCourse(props) {
                             <MenuItem value="">
                                 <em>None</em>
                             </MenuItem>
-                            {codeword.map((codewordSet) => {
+                            {publishedCodewordset.map((codewordSet) => {
                                 return <MenuItem value={codewordSet.codewordSetName}>{codewordSet.codewordSetName}</MenuItem>
                             })}
                         </Select>
