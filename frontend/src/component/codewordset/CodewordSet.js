@@ -5,7 +5,10 @@ import Appbar from '../MyAppBar'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red, grey } from '@material-ui/core/colors';
-import { Paper, Grid, Box, Button, Container, CssBaseline, Snackbar, IconButton, Dialog, DialogTitle } from '@material-ui/core';
+import {
+    Paper, Grid, Box, Slide, Button, Container, CssBaseline, Snackbar,
+    IconButton, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText
+} from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
 import { makeStyles } from '@material-ui/core/styles';
@@ -82,7 +85,7 @@ const useStyles = makeStyles(theme => ({
 
         padding: theme.spacing(4),
         maxWidth: 600
-        
+
     },
     assign: {
         margin: theme.spacing(1),
@@ -114,7 +117,7 @@ const useStyles = makeStyles(theme => ({
         margin: 10,
         background: lightGreen[200]
     },
-    report:{
+    report: {
         background: grey[500]
     },
     title: {
@@ -139,11 +142,15 @@ export default function CodewordSet(props) {
         codewordSetName: '',
         count: 0,
         isPublished: '',
-     
+
     })
 
+    const Transition = React.forwardRef(function Transition(props, ref) {
+        return <Slide direction="up" ref={ref} {...props} />;
+    });
+
     const [snack, setSnack] = useState({
-        message:'',
+        message: '',
         open: false
     })
     const [table, setTable] = useState({
@@ -157,6 +164,7 @@ export default function CodewordSet(props) {
     const [render, setRender] = useState(false)
     const [disableEdit, setDisableEdit] = useState(false)
     const [openReport, setOpenReport] = useState(false)
+    const [deleteConfirmation, setDeleteConfirmation] = useState(false)
     useEffect(() => {
 
         const headers = {
@@ -168,8 +176,8 @@ export default function CodewordSet(props) {
             if (response.status == 200) {
                 console.log(response.data)
                 var codewordSet = response.data.data
-                var codewords = codewordSet.codewords.map((item)=>{
-                    return {codeword: item}
+                var codewords = codewordSet.codewords.map((item) => {
+                    return { codeword: item }
                 })
 
                 setTable({
@@ -178,7 +186,7 @@ export default function CodewordSet(props) {
                     ],
                     data: codewords
                 })
-      
+
                 setState({
                     id: codewordSet._id,
                     codewordSetName: codewordSet.codewordSetName,
@@ -186,7 +194,7 @@ export default function CodewordSet(props) {
                     isPublished: codewordSet.isPublished
                 })
                 console.log(codewordSet)
-                if(codewordSet.isPublished){
+                if (codewordSet.isPublished) {
                     setDisableEdit(true)
                 }
             }
@@ -196,7 +204,7 @@ export default function CodewordSet(props) {
             })
     }, [render])
 
-  
+
     const [redirect, setRedirect] = useState(false);
     const handleCardClick = () => {
         console.log('click working')
@@ -208,124 +216,124 @@ export default function CodewordSet(props) {
     }
 
     const handleMessageClose = () => {
-        
+
         setSnack({
             message: '',
             open: false
-        })      
+        })
     }
-    
-    const checkCodeword = (codeword) =>{
-            console.log('check')
-            let codewords = table.data.map((item)=>{
-                return item.codeword
-            })
-            console.log(codewords)
-            codewords.push(codeword)
-            console.log(codeword.length)
-            var letters = /[/\s/\t/!@#$%^&*(),.?":;'{}|<>0-9\\\\]/
-            let duplicateWords = codewords.filter((item, index) => 
-            codewords.indexOf(item) !== index
-            )
-            console.log(duplicateWords)
-            if(codeword.length < 3){
-                return 'Codeword less than 3 letters'
-            }
-            
-            else if(codeword.search(letters) != -1){
-                return 'Codeword contains invalid character'
-            } 
-            else if(duplicateWords.length > 0){
-                return 'Codeword already present'
-            }else{
-                return 'true'
-            }
-           
 
-           
+    const checkCodeword = (codeword) => {
+        console.log('check')
+        let codewords = table.data.map((item) => {
+            return item.codeword
+        })
+        console.log(codewords)
+        codewords.push(codeword)
+        console.log(codeword.length)
+        var letters = /[/\s/\t/!@#$%^&*(),.?":;'{}|<>0-9\\\\]/
+        let duplicateWords = codewords.filter((item, index) =>
+            codewords.indexOf(item) !== index
+        )
+        console.log(duplicateWords)
+        if (codeword.length < 3) {
+            return 'Codeword less than 3 letters'
+        }
+
+        else if (codeword.search(letters) != -1) {
+            return 'Codeword contains invalid character'
+        }
+        else if (duplicateWords.length > 0) {
+            return 'Codeword already present'
+        } else {
+            return 'true'
+        }
+
+
+
     }
 
     const addCodewordRow = (resolve, newData) => {
         var data = {
             id: props.match.params.id,
-            codeword: newData.codeword,   
+            codeword: newData.codeword,
         }
         const headers = {
             'token': sessionStorage.getItem('token')
         };
-        console.log(newData) 
+        console.log(newData)
         var check = checkCodeword(newData.codeword)
-        if(check === 'true'){
-        API.post('dashboard/addcodeword', data, { headers: headers }).then(response => {
-            console.log(response.data)
-            if(response.data.code == 200){
-                setSnack({
-                    message: response.data.message,
-                    open: true
-                })
-            const data = [...table.data];
-            data.push(newData);
-            setTable({ ...table, data });
-            console.log('render'+render)
-            setRender(!render)
-                resolve()
-            }else{
-                setSnack({
-                    message: response.data.message,
-                    open: true
-                })
-            resolve()
-            }
-        })
-        }else{
+        if (check === 'true') {
+            API.post('dashboard/addcodeword', data, { headers: headers }).then(response => {
+                console.log(response.data)
+                if (response.data.code == 200) {
+                    setSnack({
+                        message: response.data.message,
+                        open: true
+                    })
+                    const data = [...table.data];
+                    data.push(newData);
+                    setTable({ ...table, data });
+                    console.log('render' + render)
+                    setRender(!render)
+                    resolve()
+                } else {
+                    setSnack({
+                        message: response.data.message,
+                        open: true
+                    })
+                    resolve()
+                }
+            })
+        } else {
             setSnack({
                 open: true,
                 message: check
-            }) 
+            })
             resolve()
         }
     }
 
     const updateCourseRow = (resolve, newData, oldData) => {
         var data = {
-            id:  props.match.params.id,
+            id: props.match.params.id,
             newCodeword: newData.codeword,
             oldCodeword: oldData.codeword,
         }
 
         var check = checkCodeword(newData.codeword)
-        if(check === 'true'){
-        const headers = {
-            'token': sessionStorage.getItem('token')
-        };
-        console.log(newData)   
-        API.post('dashboard/updatecodeword', data, { headers: headers }).then(response => {
-            console.log(response.data)
-            if(response.data.code == 200){
-                setSnack({
-                    message: response.data.message,
-                    open: true
-                })
-                const data = [...table.data];
-                data[data.indexOf(oldData)] = newData;
-                setTable({ ...table, data });
-            setRender(!render)
-                resolve()
-            }else{
-                setSnack({
-                    message: response.data.message,
-                    open: true
-                })
+        if (check === 'true') {
+            const headers = {
+                'token': sessionStorage.getItem('token')
+            };
+            console.log(newData)
+            API.post('dashboard/updatecodeword', data, { headers: headers }).then(response => {
+                console.log(response.data)
+                if (response.data.code == 200) {
+                    setSnack({
+                        message: response.data.message,
+                        open: true
+                    })
+                    const data = [...table.data];
+                    data[data.indexOf(oldData)] = newData;
+                    setTable({ ...table, data });
+                    setRender(!render)
+                    resolve()
+                } else {
+                    setSnack({
+                        message: response.data.message,
+                        open: true
+                    })
+                    resolve()
+                }
+            })
+        } else {
+            setSnack({
+                open: true,
+                message: check
+            })
             resolve()
-            }
-        })
-    }else{
-        setSnack({
-            open: true,
-            message: check
-        }) 
-        resolve()
-    }
+        }
     }
 
     const deleteCodewordRow = (resolve, oldData) => {
@@ -335,10 +343,10 @@ export default function CodewordSet(props) {
         }
         const headers = {
             'token': sessionStorage.getItem('token')
-        };  
+        };
         API.post('dashboard/deletecodeword', data, { headers: headers }).then(response => {
             console.log(response.data)
-            if(response.data.code == 200){
+            if (response.data.code == 200) {
                 setSnack({
                     message: response.data.message,
                     open: true
@@ -348,12 +356,12 @@ export default function CodewordSet(props) {
                 setTable({ ...table, data });
                 setRender(!render)
                 resolve();
-            }else{
+            } else {
                 setSnack({
                     message: response.data.message,
                     open: true
                 })
-            resolve()
+                resolve()
             }
         })
     }
@@ -366,48 +374,48 @@ export default function CodewordSet(props) {
         setOpen(false)
     };
 
-    
+
     const handleFinalize = value => {
 
         const headers = {
             'token': sessionStorage.getItem('token')
-        }; 
+        };
         console.log(props.match.params.id)
-        API.post('dashboard/publishCodeworset', {id: props.match.params.id }, { headers: headers }).then(response => {
-            
-            if(response.data.code == 200){
+        API.post('dashboard/publishCodeworset', { id: props.match.params.id }, { headers: headers }).then(response => {
+
+            if (response.data.code == 200) {
                 setSnack({
                     open: true,
                     message: 'Codeword set finalized'
                 })
                 setDisableEdit(true)
-            }else{
+            } else {
                 setSnack({
                     open: true,
                     message: response.data.message
-                }) 
+                })
             }
         })
     }
 
-    const handleDeleteCodewordset = value =>{
-    
+    const handleDeleteCodewordset = () => {
+
         const headers = {
             'token': sessionStorage.getItem('token')
-        };  
-        API.post('dashboard/deleteCodewordset', {id: props.match.params.id}, { headers: headers }).then(response => {
-            
-            if(response.data.code == 200){
+        };
+        API.post('dashboard/deleteCodewordset', { id: props.match.params.id }, { headers: headers }).then(response => {
+
+            if (response.data.code == 200) {
                 setSnack({
                     open: true,
                     message: 'Course Deleted'
                 })
                 setRedirect(true)
-            }else{
+            } else {
                 setSnack({
                     open: true,
                     message: response.data.message
-                }) 
+                })
             }
         })
     }
@@ -429,7 +437,7 @@ export default function CodewordSet(props) {
         return (
             <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
                 <DialogTitle id="simple-dialog-title">Edit Course</DialogTitle>
-                <EditCourse data = {data} onClose={handleClose}></EditCourse>
+                <EditCourse data={data} onClose={handleClose}></EditCourse>
             </Dialog>
         );
     }
@@ -440,23 +448,31 @@ export default function CodewordSet(props) {
         render: PropTypes.bool.isRequired,
     };
 
-   const handleReport = () =>{
-    // const headers = {
-    //     'token': sessionStorage.getItem('token')
-    // }; 
-    // API.post('dashboard/generateReport', {id: props.match.params.id }, { headers: headers }).then(response => {
-    //     console.log(response.data)       
-    //     if(response.data.code == 200){
-    //                 console.log(response.data.data)
-    //             }
-    // })
-    setOpenReport(true)
+    const handleReport = () => {
+        // const headers = {
+        //     'token': sessionStorage.getItem('token')
+        // }; 
+        // API.post('dashboard/generateReport', {id: props.match.params.id }, { headers: headers }).then(response => {
+        //     console.log(response.data)       
+        //     if(response.data.code == 200){
+        //                 console.log(response.data.data)
+        //             }
+        // })
+        setOpenReport(true)
 
-   }
+    }
 
-   const handleReportClose = () => {
-       setOpenReport(false)
-   }
+    const handleReportClose = () => {
+        setOpenReport(false)
+    }
+
+    const handleDeleteConfirmation = () =>{
+        setDeleteConfirmation(true)
+    }
+    const handleDeleteClose = () =>{
+        setDeleteConfirmation(false)
+        setRender(!render)
+    }
 
     return (
         <div>
@@ -472,13 +488,13 @@ export default function CodewordSet(props) {
                                     <Grid item>
                                         <Typography component="div">
                                             <Box fontSize="h6.fontSize" fontWeight="fontWeightBold" m={1}>
-                                               {state.codewordSetName}
+                                                {state.codewordSetName}
                                             </Box>
                                         </Typography>
                                     </Grid>
                                     <Grid item>
                                         <Grid container>
-                                          
+
 
                                         </Grid>
                                     </Grid>
@@ -489,15 +505,15 @@ export default function CodewordSet(props) {
                             </Grid>
                             <Grid item sm={3}>
 
-                            <Button
+                                <Button
                                     variant="contained"
                                     color="primary"
                                     size="medium"
                                     className={classes.report}
                                     onClick={handleReport}
-                                   // disabled={disableEdit}
-                                    >
-                                    
+                                // disabled={disableEdit}
+                                >
+
                                     Report
                                 </Button>
 
@@ -508,8 +524,8 @@ export default function CodewordSet(props) {
                                     className={classes.assign}
                                     onClick={handleFinalize}
                                     disabled={disableEdit}
-                                    >
-                                    
+                                >
+
                                     Finalize
                                 </Button>
 
@@ -521,7 +537,7 @@ export default function CodewordSet(props) {
                                     className={classes.edit}
                                     onClick={handleClickOpen}
                                     disabled={disableEdit}
-                                    >
+                                >
                                     edit
                                 </Button>
                                 <SimpleDialog data={state} open={open} onClose={handleClickClose} render={render} />
@@ -532,7 +548,7 @@ export default function CodewordSet(props) {
                                     color="primary"
                                     size="medium"
                                     className={classes.delete}
-                                    onClick = {handleDeleteCodewordset} >
+                                    onClick={handleDeleteConfirmation} >
                                     delete
                                 </Button>
                             </Grid>
@@ -553,86 +569,108 @@ export default function CodewordSet(props) {
                                     <Grid item xs={12} >
                                         <Typography component="div">
                                             <Box fontSize="h6.body" fontWeight="fontWeightBold" m={1}>
-                                                 {state.isPublished}
+                                                {state.isPublished}
                                             </Box>
                                         </Typography>
                                     </Grid>
                                 </Grid>
                             </Grid>
-                        
+
                         </Grid>
 
                     </div>
                     <Grid container>
                         <Grid item sm={3}></Grid>
                         <Grid item >
-                    <div  className={classes.table}>
-                        <MaterialTable
-                            icons={tableIcons}
-                            title="Codewords"
-                            columns={table.columns}
-                            data={table.data}
-                            options={{
-                                actionsColumnIndex: -1,
-                                headerStyle: {
-                                    fontSize: 15
-                                }
-                            }}
-                            editable={{
-                                onRowAdd: newData =>
-                                    new Promise(resolve => {
-                                        addCodewordRow(resolve, newData)
-                                     
-                                    }),
-                                onRowUpdate: (newData, oldData) =>
-                                    new Promise(resolve => {
-                                        updateCourseRow(resolve, newData, oldData)
-                                      
-                                    }),
-                                onRowDelete: oldData =>
-                                    new Promise(resolve => {
-                                        deleteCodewordRow(resolve, oldData)
-                                    }),
-                            }}
-                           
-                        />
-                    </div>
-                    </Grid>
+                            <div className={classes.table}>
+                                <MaterialTable
+                                    icons={tableIcons}
+                                    title="Codewords"
+                                    columns={table.columns}
+                                    data={table.data}
+                                    options={{
+                                        actionsColumnIndex: -1,
+                                        headerStyle: {
+                                            fontSize: 15
+                                        }
+                                    }}
+                                    editable={{
+                                        onRowAdd: newData =>
+                                            new Promise(resolve => {
+                                                addCodewordRow(resolve, newData)
+
+                                            }),
+                                        onRowUpdate: (newData, oldData) =>
+                                            new Promise(resolve => {
+                                                updateCourseRow(resolve, newData, oldData)
+
+                                            }),
+                                        onRowDelete: oldData =>
+                                            new Promise(resolve => {
+                                                deleteCodewordRow(resolve, oldData)
+                                            }),
+                                    }}
+
+                                />
+                            </div>
+                        </Grid>
                     </Grid>
                     <Snackbar
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
-                            }}
-                            open={snack.open}
-                            autoHideDuration={2000}
-                            variant="success"
-                            onClose={handleMessageClose}
-                            message={snack.message}
-                            action={[
-                                <IconButton
-                                    key="close"
-                                    aria-label="Close"
-                                    color="inherit"
-                                    className={classes.close}
-                                    onClick={handleMessageClose}
-                                >
-                                    <CloseIcon />
-                                </IconButton>,
-                            ]}
-                        ></Snackbar>
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }}
+                        open={snack.open}
+                        autoHideDuration={2000}
+                        variant="success"
+                        onClose={handleMessageClose}
+                        message={snack.message}
+                        action={[
+                            <IconButton
+                                key="close"
+                                aria-label="Close"
+                                color="inherit"
+                                className={classes.close}
+                                onClick={handleMessageClose}
+                            >
+                                <CloseIcon />
+                            </IconButton>,
+                        ]}
+                    ></Snackbar>
                 </div>
 
-                <Dialog  fullScreen={true}  disableBackdropClick={true} onClose={handleReportClose} aria-labelledby="simple-dialog-title" open={openReport}>    
-                 <div className={classes.report}>
-                 <Box p={2} display="flex" flexDirection="row" justifyContent="center">
-                     <Typography variant="h6">
-                         REPORT
+                <Dialog fullScreen={true} disableBackdropClick={true} onClose={handleReportClose} aria-labelledby="simple-dialog-title" open={openReport}>
+                    <div className={classes.report}>
+                        <Box p={2} display="flex" flexDirection="row" justifyContent="center">
+                            <Typography variant="h6">
+                                REPORT
                      </Typography>
 
-                 </Box>
-                <Report id={props.match.params.id} handleClose={handleReportClose}></Report>
-                </div>         
+                        </Box>
+                        <Report id={props.match.params.id} handleClose={handleReportClose}></Report>
+                    </div>
+                </Dialog>
+
+                <Dialog
+                    open={deleteConfirmation}
+                    onClose={handleDeleteClose}
+                    aria-labelledby="alert-dialog-slide-title"
+                    aria-describedby="alert-dialog-slide-description"
+                >
+                    <DialogTitle id="alert-dialog-slide-title">{"Warning"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-slide-description">
+                        Are you sure you want to delete this codeword set?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleDeleteClose} color="secondary">
+                            NO
+                         </Button>
+                        <Button onClick={handleDeleteCodewordset} color="primary">
+                            YES
+                        </Button>
+                    </DialogActions>
                 </Dialog>
             </Container>
         </div>

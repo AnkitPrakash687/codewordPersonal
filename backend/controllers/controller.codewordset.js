@@ -75,15 +75,7 @@ let addcodewordset = (req, res) => {
 }
 module.exports.addcodewordset = addcodewordset;
 
-let deletecodewordset = (req, res,next) => {
-    Codewordset.deleteOne({ CodeWordSetName : req.body.id} ).then((codes) => {
-        next()
-    }).catch((e) => {
-        console.log(e);
-        return res.json({ code: 400, message: e });
-    })
-}
-module.exports.deletecodewordset = deletecodewordset;
+
 
 let getcodewordset = (req, res) => {
     //console.log('get codewords')
@@ -353,9 +345,10 @@ const publishCodeworset = (req, res) =>{
 }
 module.exports.publishCodeworset = publishCodeworset
 
-const deleteCodeworset = (req, res) =>{
+const deleteCodewordset = (req, res) =>{
     var body = _.pick(req.body,['id'])
-    //console.log(body.id)
+    console.log('*************delete codewordset**********')
+    console.log(body.id)
     Codewordset.deleteOne({_id:body.id}, 
         (error, deletedCodewordSet)=>{
         if(error){
@@ -367,7 +360,7 @@ const deleteCodeworset = (req, res) =>{
     }
     )
 }
-module.exports.deleteCodeworset = deleteCodeworset
+module.exports.deleteCodewordset = deleteCodewordset
 
 const checker = (checkerArray, str) =>{
     for(var i in checkerArray){
