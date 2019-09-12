@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 var { CourseModel } = require('../model/model.course');
 var { UserModel } = require('../model/model.user');
-var { CodewordSet } = require('../model/model.codewordset');
+var  CodewordSet  = require('../model/model.codewordset');
 var { mongoose } = require('./../config/database')
 var mailController = require('../config/user.mail.js')
 let XLSX = require('xlsx')
@@ -23,16 +23,24 @@ const saveCourseData = (students, req, res) => {
     var body = _.pick(req.body, ['courseNameKey',
         'codeWordSetName', 'startDate', 'endDate', 'preSurveyURL', 'postSurveyURL', 'codewords']);
     //var body = req.
+    var codewordSet
     console.log(body)
+    if(!body.codeWordSetName || !body.codewords){
+        codewordSet = {
+            codeWordSetName: '',
+            codewords: []
+        }
+    }else{
+        codewordSet = {
+        codewordSetName: body.codeWordSetName,
+        codewords: body.codewords.split(',')
+        }
+    }
 
-    codewordArray = body.codewords.split(',')
     var courseModel = new CourseModel({
         courseNameKey: body.courseNameKey,
         students: students,
-        codewordSet: 
-        { codewordSetName: body.codeWordSetName,
-          codewords: codewordArray
-        }, 
+        codewordSet: codewordSet, 
         Startdate: body.startDate,
         Startdate: body.startDate,
         isAssigned: false,
@@ -302,7 +310,8 @@ let deleteCourse = (req, res) => {
 module.exports.deleteCourse = deleteCourse;
 
 const updateCourseData = (students, course, req, res) => {
-    console.log('course----------------------------------------------------/n'+course)
+    console.log('course----------------------------------------------------')
+    console.log(course)
     CourseModel.updateOne({_id: course.id, createdBy: req.session.email},
         { $set:
             {   courseNameKey: course.courseNameKey,
@@ -335,8 +344,15 @@ let updateCourse = (req, res) => {
      console.log('body--------------------------------------------------------------------/n'+body.courseNameKey)
     //var body = req.
     //    console.log(body)
+    CodewordSet.findOne({codewordSetName: body.codewordSetName}, (error, codewordSet)=>{
+        if(error){
+            return res.json({ code: 400, message: err });
+        }
     CourseModel.findOne({_id:body.id}, (error, course)=>{
      console.log('course ENd date'+course.Enddate + course.Startdate)
+     if(error){
+        return res.json({ code: 400, message: err });
+    }
         var courseData = {
             id: body.id,
             courseNameKey: course.courseNameKey,
@@ -351,8 +367,26 @@ let updateCourse = (req, res) => {
         if(course.courseNameKey != body.courseNameKey){
             courseData.courseNameKey = body.courseNameKey
         }
-        if(course.codewordSet != body.codewordSetName){
-            courseData.codewordSet = body.codewordSetName
+        console.log('*******course.codewordSet.codewordSetName')
+        console.log(course.codewordSet.codewordSetName != body.codewordSetName)
+        if(course.codewordSet.codewordSetName != body.codewordSetName){
+           
+              
+                console.log('*********codeword set********')
+                console.log(codewordSet)
+                if(codewordSet){
+                courseData.codewordSet = {
+                    codewordSetName: codewordSet.codewordSetName,
+                    codewords: codewordSet.codewords
+                }
+            }else{
+                courseData.codewordSet = {
+                    codewordSetName: '',
+                    codewords: []
+                }
+            }
+            
+            
         }
       //  console.log(course.Startdate.toISOString().substring(0,10) +'!='+ body.startDate)
          if(course.Startdate.toISOString().substring(0,10) != body.startDate){
@@ -401,6 +435,7 @@ let updateCourse = (req, res) => {
         }
     })
     })
+})
 
 }
 module.exports.updateCourse = updateCourse;
