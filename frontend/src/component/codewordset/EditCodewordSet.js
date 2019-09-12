@@ -103,7 +103,6 @@ export default function EditCodewordSet(props) {
         token: sessionStorage.getItem('token'),
         studentFilename: '',
         filename: '',
-        selectedFile: null,
         status: false,
         error: false,
         message: '',
@@ -111,7 +110,11 @@ export default function EditCodewordSet(props) {
         alertOpen: true
     })
    
-    const [codewordSetName, setCodewordSetName] = useState(props.data.codewordSetName)
+    const [codewordSet, setCodewordSet] = useState(
+        {codewordSetName: props.data.codewordSetName,
+         filename: '',
+         selectedFile: null
+         })
     const [openReport, setOpenReport] = useState(false)
     const [hardRuleData, setHardRuleData] = useState({
         moreThanThree: [],
@@ -138,19 +141,19 @@ export default function EditCodewordSet(props) {
     }
     const [disableUpdate, setDisableUpdate] = useState(true)
     useEffect(() => {
-    //    console.log(data)
+        console.log(state)
     //    console.log(course)
-        if(data.codewordSetName == codewordSetName ){
+        if(data.codewordSetName == codewordSet.codewordSetName && codewordSet.filename == ''){
                 setDisableUpdate(true)
             }else{
                 setDisableUpdate(false)
             }
-    },[codewordSetName])
+    },[codewordSet])
 
     const handleFileChange = (event) => {
         console.log(props.data)
         if (fileLabel.current.files[0] && fileLabel.current.files[0].name) {
-            setState({ ...state, filename: fileLabel.current.files[0].name, selectedFile: event.target.files[0] });
+            setCodewordSet({ ...codewordSet, filename: fileLabel.current.files[0].name, selectedFile: event.target.files[0] });
             let file = event.target.files[0]
             let fileExt = file.name.split('.')[1]
             if(fileExt == 'csv'){
@@ -228,9 +231,6 @@ export default function EditCodewordSet(props) {
         }
     }
 
-    const handleDateChange = name => (date) => {
-        setState({ ...state, [name]: date });
-    }
 
     const handleSubmit = (event) => {
         event.preventDefault()
@@ -260,10 +260,13 @@ export default function EditCodewordSet(props) {
             } else {
                 console.log('error')
                 setState({
-                    codewordSetName: state.codewordSetName,
                     status: true,
                     error: true,
                     message: response.data.message,
+                })
+
+                setCodewordSet({
+                    codewordSetName: state.codewordSetName
                 })
             }
         })
@@ -271,10 +274,12 @@ export default function EditCodewordSet(props) {
                 console.log(error)
                 console.log('error')
                 setState({
-                    codewordSetName: state.codewordSetName,
                     status: true,
                     error: true,
                     message: error.message
+                })
+                setCodewordSet({
+                    codewordSetName: state.codewordSetName
                 })
             })
             ;
@@ -313,7 +318,7 @@ export default function EditCodewordSet(props) {
     };
 
     const handleCodewordSetChange = (event) =>{
-        setCodewordSetName(event.target.value)
+        setCodewordSet( {...codewordSet,codewordSetName: event.target.value})
     }
 
     return (
@@ -333,7 +338,7 @@ export default function EditCodewordSet(props) {
                         autoFocus
                         margin="dense"
                         onChange={handleCodewordSetChange}
-                        value={codewordSetName}
+                        value={codewordSet.codewordSetName}
                     />
                     <input
                         accept=".txt,.csv"
@@ -352,7 +357,7 @@ export default function EditCodewordSet(props) {
                                     name="filename"
                                     disabled="true"
                                     margin="dense"
-                                    value={state.filename}
+                                    value={codewordSet.filename}
                                 />
                             </Grid>
                             <Grid item xs={4} sm={4} md={4} lg={4}>
