@@ -118,7 +118,8 @@ export default function EditCourse(props) {
         endSurvey: props.data.startSurvey=='Unpublished'?'':props.data.startSurvey,
         startDate: props.data.startDate,
         endDate:props.data.endDate,
-        codewordSet: props.data.codewordset
+        codewordSet: props.data.codewordset,
+        filename: state.filename
     })
     const inputLabel = React.useRef(null);
     const fileLabel = React.useRef(null)
@@ -141,7 +142,7 @@ export default function EditCourse(props) {
        console.log(course)
         if(data.courseName == course.courseName && data.startSurvey == course.startSurvey
             && data.endSurvey == course.endSurvey && data.startDate == course.startDate && 
-            data.endDate == course.endDate && data.codewordSet == course.codewordSet){
+            data.endDate == course.endDate && data.codewordSet == course.codewordSet && course.filename == ''){
                 setDisableUpdate('true')
             }else{
                 setDisableUpdate(false)
@@ -154,7 +155,8 @@ export default function EditCourse(props) {
     }
     const handleFileChange = (event) => {
         if (fileLabel.current.files[0] && fileLabel.current.files[0].name)
-            setState({ ...state, filename: fileLabel.current.files[0].name, selectedFile: event.target.files[0] });
+        setCourse({...course, filename:fileLabel.current.files[0].name})    
+        setState({ ...state, filename: fileLabel.current.files[0].name, selectedFile: event.target.files[0] });
     }
 
     const handleDateChange = name => (date) => {

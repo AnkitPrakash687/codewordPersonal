@@ -5,7 +5,8 @@ import Appbar from '../MyAppBar'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red, grey } from '@material-ui/core/colors';
-import { Paper, Grid, Box, Button, Container, CssBaseline, Snackbar, IconButton, Dialog, DialogTitle } from '@material-ui/core';
+import { Paper, Grid, Box, Button, Container, CssBaseline, Snackbar, 
+    IconButton, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText} from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
 import { makeStyles } from '@material-ui/core/styles';
@@ -155,6 +156,7 @@ export default function Course(props) {
     const [open, setOpen] = useState(false)
     const [render, setRender] = useState(false)
     const [disableEdit, setDisableEdit] = useState(false)
+    const [cannotAssignError ,setCannotAssignError] = useState(false)
     useEffect(() => {
 
         const headers = {
@@ -192,7 +194,8 @@ export default function Course(props) {
                     startSurvey: course.PreSurveyURL == '' ? 'Unpublished' : course.PreSurveyURL,
                     endSurvey: course.PostSurveyURL == '' ? 'Unpublished' : course.PostSurveyURL,
                     isAssigned: course.isAssigned,
-                    codewordset: course.codewordSet.codewordSetName == '' ? 'Not Assigned' : course.codewordSet.codewordSetName,
+                    codewordset: (!course.codewordSet.hasOwnProperty('codewordSetName') || course.codewordSet.codewordSetName == '')
+                                 ? 'Not Assigned' : course.codewordSet.codewordSetName,
                     ack: ack + '/' + course.students.length
                 })
                 console.log(course)
@@ -333,6 +336,9 @@ export default function Course(props) {
     
     const handleAssign = value => {
 
+        if(state.codewordSet == 'Not Assigned' || state.codewordSet == ''){
+            setCannotAssignError(true)
+        }else{
         var studentEmails = table.data.map((item)=>{
             return item.email
         })
@@ -355,7 +361,11 @@ export default function Course(props) {
             }
         })
     }
+    }
 
+    const handleAssignErrorClose = () =>{
+        setCannotAssignError(false)
+    }
     const handleDeleteCourse = value =>{
         var studentEmails = table.data.map((item)=>{
             return item.email
@@ -582,7 +592,24 @@ export default function Course(props) {
 
                     </div>
                 </div>
-
+                <Dialog
+                    open={cannotAssignError}
+                    onClose={handleAssignErrorClose}
+                    aria-labelledby="alert-dialog-slide-title"
+                    aria-describedby="alert-dialog-slide-description"
+                >
+                    <DialogTitle id="alert-dialog-slide-title">{"Error"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-slide-description">
+                        You cannot assign course untill you set the codeword set?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleAssignErrorClose} color="secondary">
+                            OK
+                         </Button>
+                    </DialogActions>
+                </Dialog>
             </Container>
         </div>
     );
