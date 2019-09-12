@@ -104,7 +104,7 @@ export default function Report(props) {
     return (
         <div>
 
-            <Container component="main" maxWidth="lg">
+            <Container component="main" >
                 <CssBaseline />
                 {
 

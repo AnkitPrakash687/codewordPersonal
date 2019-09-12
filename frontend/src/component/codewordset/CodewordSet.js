@@ -4,10 +4,10 @@ import AppBar from '@material-ui/core/AppBar';
 import Appbar from '../MyAppBar'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { green, lightGreen, red, grey } from '@material-ui/core/colors';
+import { green, lightGreen, red, grey, orange } from '@material-ui/core/colors';
 import {
     Paper, Grid, Box, Slide, Button, Container, CssBaseline, Snackbar,
-    IconButton, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText
+    IconButton, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Tooltip
 } from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
@@ -34,6 +34,10 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import Report from './Report'
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import LockIcon from '@material-ui/icons/Lock';
+import ListAltIcon from '@material-ui/icons/ListAlt';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -89,13 +93,15 @@ const useStyles = makeStyles(theme => ({
     },
     assign: {
         margin: theme.spacing(1),
-        background: green[500],
+        background: lightGreen[500],
         "&:hover": {
             backgroundColor: "green"
         }
     },
     edit: {
-        margin: theme.spacing(1)
+        background: green[400],
+        margin: theme.spacing(1),
+        color: grey[900]
     },
     delete: {
         margin: theme.spacing(1),
@@ -103,6 +109,21 @@ const useStyles = makeStyles(theme => ({
         "&:hover": {
             backgroundColor: red[600]
         }
+    },
+    report: {
+        margin: theme.spacing(5),
+        background: lightGreen[100],
+
+    },
+    iconButton:{
+        background: grey[300],
+        margin: theme.spacing(1),
+        color: grey[900]
+    },
+    iconButtonDelete:{
+        background: grey[300],
+        margin: theme.spacing(1),
+        color: red[900]
     },
     appBar: {
         borderRadius: 5,
@@ -116,9 +137,6 @@ const useStyles = makeStyles(theme => ({
         padding: 10,
         margin: 10,
         background: lightGreen[200]
-    },
-    report: {
-        background: grey[500]
     },
     title: {
         padding: 10
@@ -500,24 +518,42 @@ export default function CodewordSet(props) {
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid item sm={3}>
+                            <Grid item sm={1}>
 
                             </Grid>
-                            <Grid item sm={3}>
-
-                                <Button
+                            <Grid item sm={5}>
+                            <Box display="flex" flexDirection="row" justifyContent="flex-end">
+                                {/* <Button
                                     variant="contained"
                                     color="primary"
                                     size="medium"
                                     className={classes.report}
                                     onClick={handleReport}
-                                // disabled={disableEdit}
+                                    disabled={disableEdit}
                                 >
 
                                     Report
-                                </Button>
+                                </Button> */}
+                                <Tooltip title="Report">
+                                <IconButton 
+                                    className={classes.iconButton} 
+                                    onClick={handleReport}
+                                    disabled={disableEdit}
+                                    >
+                                    <ListAltIcon fontSize="large"/>
+                                </IconButton>
+                                </Tooltip>
 
-                                <Button
+                                <Tooltip title="Finalize Course">
+                                <IconButton 
+                                    className={classes.iconButton} 
+                                    onClick={handleFinalize}
+                                    disabled={disableEdit}
+                                    >
+                                    <LockIcon fontSize="large"/>
+                                </IconButton>
+                                </Tooltip>
+                                {/* <Button
                                     variant="contained"
                                     color="primary"
                                     size="medium"
@@ -527,9 +563,17 @@ export default function CodewordSet(props) {
                                 >
 
                                     Finalize
-                                </Button>
-
-                                <Button
+                                </Button> */}
+                                <Tooltip title="Edit Course">
+                                <IconButton 
+                                    className={classes.iconButton} 
+                                    onClick={handleClickOpen}
+                                    disabled={disableEdit}
+                                    >
+                                    <EditIcon fontSize="large"/>
+                                </IconButton>
+                                </Tooltip>
+                                {/* <Button
                                     type="submit"
                                     variant="contained"
                                     color="primary"
@@ -539,10 +583,19 @@ export default function CodewordSet(props) {
                                     disabled={disableEdit}
                                 >
                                     edit
-                                </Button>
+                                </Button> */}
                                 <SimpleDialog data={state} open={open} onClose={handleClickClose} render={render} />
-
-                                <Button
+                                <Tooltip title="Delete Course">
+                                <IconButton 
+                                    className={classes.iconButtonDelete} 
+                                    onClick={handleFinalize}
+                                    disabled={disableEdit}
+                                    >
+                                    <DeleteForeverIcon fontSize="large"/>
+                                </IconButton>
+                                </Tooltip>
+                                
+                                {/* <Button
                                     type="submit"
                                     variant="contained"
                                     color="primary"
@@ -550,7 +603,8 @@ export default function CodewordSet(props) {
                                     className={classes.delete}
                                     onClick={handleDeleteConfirmation} >
                                     delete
-                                </Button>
+                                </Button> */}
+                                </Box>
                             </Grid>
                         </Grid>
                     </Box>
