@@ -39,15 +39,7 @@ const useStyles = makeStyles(theme => ({
     title: {
         padding: 10
     },
-    banner1: {
-        background: lightGreen[200],
-        paddingLeft: 20
-    },
-    banner2: {
-        background: red[200],
-        padding: 10
-
-    },
+ 
     fabProgress: {
         color: green[500],
         position: 'absolute',
@@ -79,7 +71,7 @@ export default function InstructorDashboard() {
                 aria-labelledby={`simple-tab-${index}`}
                 {...other}
             >
-                <Box bgcolor={lightGreen[100]} height={500} p={3}>{children}</Box>
+                <Box bgcolor={lightGreen[100]} minheight={500} p={3}>{children}</Box>
             </Typography>
         );
     }
