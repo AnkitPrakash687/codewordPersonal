@@ -513,7 +513,7 @@ export default function CodewordSet(props) {
                                     disabled={disableEdit}
                                     >
                                     
-                                    assign
+                                    Finalize
                                 </Button>
 
                                 <Button

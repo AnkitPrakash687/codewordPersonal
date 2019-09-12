@@ -213,10 +213,12 @@ export default function InstructorDashboard() {
             let data = response.data.data
             let result = []
             data.map((item)=>{
+                console.log(item)
                 result.push({
                     id: item.id,
                     codewordSetName: item.codewordSetName,
-                    count: item.count
+                    count: item.count,
+                    isPublished: item.isPublished
                 })
             })
             setCodewordsetData(result)
@@ -241,9 +243,12 @@ export default function InstructorDashboard() {
     })
 
     const listCodewordSet = codewordsetData.map((item) => {
+        // console.log('*******codeworset*******')
+        // console.log(item)
         return <CodewordsetCard id={item.id}
             codewordSetName={item.codewordSetName}
             count={item.count}
+            isPublished = {item.isPublished}
         ></CodewordsetCard>
     })
     return (

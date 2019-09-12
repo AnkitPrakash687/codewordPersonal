@@ -54,33 +54,7 @@ export default function CourseCard(props) {
         token: sessionStorage.getItem('token')
     })
 
-    useEffect(() => {
-        // console.log('getdata')
-        // const headers = {
-        //     'Content-Type': 'application/json',
-        //     'token':  this.state.token
-        //   };
 
-        // console.log(headers)
-        //  try {
-        //     const response = await API.get('dashboard/details', {headers});
-        //     console.log('👉 Returned data in :', response);
-        //     console.log(response.data)
-        //     if(response.status == 200){
-        //     this.setState( {
-        //       id: response.data.email_id,   
-        //       role: response.data.role,
-        //       name: response.data.first_name + ' ' + response.data.last_name
-        //     })
-        //     console.log('dashbaord : '+ this.state.role)
-
-        // }else {
-
-        // }
-        //   } catch (e) {
-        //     console.log(`😱 Axios request failed: ${e}`);
-        //   }
-    })
     const [redirect, setRedirect] = useState(false);
     const handleCardClick = () => {
         console.log('click working')
@@ -111,7 +85,19 @@ export default function CourseCard(props) {
                             Count: {props.count}
                         </Typography><br></br>
                     </Paper>
-                    
+                    {(props.isPublished) ?
+                        <Paper className={classes.banner1}>
+
+                            <Typography variant="h8" className={classes.title}>
+                            FINALIZED
+                    </Typography>
+                        </Paper> :
+                        <Paper className={classes.banner2}>
+                            <Typography variant="h8" className={classes.title}>
+                                NOT FINALIZED
+                    </Typography>
+                        </Paper>
+                    }
                      </CardActionArea>
                 </Paper>
            

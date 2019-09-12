@@ -106,7 +106,8 @@ let getcodewordset = (req, res) => {
                         id: codewordSet[i]._id,
                         codewordSetName: codewordSet[i].codewordSetName,
                         count: codewordSet[i].codewords.length,
-                        codewords: codewordSet[i].codewords
+                        codewords: codewordSet[i].codewords,
+                        isPublished: codewordSet[i].isPublished
                     })
                 }
                 return res.json({ code: 200, data:data });
