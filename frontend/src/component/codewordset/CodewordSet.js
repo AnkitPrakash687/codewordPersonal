@@ -588,8 +588,7 @@ export default function CodewordSet(props) {
                                 <Tooltip title="Delete Course">
                                 <IconButton 
                                     className={classes.iconButtonDelete} 
-                                    onClick={handleFinalize}
-                                    disabled={disableEdit}
+                                    onClick={handleDeleteConfirmation}
                                     >
                                     <DeleteForeverIcon fontSize="large"/>
                                 </IconButton>
