@@ -41,10 +41,7 @@ export default function Report(props) {
     const [similarCodewords, setSimilarCodewords] = useState([]);
     const [anagrams, setAnagrams] = useState([])
     const [loading, setLoading] = useState()
-    const [level, setLevel] = useState({
-        age: '',
-        name: 'hai',
-      })
+    const [level, setLevel] = useState(2)
 
       const inputLabel = React.useRef(null);
       const [disableUpdate, setDisableUpdate] = useState('true')
@@ -89,11 +86,10 @@ export default function Report(props) {
     })
 
  
-    const handleChange = name => (event) => {
-        setLevel(oldValues => ({
-            ...oldValues,
-            [name]: event.target.value,
-          }));
+    const handleChange =  (event) => {
+        console.log(event.target)
+        setLevel(event.target.value);
+        setRender(!render)
     }
     return (
         <div>
@@ -129,7 +125,7 @@ export default function Report(props) {
                         </InputLabel>
                         <Select
                             value={level}
-                            onChange={handleChange('level')}
+                            onChange={handleChange}
                             input={<OutlinedInput labelWidth={labelWidth} name="level" id="outlined-age-simple" />}
                         >
                             <MenuItem value="">

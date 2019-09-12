@@ -242,7 +242,30 @@ let addcodeword = (req, res) => {
 
   let generateReport = (req, res) =>{
 
-    var body = _.pick(req.body,['id']);
+    var body = _.pick(req.body,['id','level']);
+    console.log('********LEVEL**********')
+    console.log(body.level)
+    var similarityLevel
+    switch(body.level){
+        case 0:
+            similarityLevel = 0.3
+            break;
+        case 1:
+            similarityLevel = 0.5
+            break;
+        case 2:
+            similarityLevel = 0.7
+            break;
+        case 3:
+            similarityLevel = 0.8
+            break;
+        case 4:
+            similarityLevel = 0.9
+            break;
+        default:
+            similarityLevel = 0.5
+    }
+    console.log(similarityLevel)
     Codewordset.findOne({_id: body.id}, (error, codewordset)=>{
         if(error){
             return res.json({ code: 400, message: error });
@@ -271,7 +294,7 @@ let addcodeword = (req, res) => {
            var output = []
            output.push(result[i].word)
            for(var i in ratings){
-                if(ratings[i].rating > 0.7){
+                if(ratings[i].rating > similarityLevel){
                     output.push(ratings[i].target)
                     checkerArray.push(ratings[i].target)
                     }
@@ -297,8 +320,8 @@ let addcodeword = (req, res) => {
 
      var data ={similars: Array.from(new Set(final.map(JSON.stringify)), JSON.parse),
                 anagrams: anagrams}
-     console.log('************ANAGRAMS******************')
-     console.log(anagrams)
+    // console.log('************ANAGRAMS******************')
+     //console.log(anagrams)
       return res.json({ code: 200, data: data });
     })
   }
