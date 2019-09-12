@@ -114,6 +114,9 @@ const useStyles = makeStyles(theme => ({
         margin: 10,
         background: lightGreen[200]
     },
+    report:{
+        background: grey[500]
+    },
     title: {
         padding: 10
     },
@@ -624,9 +627,14 @@ export default function CodewordSet(props) {
                 </div>
 
                 <Dialog  fullScreen={true}  disableBackdropClick={true} onClose={handleReportClose} aria-labelledby="simple-dialog-title" open={openReport}>    
-                 <div>
-                 <DialogTitle id="simple-dialog-title">Report </DialogTitle>
-                <Report id={props.match.params.id}></Report>
+                 <div className={classes.report}>
+                 <Box p={2} display="flex" flexDirection="row" justifyContent="center">
+                     <Typography variant="h6">
+                         REPORT
+                     </Typography>
+
+                 </Box>
+                <Report id={props.match.params.id} handleClose={handleReportClose}></Report>
                 </div>         
                 </Dialog>
             </Container>

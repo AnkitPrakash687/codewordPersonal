@@ -2,8 +2,11 @@ import React, { useState, Component, useEffect } from 'react';
 import { green, lightGreen, red, grey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import API from '../../utils/API'
-import { Paper, Grid, Box, Typography,CircularProgress, Button, Container, CssBaseline, 
-    Select, MenuItem, FormControl, OutlinedInput, FormHelperText, InputLabel } from '@material-ui/core';
+import {
+    Paper, Grid, Box, Typography, CircularProgress, Button, Container, CssBaseline,
+    Select, MenuItem, FormControl, OutlinedInput, IconButton, InputLabel
+} from '@material-ui/core';
+import CancelRoundedIcon from '@material-ui/icons/CancelRounded'
 import ReportCard from './ReportCard'
 const useStyles = makeStyles(theme => ({
     root: {
@@ -18,19 +21,23 @@ const useStyles = makeStyles(theme => ({
         borderRadius: 5,
         background: lightGreen[300],
         padding: theme.spacing(2),
-        marginBottom: theme.spacing(4 )
+        marginBottom: theme.spacing(4)
     },
 
-    heading:{
+    heading: {
         borderRadius: 5,
         background: green[600],
-        padding: theme.spacing(1),
+        
     },
-    progress:{
+    progress: {
         margin: theme.spacing(2),
     },
-    formControl:{
+    formControl: {
         minWidth: 250
+    },
+    cancelButton:{
+        margin: theme.spacing(1),
+        color: red[900]
     }
 
 }));
@@ -43,12 +50,12 @@ export default function Report(props) {
     const [loading, setLoading] = useState()
     const [level, setLevel] = useState(2)
 
-      const inputLabel = React.useRef(null);
-      const [disableUpdate, setDisableUpdate] = useState('true')
-      const [labelWidth, setLabelWidth] = React.useState(0);
-      React.useEffect(() => {
-          setLabelWidth(inputLabel.current.offsetWidth);
-      }, []);
+    const inputLabel = React.useRef(null);
+    const [disableUpdate, setDisableUpdate] = useState('true')
+    const [labelWidth, setLabelWidth] = React.useState(0);
+    React.useEffect(() => {
+        setLabelWidth(inputLabel.current.offsetWidth);
+    }, []);
 
     useEffect(() => {
         setLoading(true)
@@ -58,7 +65,7 @@ export default function Report(props) {
             'token': sessionStorage.getItem('token')
         };
 
-        API.post('dashboard/generateReport', { id: props.id, level:level }, { headers: headers }).then(response => {
+        API.post('dashboard/generateReport', { id: props.id, level: level }, { headers: headers }).then(response => {
             console.log(response.data)
             if (response.data.code == 200) {
                 console.log(response.data.data)
@@ -69,7 +76,10 @@ export default function Report(props) {
         })
     }, [render])
 
-    const handleRender = () =>{
+    const handleClose = () =>{
+        props.handleClose()
+    }
+    const handleRender = () => {
         setRender(!render)
     }
     const listCodeword =
@@ -81,12 +91,12 @@ export default function Report(props) {
     //     console.log(render)
     // }
     const listAnagrams =
-    anagrams.map((item) => {
-        return <ReportCard id={props.id} items={item} render={handleRender}></ReportCard>
-    })
+        anagrams.map((item) => {
+            return <ReportCard id={props.id} items={item} render={handleRender}></ReportCard>
+        })
 
- 
-    const handleChange =  (event) => {
+
+    const handleChange = (event) => {
         console.log(event.target)
         setLevel(event.target.value);
         setRender(!render)
@@ -97,82 +107,100 @@ export default function Report(props) {
             <Container component="main" maxWidth="lg">
                 <CssBaseline />
                 {
-                   
-                loading ? 
-                <Grid container
-                 spacing={0}
-                 alignItems="center"
-                 justify="center"
-                 style={{ minHeight: '100vh' }}>
-                <CircularProgress className={classes.progress} />
-                </Grid>
-                :
-                <div>
-                <Paper>
-                <Box className={classes.heading}>
-                        <Typography component="div">
-                            <Box fontSize="h6.fontSize"  m={1}>
-                                Similar Codewords
-                            </Box>
-                        </Typography>
-                    </Box>
-                    </Paper>
-                <Paper className={classes.paper}>
-                  
-                <FormControl margin='dense' variant="outlined" className={classes.formControl}>
-                        <InputLabel ref={inputLabel} htmlFor="outlined-age-simple">
-                            Select Level of similarity
-                        </InputLabel>
-                        <Select
-                            value={level}
-                            onChange={handleChange}
-                            input={<OutlinedInput labelWidth={labelWidth} name="level" id="outlined-age-simple" />}
-                        >
-                            <MenuItem value="">
-                                <em>None</em>
-                            </MenuItem>
+
+                    loading ?
+                        <Grid container
+                            spacing={0}
+                            alignItems="center"
+                            justify="center"
+                            style={{ minHeight: '100vh' }}>
+                            <CircularProgress className={classes.progress} />
+                        </Grid>
+                        :
+                        <div>
+                            <Paper>
                         
-                                <MenuItem value={0}>Level 1 - Lowest</MenuItem>
-                                <MenuItem value={1}>Level 2 - Low</MenuItem>
-                                <MenuItem value={2}>Level 3 - Medium</MenuItem>
-                                <MenuItem value={3}>Level 3 - High</MenuItem>
-                                <MenuItem value={4}>Level 4 - Highest</MenuItem>
-                          
-                        </Select>
-                    </FormControl>
-
-                    <Grid container >
-
-                        {
-                            listCodeword
-                        }
-
-                    </Grid>
-                </Paper>
-
-                <Paper>
-                <Box className={classes.heading}>
-                        <Typography component="div">
-                            <Box fontSize="h6.fontSize"  m={1}>
-                                Anagrams
+                                <Box display="flex"  flexDirection="row" className={classes.heading}>
+                                    <Box p={1}  width="100%" justifyContent="flex-start">
+                                    <Typography component="div">
+                                        <Box fontSize="h6.fontSize" m={1}>
+                                            Similar Codewords
+                                        </Box>
+                                    </Typography>
+                                  </Box>
+                                    <Box   justifyContent="flex-end">
+                                    
+                                      
+                                            <IconButton
+                                                color="primary"
+                                                className={classes.cancelButton}
+                                                aria-label="cancel"
+                                                component="span"
+                                                onClick = {handleClose}
+                                            >
+                                                <CancelRoundedIcon fontSize="large"/>
+                                            </IconButton>
+                                    
                             </Box>
-                        </Typography>
-                    </Box>
+                           
+                              </Box>
                     </Paper>
-                <Paper className={classes.paper}>
-                  
-                    <Grid container >
+                                <Paper className={classes.paper}>
 
-                        {
-                            listAnagrams
-                        }
+                                    <FormControl margin='dense' variant="outlined" className={classes.formControl}>
+                                        <InputLabel ref={inputLabel} htmlFor="outlined-age-simple">
+                                            Select Level of similarity
+                        </InputLabel>
+                                        <Select
+                                            value={level}
+                                            onChange={handleChange}
+                                            input={<OutlinedInput labelWidth={labelWidth} name="level" id="outlined-age-simple" />}
+                                        >
+                                            <MenuItem value="">
+                                                <em>None</em>
+                                            </MenuItem>
 
-                    </Grid>
-                </Paper>
+                                            <MenuItem value={0}>Level 1 - Lowest</MenuItem>
+                                            <MenuItem value={1}>Level 2 - Low</MenuItem>
+                                            <MenuItem value={2}>Level 3 - Medium</MenuItem>
+                                            <MenuItem value={3}>Level 3 - High</MenuItem>
+                                            <MenuItem value={4}>Level 4 - Highest</MenuItem>
+
+                                        </Select>
+                                    </FormControl>
+
+                                    <Grid container >
+
+                                        {
+                                            listCodeword
+                                        }
+
+                                    </Grid>
+                                </Paper>
+
+                                <Paper>
+                                    <Box className={classes.heading}>
+                                        <Typography component="div">
+                                            <Box fontSize="h6.fontSize" m={1}>
+                                                Anagrams
+                            </Box>
+                                        </Typography>
+                                    </Box>
+                                </Paper>
+                                <Paper className={classes.paper}>
+
+                                    <Grid container >
+
+                                        {
+                                            listAnagrams
+                                        }
+
+                                    </Grid>
+                                </Paper>
                 </div>
-                }
+                            }
             </Container>
         </div>
-    )
-}
-
+            )
+        }
+        
