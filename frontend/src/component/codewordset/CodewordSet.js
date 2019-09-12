@@ -138,7 +138,7 @@ export default function CodewordSet(props) {
         id: props.match.params.id,
         codewordSetName: '',
         count: 0,
-        isAssigned: '',
+        isPublished: '',
      
     })
 
@@ -182,10 +182,11 @@ export default function CodewordSet(props) {
                 setState({
                     id: codewordSet._id,
                     codewordSetName: codewordSet.codewordSetName,
-                    count: codewordSet.count
+                    count: codewordSet.count,
+                    isPublished: codewordSet.isPublished
                 })
                 console.log(codewordSet)
-                if(codewordSet.isAssigned){
+                if(codewordSet.isPublished){
                     setDisableEdit(true)
                 }
             }
@@ -366,20 +367,18 @@ export default function CodewordSet(props) {
     };
 
     
-    const handleAssign = value => {
+    const handleFinalize = value => {
 
-        var studentEmails = table.data.map((item)=>{
-            return item.email
-        })
         const headers = {
             'token': sessionStorage.getItem('token')
-        };  
-        API.post('dashboard/assignCourse', {id: props.match.params.id, studentEmails: studentEmails }, { headers: headers }).then(response => {
+        }; 
+        console.log(props.match.params.id)
+        API.post('dashboard/publishCodeworset', {id: props.match.params.id }, { headers: headers }).then(response => {
             
             if(response.data.code == 200){
                 setSnack({
                     open: true,
-                    message: 'Course Assigned'
+                    message: 'Codeword set finalized'
                 })
                 setDisableEdit(true)
             }else{
@@ -391,14 +390,12 @@ export default function CodewordSet(props) {
         })
     }
 
-    const handleDeleteCourse = value =>{
-        var studentEmails = table.data.map((item)=>{
-            return item.email
-        })
+    const handleDeleteCodewordset = value =>{
+    
         const headers = {
             'token': sessionStorage.getItem('token')
         };  
-        API.post('dashboard/deleteCourse', {id: props.match.params.id, studentEmails: studentEmails }, { headers: headers }).then(response => {
+        API.post('dashboard/deleteCodewordset', {id: props.match.params.id}, { headers: headers }).then(response => {
             
             if(response.data.code == 200){
                 setSnack({
@@ -509,7 +506,7 @@ export default function CodewordSet(props) {
                                     color="primary"
                                     size="medium"
                                     className={classes.assign}
-                                    onClick={handleAssign}
+                                    onClick={handleFinalize}
                                     disabled={disableEdit}
                                     >
                                     
@@ -535,7 +532,7 @@ export default function CodewordSet(props) {
                                     color="primary"
                                     size="medium"
                                     className={classes.delete}
-                                    onClick = {handleDeleteCourse} >
+                                    onClick = {handleDeleteCodewordset} >
                                     delete
                                 </Button>
                             </Grid>

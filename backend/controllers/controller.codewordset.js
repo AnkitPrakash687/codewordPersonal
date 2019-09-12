@@ -136,7 +136,8 @@ let getacodewordset = (req, res) => {
                     var data = {
                         codewordSetName: codewordSet.codewordSetName,
                         count: codewordSet.codewords.length,
-                        codewords: codewordSet.codewords
+                        codewords: codewordSet.codewords,
+                        isPublished: codewordSet.isPublished
                     }
                 
                 return res.json({ code: 200, data:data });
@@ -328,6 +329,45 @@ let addcodeword = (req, res) => {
   }
 
   module.exports.generateReport = generateReport
+
+
+const publishCodeworset = (req, res) =>{
+    var body = _.pick(req.body,['id'])
+    //console.log(body.id)
+    Codewordset.updateOne({_id:body.id}, 
+       { 
+           $set:{
+                    "isPublished": true
+
+                }
+        },
+        (error, updatedCodewordSet)=>{
+        if(error){
+
+            return res.json({ code: 400, message: error });
+        }
+
+        return res.json({ code: 200, message: 'Codeword set finalized' });
+    }
+    )
+}
+module.exports.publishCodeworset = publishCodeworset
+
+const deleteCodeworset = (req, res) =>{
+    var body = _.pick(req.body,['id'])
+    //console.log(body.id)
+    Codewordset.deleteOne({_id:body.id}, 
+        (error, deletedCodewordSet)=>{
+        if(error){
+
+            return res.json({ code: 400, message: error });
+        }
+
+        return res.json({ code: 200, message: 'Codeword set finalized' });
+    }
+    )
+}
+module.exports.deleteCodeworset = deleteCodeworset
 
 const checker = (checkerArray, str) =>{
     for(var i in checkerArray){

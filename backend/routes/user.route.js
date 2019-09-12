@@ -64,4 +64,6 @@ router.get('/coursedetails/:CourseNameKey',studentDashboardController.countACK)
 router.post('/reveal', courseController.revealCodeword)
 router.post('/deletecodeword', codewordsetController.deletecodeword)
 router.post('/generateReport', codewordsetController.generateReport)
+router.post('/publishCodeworset', codewordsetController.publishCodeworset)
+router.post('/deletecodewordset', codewordsetController.deletecodewordset)
 module.exports = router;
