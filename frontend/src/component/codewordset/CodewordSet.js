@@ -38,6 +38,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import LockIcon from '@material-ui/icons/Lock';
 import ListAltIcon from '@material-ui/icons/ListAlt';
+import EditCodewordSet from './EditCodewordSet';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -158,8 +159,6 @@ export default function CodewordSet(props) {
     const [state, setState] = useState({
         id: props.match.params.id,
         codewordSetName: '',
-        count: 0,
-        isPublished: '',
 
     })
 
@@ -454,8 +453,8 @@ export default function CodewordSet(props) {
 
         return (
             <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
-                <DialogTitle id="simple-dialog-title">Edit Course</DialogTitle>
-                <EditCourse data={data} onClose={handleClose}></EditCourse>
+                <DialogTitle id="simple-dialog-title">Edit Codeword Set</DialogTitle>
+                <EditCodewordSet data={data} onClose={handleClose}></EditCodewordSet>
             </Dialog>
         );
     }
