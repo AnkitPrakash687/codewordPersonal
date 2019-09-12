@@ -243,7 +243,7 @@ export default function EditCodewordSet(props) {
         }
         console.log(data)
         
-        API.post('dashboard/addcodewordset',  data, { headers: headers }).then(response => {
+        API.post('dashboard/upadatecodewordset',  data, { headers: headers }).then(response => {
             console.log('👉 Returned data in :', response);
             if (response.status == 200) {
               

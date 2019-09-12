@@ -29,7 +29,6 @@ router.get('/getCourseList', courseController.getCourses/*,courseController.getC
 router.post('/addcodewordset',codewordsetController.addcodewordset);
 router.post('/addcodeword', codewordsetController.addcodeword)
 router.post('/updatecodeword', codewordsetController.updatecodeword)
-router.post('/getdataxlsx',codewordsetController.getDataFromXLS);
 router.post('/addnewcodewords',multer().single('file'), codewordController.addcodewords)
 router.post('/getCodewords', codewordController.getCodewords)
 router.post('/deleteCodewords', codewordController.deleteCodewords)
@@ -65,4 +64,5 @@ router.post('/deletecodeword', codewordsetController.deletecodeword)
 router.post('/generateReport', codewordsetController.generateReport)
 router.post('/publishCodeworset', codewordsetController.publishCodeworset)
 router.post('/deleteCodewordset', codewordsetController.deleteCodewordset)
+router.post('/upadatecodewordset', codewordsetController.upadatecodewordset)
 module.exports = router;

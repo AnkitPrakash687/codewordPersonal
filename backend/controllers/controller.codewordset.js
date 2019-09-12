@@ -19,43 +19,6 @@ var storage = multer.diskStorage({
     }
 })
 
-var upload = multer({ storage: storage }).single('file')
-
-// Fetching data from uploaded xls file is added by Ujjawal Kumar
-let getDataFromXLS = (req, res) => {
-
-    upload(req, res, function (err) {
-        if (req && (!req.file || req.file.size == 0)) {
-            return res.status(500).json({ message: "Please provide proper file." });
-        }
-        xlsx2json("./data/test.xlsx",
-            {
-                // dataStartingRow: 2, (This would be required if header would be required in the cordword sheet which would be uploaded by the Instructor)
-                //A, B , C , E is from the input sheet row numbers
-                mapping: {
-                    'codeword': 'A',
-                }
-            }).then(jsonArray => {
-                console.log(_.map(jsonArray[0],'codeword'))
-                let xlsData = _.map(jsonArray[0],'codeword');
-                if(!xlsData.length){
-                    return res.status(200).json({ code:301, message: "Invalid data with empty or NULL values!"})
-                }
-
-                if(_.filter(xlsData, (v)=> v == "").length){
-                    return res.status(200).json({ code:302, message: "Invalid data with empty or NULL values! "})
-                }
-
-                if(_.filter(xlsData, (v)=> v.length < 5).length){
-                    return res.status(200).json({ code:303, message: "Invalid data with length less than 5! "})
-                }
-                return res.status(200).json({ code : 200, data: _.map(jsonArray[0],'codeword'), count: jsonArray[0].length })
-            })
-    })
-
-}
-module.exports.getDataFromXLS = getDataFromXLS;
-
 
 let addcodewordset = (req, res) => {
     
@@ -75,7 +38,49 @@ let addcodewordset = (req, res) => {
 }
 module.exports.addcodewordset = addcodewordset;
 
+let upadatecodewordset = (req, res) => {
+    
+    var body = _.pick(req.body,['id','codewordSetName', 'codewords']);
+  
+    console.log(req.body)
+    console.log('**********update codewordset*******')
+    console.log(body)
+    if(body.codewords.length == 0){
 
+        Codewordset.findOne({'codewordSetName':body.codewordSetName}, (error, codewordSet) =>{
+            if(codewordSet){
+                return res.json({ code: 404, message: 'Codeword set exists' });
+            }else{
+                Codewordset.updateOne({_id:body.id},
+                    {$set:{
+                        codewordSetName: body.codewordSetName
+                    }
+                }, (error, updatedCodewordSet)=>{
+                    if(error){
+                        return res.json({ code: 400, message: e });
+                    }
+                    return res.json({ code: 200, message: 'Codeword set updated' });
+                }) 
+            }
+        }
+        )
+          
+    }else{
+        Codewordset.updateOne({_id:body.id},
+            {$set:{
+                codewordSetName: body.codewordSetName,
+                codewords: body.codewords
+            }
+        }, (error, updatedCodewordSet)=>{
+            if(error){
+                return res.json({ code: 400, message: e });
+            }
+            return res.json({ code: 200, message: 'Codeword set updated' });
+        }) 
+    }
+ 
+}
+module.exports.upadatecodewordset = upadatecodewordset;
 
 let getcodewordset = (req, res) => {
     //console.log('get codewords')
