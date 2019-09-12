@@ -109,7 +109,9 @@ export default function EditCourse(props) {
         message: '',
         reRender: false
     })
-
+    const [publishedCodewordset,SetPublishedCodewordset] = useState([{
+        codewordSetName: ''
+    }])
     const [course, setCourse] = useState({
         courseName: props.data.courseName,
         startSurvey: props.data.startSurvey=='Unpublished'?'':props.data.startSurvey,
@@ -271,6 +273,12 @@ export default function EditCourse(props) {
                         }
                     })
                     )
+                    SetPublishedCodewordset(response.data.data.filter((item)=>{
+                        if(item.isPublished){
+                            return {codewordSetName: item.codewordSetName}
+                        }
+                    }
+                    ))
                     console.log(response.data.data)
             }
         })
@@ -374,7 +382,7 @@ export default function EditCourse(props) {
                             <MenuItem value="">
                                 <em>None</em>
                             </MenuItem>
-                            {codeword.map((codewordSet)=>{
+                            {publishedCodewordset.map((codewordSet)=>{
                                 return <MenuItem value={codewordSet.codewordSetName}>{codewordSet.codewordSetName}</MenuItem>
                             })}
                         </Select>
