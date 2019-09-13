@@ -10,7 +10,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import { Redirect } from "react-router-dom";
 import history from '../../history'
-
+import {Link, Box} from  '@material-ui/core'
 const useStyles = makeStyles(theme => ({
     root: {
         margin: 30,
@@ -45,6 +45,9 @@ const useStyles = makeStyles(theme => ({
         padding: 5,
         marginTop: 5
 
+    },
+    startSurvey:{
+       marginRight: theme.spacing(1)
     }
 }));
 export default function CourseCard(props) {
@@ -100,23 +103,46 @@ export default function CourseCard(props) {
                 <CardActionArea onClick={handleCardClick}>
                     <div className={classes.appBar}>
                         <AppBar position="static" className={classes.appBar}>
-                            <Typography variant="h6" className={classes.title}>
+                            <Typography noWrap variant="body1" className={classes.title}>
                                 {props.courseName}
                             </Typography>
                         </AppBar>
                     </div>
-
+                    </CardActionArea> 
+                    <div onClick={handleCardClick}>
+                    <Grid container>
+                        <Grid item xs ={2} sm={2}></Grid>
+                        <Grid item>
+                    <Box display="flex">
+                       
                     <Paper className={classes.paper2}>
-                        <Typography variant="h8" className={classes.title}>
+                        
+                        <Typography variant="h8" >
                             Aknowledged: {props.ack}
-                        </Typography><br></br>
-                        <Typography variant="h8" className={classes.title}>
-                            Start Survey: {props.startSurvey}
-                        </Typography><br></br>
-                        <Typography variant="h8" className={classes.title}>
-                            End Survey: {props.endSurvey}
                         </Typography>
+                        <Box display="flex" >
+                        { props.startSurvey != ''?
+                        <Link onClick={event => event.stopPropagation()} target="_blank" href="http://www.google.com" variant="body2" className={classes.startSurvey}>
+                         Start Survey
+                      </Link>
+                        :false
+                        }
+                        { props.endSurvey != ''?
+                        <Link onClick={event => event.stopPropagation()} target="_blank" href="http://www.google.com" variant="body2" className={classes.link}>
+                         End Survey
+                      </Link>
+                       
+                        :false
+                        }
+                      </Box>
                     </Paper>
+                  
+                    </Box>
+                    </Grid>
+                    <Grid item xs={2} sm={2}></Grid>
+                    </Grid>
+                    </div>
+                    <CardActionArea onClick={handleCardClick}>
                     <Grid className={classes.dates} container spacing={0}>
                         <Grid item xs={12} sm={6} md={6} lg={6}>
                             <Typography variant="caption" className={classes.title}>
@@ -142,7 +168,7 @@ export default function CourseCard(props) {
                     </Typography>
                         </Paper>
                     }
-                     </CardActionArea>
+                    </CardActionArea>
                 </Paper>
            
         </Grid>
