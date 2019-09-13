@@ -48,6 +48,11 @@ const useStyles = makeStyles(theme => ({
     },
     startSurvey:{
        marginRight: theme.spacing(1)
+    },
+    clickable:{
+        "&:hover":{
+            cursor: "pointer"
+        }
     }
 }));
 export default function CourseCard(props) {
@@ -109,7 +114,7 @@ export default function CourseCard(props) {
                         </AppBar>
                     </div>
                     </CardActionArea> 
-                    <div onClick={handleCardClick}>
+                    <div className={classes.clickable} onClick={handleCardClick}>
                     <Grid container>
                         <Grid item xs ={2} sm={2}></Grid>
                         <Grid item>
