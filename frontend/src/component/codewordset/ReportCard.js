@@ -58,7 +58,7 @@ export default function ReportCard(props) {
     }
     return (
         <List dense={true}>
-           {chipData.length > 0 &&
+           {chipData.length > 1 &&
             <Paper className={classes.paper}>
                 <Grid container direction="column">
                     {

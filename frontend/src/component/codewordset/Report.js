@@ -115,8 +115,9 @@ export default function Report(props) {
                             justify="center"
                             style={{ minHeight: '100vh' }}>
                             <CircularProgress className={classes.progress} />
-                        </Grid>
-                        :
+                        </Grid>:false
+                }
+                        
                         <div>
                             <Paper>
                         
@@ -198,7 +199,7 @@ export default function Report(props) {
                                     </Grid>
                                 </Paper>
                 </div>
-                            }
+                            
             </Container>
         </div>
             )
