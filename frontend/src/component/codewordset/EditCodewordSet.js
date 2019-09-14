@@ -238,14 +238,15 @@ export default function EditCodewordSet(props) {
             'token': sessionStorage.getItem('token')
         };
         var data = {
-            codewordSetName: state.codewordSetName,
+            oldCodewordSetName: props.data.codewordSetName,
+            newCodewordSetName: codewordSet.codewordSetName,
             codewords: hardRuleData.filteredData
         }
         console.log(data)
         
         API.post('dashboard/upadatecodewordset',  data, { headers: headers }).then(response => {
             console.log('👉 Returned data in :', response);
-            if (response.status == 200) {
+            if (response.data.code == 200) {
               
                 if(hardRuleData.lessThanThree.length > 0 || hardRuleData.invalidCodewords.length > 0
                     || hardRuleData.duplicates.length > 0){
@@ -253,7 +254,7 @@ export default function EditCodewordSet(props) {
                     }else{
                         setState({
                             status: true,
-                            message: "Codeword Set created!",
+                            message: "Codeword Set Updated!",
                             reRender: true
                         })
                     }

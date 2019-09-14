@@ -40,25 +40,27 @@ module.exports.addcodewordset = addcodewordset;
 
 let upadatecodewordset = (req, res) => {
     
-    var body = _.pick(req.body,['id','codewordSetName', 'codewords']);
+    var body = _.pick(req.body,['id','oldCodewordSetName','newCodewordSetName', 'codewords']);
   
     console.log(req.body)
     console.log('**********update codewordset*******')
     console.log(body)
     if(body.codewords.length == 0){
 
-        Codewordset.findOne({'codewordSetName':body.codewordSetName}, (error, codewordSet) =>{
+        Codewordset.findOne({'codewordSetName':body.newCodewordSetName}, (error, codewordSet) =>{
             if(codewordSet){
                 return res.json({ code: 404, message: 'Codeword set exists' });
             }else{
-                Codewordset.updateOne({_id:body.id},
+                Codewordset.updateOne({'codewordSetName':body.oldCodewordSetName},
                     {$set:{
-                        codewordSetName: body.codewordSetName
+                        codewordSetName: body.newCodewordSetName
                     }
                 }, (error, updatedCodewordSet)=>{
                     if(error){
+
                         return res.json({ code: 400, message: e });
                     }
+                    console.log(updatedCodewordSet)
                     return res.json({ code: 200, message: 'Codeword set updated' });
                 }) 
             }
@@ -66,15 +68,16 @@ let upadatecodewordset = (req, res) => {
         )
           
     }else{
-        Codewordset.updateOne({_id:body.id},
+        Codewordset.updateOne({'codewordSetName':body.oldCodewordSetName},
             {$set:{
-                codewordSetName: body.codewordSetName,
+                codewordSetName: body.newCodewordSetName,
                 codewords: body.codewords
             }
         }, (error, updatedCodewordSet)=>{
             if(error){
                 return res.json({ code: 400, message: e });
             }
+            console.log(updatedCodewordSet)
             return res.json({ code: 200, message: 'Codeword set updated' });
         }) 
     }
