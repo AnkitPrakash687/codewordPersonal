@@ -209,11 +209,11 @@ export default function Course(props) {
                     startSurvey: course.PreSurveyURL == '' ? 'Unpublished' : course.PreSurveyURL,
                     endSurvey: course.PostSurveyURL == '' ? 'Unpublished' : course.PostSurveyURL,
                     isAssigned: course.isAssigned,
-                    codewordset: (!course.codewordSet.hasOwnProperty('codewordSetName') || course.codewordSet.codewordSetName == '')
+                    codewordset: (!course.codewordSet.codewordSetName || course.codewordSet.codewordSetName == '')
                                  ? 'Not Assigned' : course.codewordSet.codewordSetName,
                     ack: ack + '/' + course.students.length
                 })
-                console.log(course)
+                
                 if(course.isAssigned){
                     setDisableEdit(true)
                 }
@@ -225,7 +225,7 @@ export default function Course(props) {
                 console.log(error)
             })
     }, [render])
-
+    
   
     const [redirect, setRedirect] = useState(false);
     const handleCardClick = () => {
@@ -354,11 +354,12 @@ export default function Course(props) {
     };
 
     const handleDeleteConfirmation = value =>{
+        console.log(state.codewordSet)
         setDeleteConfirmation(true)
     }
     const handleAssign = value => {
-
-        if(state.codewordSet == 'Not Assigned' || state.codewordSet == ''){
+        console.log(state.codewordset)
+        if(state.codewordset == 'Not Assigned' || state.codewordset == '' || !state.codewordset){
             setCannotAssignError(true)
         }else{
         var studentEmails = table.data.map((item)=>{
@@ -689,6 +690,8 @@ export default function Course(props) {
                         </Button>
                     </DialogActions>
                 </Dialog>
+
+               
 
             </Container>
              }
