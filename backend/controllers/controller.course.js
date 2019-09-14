@@ -121,45 +121,45 @@ let getCourses = (req, res, next) => {
 }
 module.exports.getCourses = getCourses;
 
-let getCoursesAckData = (req, res) => {
-    let tCourses = _.map(req.courses, 'courseNameKey')
-    CourseStudentModel.find({ CourseNameKey: { $in: tCourses } }, function (err, result) {
-        let cRes = _.groupBy(result, 'CourseNameKey');
-        var result = [];
-        _.forEach(req.courses, function (value) {
-            let cData = value.toObject()
-            let tempData = cRes[value.courseNameKey];
-            if (tempData) {
-                cData.totalAck = tempData.length;
-                cData.ackAval = _.filter(tempData, { Acknowledged: true }).length
+// let getCoursesAckData = (req, res) => {
+//     let tCourses = _.map(req.courses, 'courseNameKey')
+//     CourseStudentModel.find({ CourseNameKey: { $in: tCourses } }, function (err, result) {
+//         let cRes = _.groupBy(result, 'CourseNameKey');
+//         var result = [];
+//         _.forEach(req.courses, function (value) {
+//             let cData = value.toObject()
+//             let tempData = cRes[value.courseNameKey];
+//             if (tempData) {
+//                 cData.totalAck = tempData.length;
+//                 cData.ackAval = _.filter(tempData, { Acknowledged: true }).length
 
-            }
-            result.push(cData)
-        });
-        if (err) { res.send(err) }
-        return res.json({ code: 200, data: result });
-    })
-}
-module.exports.getCoursesAckData = getCoursesAckData;
+//             }
+//             result.push(cData)
+//         });
+//         if (err) { res.send(err) }
+//         return res.json({ code: 200, data: result });
+//     })
+// }
+// module.exports.getCoursesAckData = getCoursesAckData;
 
-let updateCourseInfo = (req, res) => {
+// let updateCourseInfo = (req, res) => {
 
-    CourseModel.updateOne({ _id: req.body.id }, {
-        $set: {
-            "courseNameKey": req.body.courseNameKey,
-            "Startdate": req.body.Startdate,
-            "Enddate": req.body.Enddate,
-            "PreSurveyURL": req.body.PreSurveyURL,
-            "PostSurveyURL": req.body.PostSurveyURL
-        }
-    }, function (err, updatecodeword) {
-        if (err) {
-            return res.json({ code: 200, message: 'Course info is updated' });
-        }
-        return res.json({ code: 400, message: true })
-    })
-}
-module.exports.updateCourseInfo = updateCourseInfo;
+//     CourseModel.updateOne({ _id: req.body.id }, {
+//         $set: {
+//             "courseNameKey": req.body.courseNameKey,
+//             "Startdate": req.body.Startdate,
+//             "Enddate": req.body.Enddate,
+//             "PreSurveyURL": req.body.PreSurveyURL,
+//             "PostSurveyURL": req.body.PostSurveyURL
+//         }
+//     }, function (err, updatecodeword) {
+//         if (err) {
+//             return res.json({ code: 200, message: 'Course info is updated' });
+//         }
+//         return res.json({ code: 400, message: true })
+//     })
+// }
+// module.exports.updateCourseInfo = updateCourseInfo;
 
 let addStudent = (req, res) => {
 
