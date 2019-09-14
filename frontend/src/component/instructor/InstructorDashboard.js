@@ -18,7 +18,7 @@ import Button from '@material-ui/core/Button'
 import AddCourse from './AddCourse'
 import {CircularProgress} from '@material-ui/core'
 import API from '../../utils/API'
-
+import ContainedTabs from '../mui-treasury/ContainedTabs'
 const useStyles = makeStyles(theme => ({
     root: {
         margin: 30,
@@ -255,15 +255,28 @@ export default function InstructorDashboard() {
         </Grid>
         :
         <div>
-            <AppBar position="static" className={classes.appBar}>
+           
 
 
                         
-                <Tabs variant='fullWidth' centered={true} value={value} onChange={handleChange} aria-label="simple tabs example" >
+                {/* <Tabs variant='fullWidth' centered={true} value={value} onChange={handleChange} aria-label="simple tabs example" >
                     <Tab label="Course" {...a11yProps(0)} />
                     <Tab label="Codeword" {...a11yProps(1)} />
-                </Tabs>
-            </AppBar>
+                </Tabs> */}
+        <ContainedTabs
+        style={{ alignSelf: 'flex-center',  }}
+        tabs={[
+          { label: 'Course' },
+          { label: 'Codeword' }
+        ]}
+        value={value}
+        onChange={handleChange}
+      >
+             {/* <Tab label="Course" {...a11yProps(0)} />
+                    <Tab label="Codeword" {...a11yProps(1)} /> */}
+      </ContainedTabs>
+
+                    
             <TabPanel value={value} index={0}>
 
                 <Button variant="contained" color="primary" className={classes.button} onClick={handleClickOpen}>
