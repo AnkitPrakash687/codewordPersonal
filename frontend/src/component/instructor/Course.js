@@ -164,7 +164,8 @@ export default function Course(props) {
     const [table, setTable] = useState({
         columns: [
             { title: 'Name', field: 'name' },
-            { title: 'Email', field: 'email' }
+            { title: 'Email', field: 'email' },
+            { title: 'Registered', field: 'register' }
         ],
         data: [],
     })
@@ -186,13 +187,14 @@ export default function Course(props) {
                 console.log(response.data)
                 var course = response.data.data
                 var studentList = course.students.map((student) => {
-                    return { email: student.email }
+                    return { name: student.name, email: student.email }
                 })
 
                 setTable({
                     columns: [
                         { title: 'Name', field: 'name' },
-                        { title: 'Email', field: 'email' }
+                        { title: 'Email', field: 'email' },
+                        { title: 'Registered', field: 'register' }
                     ],
                     data: studentList
                 })
@@ -230,6 +232,17 @@ export default function Course(props) {
     }, [render])
 
 
+    useEffect(()=>{
+        var data = {
+            studentEmails: table.data.map((item)=>{ return item.email})
+        }
+        const headers = {
+            'token': sessionStorage.getItem('token')
+        };
+        API.post('dashboard/checkUsers/' , data, { headers: headers }).then(response => {
+
+        })
+    }, [table])
     const [redirect, setRedirect] = useState(false);
     const handleCardClick = () => {
         console.log('click working')

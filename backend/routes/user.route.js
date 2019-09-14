@@ -49,4 +49,5 @@ router.post('/generateReport', codewordsetController.generateReport)
 router.post('/publishCodeworset', codewordsetController.publishCodeworset)
 router.post('/deleteCodewordset', codewordsetController.deleteCodewordset)
 router.post('/upadatecodewordset', codewordsetController.upadatecodewordset)
+router.post('/checkUsers', usersController.checkUsers)
 module.exports = router;

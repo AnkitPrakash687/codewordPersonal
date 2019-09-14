@@ -19,12 +19,12 @@ var uploadFile = multer(
     })
     .single('file');
 
-const saveCourseData = (students, req, res) => {
+const saveCourseData = (students, invalidRecords, req, res) => {
     var body = _.pick(req.body, ['courseNameKey',
         'codeWordSetName', 'startDate', 'endDate', 'preSurveyURL', 'postSurveyURL', 'codewords']);
     //var body = req.
     var codewordSet
-    console.log(body)
+    console.log(invalidRecords)
     if(!body.codeWordSetName || !body.codewords){
         codewordSet = {
             codeWordSetName: '',
@@ -49,17 +49,18 @@ const saveCourseData = (students, req, res) => {
         PreSurveyURL: body.preSurveyURL,
         PostSurveyURL: body.postSurveyURL
     });
+
     courseModel.save().then((user) => {
         if (user)
-            return res.status(200).json({ message: "Course created successfully." });
+            return res.status(200).json({ code: '200',data:invalidRecords ,message: "Course created successfully." });
     }).catch((error) => {
         console.log(error)
         console.log(error.name + ' ' + error.code)
         if (error.name == 'MongoError' && error.code == 11000) {
             console.log('working')
-            return res.status(403).json({ message: 'There was a duplicate course error' });
+            return res.status(200).json({ code:'403',message: 'There was a duplicate course error' });
         }
-        return res.status(403).json({ message: error.message });
+        return res.status(200).json({ data:'400', message: error.message });
     })
 }
 
@@ -71,10 +72,16 @@ let addCourse = (req, res) => {
         } else if (error) {
             // An unknown error occurred when uploading.
         }
-
+       
         var studentList = req.file;
-        console.log(studentList)
+   
         if (studentList) {
+            var fileExtn = req.file.originalname.split('.').pop()
+            var invalidRecords = []
+            console.log(fileExtn)
+            if(fileExtn != 'csv'){
+                return res.status(200).json({code:400, message: 'Wrong File Extension' });
+            }
             var data = studentList.buffer.toString();
 
             csv({
@@ -85,23 +92,58 @@ let addCourse = (req, res) => {
                 .then((jsonObj) => {
                     console.log(jsonObj)
 
-                    var students = jsonObj.map((data) => {
+                    var students = jsonObj.filter((data) => {
+                        var email = data[1].trim()
+                        var name = data[0].trim()
+                        if(checkInput(name,email)){
                         return {
-                            email: data[0],
+                            name: data[0],
+                            email: data[1],
                             isRevealed: false,
                             codeword: ''
                         }
+                    }else{
+                        invalidRecords.push(data)
+                    }
+                    })
+                    console.log('***************students****************')
+                   students = students.map((item)=>{     
+                            
+                              return {  
+                                name: item[0],
+                                email: item[1],
+                                isRevealed: false,
+                                codeword:''
+                              }           
+                        
+                    })
+                    invalidRecords = invalidRecords.map((item)=>{
+                        return {
+                            name: item[0],
+                            email:item[1]
+                        }
                     })
                     console.log(students)
-                    saveCourseData(students, req, res)
+                    saveCourseData(students, invalidRecords, req, res)
                 })
 
         } else {
             console.log(req.body)
-            saveCourseData([], req, res)
+            saveCourseData([], [], req, res)
         }
 
     })
+
+    const checkInput = (name, email) =>{
+
+        var emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+        if(name.length > 50){
+            return false
+        }else if(!emailRegex.test(email)){
+            return false
+        }
+        return true
+    }
 
 }
 module.exports.addCourse = addCourse;

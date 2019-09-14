@@ -127,7 +127,7 @@ export default function AddCourse(props) {
         count: 0,
         codewords:[]
     }])
-
+    const [invalidRecord, setInvalidRecord] = useState(false)
     const [studentCount, setStudentCount] = useState('empty')
     const [codewordCount, SetCodewordCount] = useState('empty')
     const [publishedCodewordset, SetPublishedCodewordset] = useState([{
@@ -244,12 +244,18 @@ export default function AddCourse(props) {
 
         API.post('dashboard/addnewCourse', formData, { headers: headers }).then(response => {
             console.log('👉 Returned data in :', response);
-            if (response.status == 200) {
+            if (response.data.code == 200) {
+                
+                if(response.data.invalidRecords.length > 0){
+                    setInvalidRecord(true)
+                    setState({...state, reRender:true})
+                }else{
                 setState({
                     status: true,
                     message: response.data.message,
                     reRender: true
                 })
+            }
             } else {
                 console.log('error')
                 setState({

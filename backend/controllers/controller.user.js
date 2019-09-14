@@ -178,3 +178,13 @@ const reset = (req,res) => {
 }
 module.exports.reset = reset
 
+
+const checkUsers = (req,res) =>{
+    var body = _.pick(req.body,['studentEmails']);
+    console.log('***********DATA************')
+    console.log(body.studentEmails)
+    
+
+}
+
+module.exports.checkUsers = checkUsers

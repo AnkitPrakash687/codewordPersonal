@@ -13,6 +13,7 @@ var CourseModel = mongoose.model('courseModel', {
    createdBy:{type: String},
    students:[
       {
+      name: {type: String},
       email:{type:String, unique:true},
       isRevealed:{type: Boolean},
       codeword:{type: String}

@@ -60,9 +60,8 @@ import { breakpoints } from '@material-ui/system';
         },
         '&:hover': {
           '&:not($selected)': {
-            backgroundColor: Color(selectedBgColor)
-              .fade(0.4)
-              .toString(),
+            backgroundColor: "#9ccc65"
+             
           },
           '&::before': {
             opacity: 0,
