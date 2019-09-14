@@ -376,6 +376,7 @@ export default function Course(props) {
                     message: 'Course Assigned'
                 })
                 setDisableEdit(true)
+                setRender(!render)
             }else{
                 setSnack({
                     open: true,
@@ -609,6 +610,7 @@ export default function Course(props) {
                                 }
                             }}
                             editable={{
+                                
                                 onRowAdd: newData =>
                                     new Promise(resolve => {
                                         addCourseRow(resolve, newData)
