@@ -119,14 +119,19 @@ export default function EditCourse(props) {
         startDate: props.data.startDate,
         endDate:props.data.endDate,
         codewordSet: props.data.codewordset,
+        isAssigned: props.data.isAssigned,
         filename: state.filename
     })
     const inputLabel = React.useRef(null);
     const fileLabel = React.useRef(null)
     const [disableUpdate, setDisableUpdate] = useState('true')
     const [labelWidth, setLabelWidth] = React.useState(0);
+    const [disableField, setDisableField] = useState(false)
     React.useEffect(() => {
         setLabelWidth(inputLabel.current.offsetWidth);
+        if(props.data.isAssigned){
+        setDisableField(true)
+        }
     }, []);
 
     const data = {
@@ -135,11 +140,21 @@ export default function EditCourse(props) {
         endSurvey: props.data.startSurvey=='Unpublished'?'':props.data.startSurvey,
         startDate: props.data.startDate,
         endDate:props.data.endDate,
-        codewordSet: props.data.codewordset
+        codewordSet: props.data.codewordset,
+        isAssigned: props.data.isAssigned,
     }
     useEffect(() => {
        console.log(data)
        console.log(course)
+       if(course.isAssigned){
+        setDisableField(true)
+        if(data.startSurvey == course.startSurvey
+            && data.endSurvey == course.endSurvey ){
+                setDisableUpdate('true')
+            }else{
+                setDisableUpdate(false)
+            }
+       }else{
         if(data.courseName == course.courseName && data.startSurvey == course.startSurvey
             && data.endSurvey == course.endSurvey && data.startDate == course.startDate && 
             data.endDate == course.endDate && data.codewordSet == course.codewordSet && course.filename == ''){
@@ -147,6 +162,7 @@ export default function EditCourse(props) {
             }else{
                 setDisableUpdate(false)
             }
+        }
     },[course])
 
     const handleChange = name => (event, isChecked) => {
@@ -305,6 +321,7 @@ export default function EditCourse(props) {
                         margin="dense"
                         onChange={handleChange('courseName')}
                         value={course.courseName}
+                        disabled={disableField}
                     />
                     <input
                         accept=".csv"
@@ -327,7 +344,7 @@ export default function EditCourse(props) {
                                 />
                             </Grid>
                             <Grid item xs={4} sm={4} md={4} lg={4}>
-                                <Button variant="contained" component="span" color="primary" className={classes.button}>
+                                <Button  disabled={disableField} variant="contained" component="span" color="primary" className={classes.button}>
                                     Upload
                                     <CloudUploadIcon className={classes.rightIcon} />
                                 </Button>
@@ -340,6 +357,7 @@ export default function EditCourse(props) {
                         <Grid container spacing={5}>
                             <Grid item xs={6} sm={6} md={6} lg={6}>
                                 <KeyboardDatePicker
+                                    disabled={disableField}
                                     variant="normal"
                                     format="MM/dd/yyyy"
                                     margin="normal"
@@ -354,6 +372,7 @@ export default function EditCourse(props) {
                             </Grid>
                             <Grid item xs={6} sm={6} md={6} lg={6}>
                                 <KeyboardDatePicker
+                                    disabled={disableField}
                                     variant="normal"
                                     format="MM/dd/yyyy"
                                     margin="normal"
@@ -377,6 +396,7 @@ export default function EditCourse(props) {
                             Codeword Set
         </InputLabel>
                         <Select
+                             disabled={disableField}
                             value={course.codewordSet}
                             onChange={handleChange('codewordSet')}
                             input={<OutlinedInput labelWidth={labelWidth} name="Codeword Set" id="outlined-age-simple" />}

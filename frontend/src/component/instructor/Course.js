@@ -525,7 +525,7 @@ export default function Course(props) {
                                 <IconButton 
                                     className={classes.iconButton} 
                                     onClick={handleClickOpen}
-                                    disabled={disableEdit}
+                                   // disabled={disableEdit}
                                     >
                                     <EditIcon fontSize="large"/>
                                 </IconButton>
