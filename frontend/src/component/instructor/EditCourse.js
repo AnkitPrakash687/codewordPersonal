@@ -137,7 +137,7 @@ export default function EditCourse(props) {
     const data = {
         courseName: props.data.courseName,
         startSurvey: props.data.startSurvey=='Unpublished'?'':props.data.startSurvey,
-        endSurvey: props.data.startSurvey=='Unpublished'?'':props.data.startSurvey,
+        endSurvey: props.data.endSurvey=='Unpublished'?'':props.data.endSurvey,
         startDate: props.data.startDate,
         endDate:props.data.endDate,
         codewordSet: props.data.codewordset,
