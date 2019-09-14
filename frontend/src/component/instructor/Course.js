@@ -216,6 +216,7 @@ export default function Course(props) {
                     ack: ack + '/' + course.students.length
                 })
 
+                
                 if (course.isAssigned) {
                     setDisableEdit(true)
                 }
@@ -618,22 +619,20 @@ export default function Course(props) {
                                         fontSize: 15
                                     }
                                 }}
-                                editable={{
-
-                                    onRowAdd: newData =>
+                                editable={{ onRowAdd: !disableEdit ? newData =>
                                         new Promise(resolve => {
                                             addCourseRow(resolve, newData)
 
-                                        }),
-                                    onRowUpdate: (newData, oldData) =>
+                                        }):null,
+                                    onRowUpdate: !disableEdit ? (newData, oldData) =>
                                         new Promise(resolve => {
                                             updateCourseRow(resolve, newData, oldData)
 
-                                        }),
-                                    onRowDelete: oldData =>
+                                        }):null,
+                                    onRowDelete: !disableEdit ? oldData =>
                                         new Promise(resolve => {
                                             deleteCourseRow(resolve, oldData)
-                                        }),
+                                        }):null,
 
                                 }}
                             />
