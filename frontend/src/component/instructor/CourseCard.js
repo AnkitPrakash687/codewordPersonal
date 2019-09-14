@@ -103,9 +103,9 @@ export default function CourseCard(props) {
     return (
 
         <Grid item xs={12} sm={3} md={3} lg={3}>
-            
+              <CardActionArea onClick={handleCardClick}>
                 <Paper className={classes.paper}>
-                <CardActionArea onClick={handleCardClick}>
+              
                     <div className={classes.appBar}>
                         <AppBar position="static" className={classes.appBar}>
                             <Typography noWrap variant="body1" className={classes.title}>
@@ -113,7 +113,7 @@ export default function CourseCard(props) {
                             </Typography>
                         </AppBar>
                     </div>
-                    </CardActionArea> 
+                   
                     <div className={classes.clickable} onClick={handleCardClick}>
                     <Grid container>
                         <Grid item xs ={2} sm={2}></Grid>
@@ -126,14 +126,14 @@ export default function CourseCard(props) {
                             Aknowledged: {props.ack}
                         </Typography>
                         <Box display="flex" >
-                        { props.startSurvey != ''?
-                        <Link onClick={event => event.stopPropagation()} target="_blank" href="http://www.google.com" variant="body2" className={classes.startSurvey}>
+                        { props.startSurvey != 'Unpublished'?
+                        <Link onClick={event => event.stopPropagation()} target="_blank" href={props.startSurvey} variant="body2" className={classes.startSurvey}>
                          Start Survey
                       </Link>
                         :false
                         }
-                        { props.endSurvey != ''?
-                        <Link onClick={event => event.stopPropagation()} target="_blank" href="http://www.google.com" variant="body2" className={classes.link}>
+                        { props.endSurvey != 'Unpublished'?
+                        <Link onClick={event => event.stopPropagation()} target="_blank" href={props.endSurvey} variant="body2" className={classes.link}>
                          End Survey
                       </Link>
                        
@@ -147,7 +147,7 @@ export default function CourseCard(props) {
                     <Grid item xs={2} sm={2}></Grid>
                     </Grid>
                     </div>
-                    <CardActionArea onClick={handleCardClick}>
+                  
                     <Grid className={classes.dates} container spacing={0}>
                         <Grid item xs={12} sm={6} md={6} lg={6}>
                             <Typography variant="caption" className={classes.title}>
@@ -173,9 +173,9 @@ export default function CourseCard(props) {
                     </Typography>
                         </Paper>
                     }
-                    </CardActionArea>
+                   
                 </Paper>
-           
+                </CardActionArea>
         </Grid>
 
     );
