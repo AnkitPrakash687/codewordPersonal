@@ -16,7 +16,7 @@ import { breakpoints } from '@material-ui/system';
   
   const useTabStyles = makeStyles(theme => {
       
-    const defaultBgColor = '#4caf50';
+    const defaultBgColor = '#81c784';
     const defaultSelectedBgColor = '#dcedc8';
     const defaultMinWidth = {
       xs: 160,
@@ -31,12 +31,13 @@ import { breakpoints } from '@material-ui/system';
         minWidth = defaultMinWidth,
         selectedBgColor = defaultSelectedBgColor
       }) => ({
-          borderTopLeftRadius: 20 ,
-          borderTopRightRadius: 15,
+          borderTopLeftRadius: 10 ,
+          borderTopRightRadius: 10,
         minWidth: 160,
         opacity: 1,
         overflow: 'initial',
-        color: getTextColor(bgColor),
+        color: grey[100],
+        fontSize: 15,
         backgroundColor: bgColor,
         transition: '0.2s',
         '&:before': {
@@ -73,10 +74,11 @@ import { breakpoints } from '@material-ui/system';
       }),
       selected: ({ selectedBgColor = defaultSelectedBgColor }) => ({
         backgroundColor: selectedBgColor,
-        color: getTextColor(selectedBgColor),
-        '& + $root': {
-          zIndex: 1,
-        },
+        borderStyle:'solid',
+        border: 2,
+        borderColor: green[500],
+        color: grey[800],
+        fontSize: 20,
         '& + $root:before': {
           opacity: 0,
         },
