@@ -5,8 +5,8 @@ import Appbar from '../MyAppBar'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red, grey } from '@material-ui/core/colors';
-import { Paper, Grid, Box, Button, Container, CssBaseline, Snackbar, 
-    IconButton, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText} from '@material-ui/core';
+import { Paper, Grid, Box, Button, Container, CssBaseline, Snackbar, Tooltip,
+    IconButton,CircularProgress, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText} from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
 import { makeStyles } from '@material-ui/core/styles';
@@ -31,7 +31,10 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import LockIcon from '@material-ui/icons/Lock';
+import ListAltIcon from '@material-ui/icons/ListAlt';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -126,6 +129,16 @@ const useStyles = makeStyles(theme => ({
         padding: 5,
         marginTop: 5
 
+    },
+    iconButton:{
+        background: grey[300],
+        margin: theme.spacing(1),
+        color: grey[900]
+    },
+    iconButtonDelete:{
+        background: grey[300],
+        margin: theme.spacing(1),
+        color: red[900]
     }
 }));
 export default function Course(props) {
@@ -157,8 +170,10 @@ export default function Course(props) {
     const [render, setRender] = useState(false)
     const [disableEdit, setDisableEdit] = useState(false)
     const [cannotAssignError ,setCannotAssignError] = useState(false)
+    const [deleteConfirmation, setDeleteConfirmation] = useState()
+    const [loading, setLoading] = useState(false)
     useEffect(() => {
-
+        setLoading(true)
         const headers = {
             'token': sessionStorage.getItem('token')
         };
@@ -202,6 +217,8 @@ export default function Course(props) {
                 if(course.isAssigned){
                     setDisableEdit(true)
                 }
+
+                setLoading(false)
             }
         })
             .catch(error => {
@@ -228,6 +245,9 @@ export default function Course(props) {
         })      
     }
     
+    const handleDeleteClose = value =>{
+        setDeleteConfirmation(false)
+    }
     const addCourseRow = (resolve, newData) => {
         var data = {
             id: state.id,
@@ -333,7 +353,9 @@ export default function Course(props) {
         setOpen(false)
     };
 
-    
+    const handleDeleteConfirmation = value =>{
+        setDeleteConfirmation(true)
+    }
     const handleAssign = value => {
 
         if(state.codewordSet == 'Not Assigned' || state.codewordSet == ''){
@@ -421,6 +443,15 @@ export default function Course(props) {
     return (
         <div>
             <Appbar isLoggedIn={true}></Appbar>
+           
+             {loading?     <Grid container
+            spacing={0}
+            alignItems="center"
+            justify="center"
+            style={{ minHeight: '100vh' }}>
+            <CircularProgress className={classes.progress} />
+        </Grid>
+        :
             <Container component="main" maxWidth='lg'>
                 <CssBaseline />
                 <div className={classes.root}>
@@ -458,7 +489,7 @@ export default function Course(props) {
                             </Grid>
                             <Grid item sm={3}>
 
-                                <Button
+                                {/* <Button
                                     variant="contained"
                                     color="primary"
                                     size="medium"
@@ -468,9 +499,18 @@ export default function Course(props) {
                                     >
                                     
                                     assign
-                                </Button>
+                                </Button> */}
+                                <Tooltip title="Assign Course">
+                                <IconButton 
+                                    className={classes.iconButton} 
+                                    onClick={handleAssign}
+                                    disabled={disableEdit}
+                                    >
+                                    <LockIcon fontSize="large"/>
+                                </IconButton>
+                                </Tooltip>
 
-                                <Button
+                                {/* <Button
                                     type="submit"
                                     variant="contained"
                                     color="primary"
@@ -480,10 +520,19 @@ export default function Course(props) {
                                     disabled={disableEdit}
                                     >
                                     edit
-                                </Button>
+                                </Button> */}
+                                <Tooltip title="Edit course">
+                                <IconButton 
+                                    className={classes.iconButton} 
+                                    onClick={handleClickOpen}
+                                    disabled={disableEdit}
+                                    >
+                                    <EditIcon fontSize="large"/>
+                                </IconButton>
+                                </Tooltip>
                                 <SimpleDialog data={state} open={open} onClose={handleClickClose} render={render} />
 
-                                <Button
+                                {/* <Button
                                     type="submit"
                                     variant="contained"
                                     color="primary"
@@ -491,7 +540,16 @@ export default function Course(props) {
                                     className={classes.delete}
                                     onClick = {handleDeleteCourse} >
                                     delete
-                                </Button>
+                                </Button> */}
+
+                                <Tooltip title="Delete course">
+                                <IconButton 
+                                    className={classes.iconButtonDelete} 
+                                    onClick={handleDeleteConfirmation}
+                                    >
+                                    <DeleteForeverIcon fontSize="large"/>
+                                </IconButton>
+                                </Tooltip>
                             </Grid>
                         </Grid>
                     </Box>
@@ -601,7 +659,7 @@ export default function Course(props) {
                     <DialogTitle id="alert-dialog-slide-title">{"Error"}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description">
-                        You cannot assign course untill you set the codeword set?
+                        You cannot assign course untill you set the codeword set.
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
@@ -610,7 +668,30 @@ export default function Course(props) {
                          </Button>
                     </DialogActions>
                 </Dialog>
+                <Dialog
+                    open={deleteConfirmation}
+                    onClose={handleDeleteClose}
+                    aria-labelledby="alert-dialog-slide-title"
+                    aria-describedby="alert-dialog-slide-description"
+                >
+                    <DialogTitle id="alert-dialog-slide-title">{"Warning"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-slide-description">
+                        Are you sure you want to delete this codeword set?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleDeleteClose} color="secondary">
+                            NO
+                         </Button>
+                        <Button onClick={handleDeleteCourse} color="primary">
+                            YES
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
             </Container>
+             }
         </div>
     );
 

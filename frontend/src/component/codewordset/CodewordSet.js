@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red, grey, orange } from '@material-ui/core/colors';
 import {
-    Paper, Grid, Box, Slide, Button, Container, CssBaseline, Snackbar,
+    Paper, Grid, Box, Slide, Button, Container, CssBaseline, Snackbar, CircularProgress,
     IconButton, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Tooltip
 } from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
@@ -182,8 +182,9 @@ export default function CodewordSet(props) {
     const [disableEdit, setDisableEdit] = useState(false)
     const [openReport, setOpenReport] = useState(false)
     const [deleteConfirmation, setDeleteConfirmation] = useState(false)
+    const [loading, setLoading] = useState(false)
     useEffect(() => {
-
+        setLoading(true)
         const headers = {
             'token': sessionStorage.getItem('token')
         };
@@ -215,6 +216,7 @@ export default function CodewordSet(props) {
                     setDisableEdit(true)
                 }
             }
+            setLoading(false)
         })
             .catch(error => {
                 console.log(error)
@@ -494,6 +496,14 @@ export default function CodewordSet(props) {
     return (
         <div>
             <Appbar isLoggedIn={true}></Appbar>
+            {loading?<Grid container
+            spacing={0}
+            alignItems="center"
+            justify="center"
+            style={{ minHeight: '100vh' }}>
+            <CircularProgress className={classes.progress} />
+        </Grid>
+        :
             <Container component="main" maxWidth='lg'>
                 <CssBaseline />
                 <div className={classes.root}>
@@ -543,7 +553,7 @@ export default function CodewordSet(props) {
                                 </IconButton>
                                 </Tooltip>
 
-                                <Tooltip title="Finalize Course">
+                                <Tooltip title="Finalize codeword set">
                                 <IconButton 
                                     className={classes.iconButton} 
                                     onClick={handleFinalize}
@@ -563,7 +573,7 @@ export default function CodewordSet(props) {
 
                                     Finalize
                                 </Button> */}
-                                <Tooltip title="Edit Course">
+                                <Tooltip title="Edit codeword set">
                                 <IconButton 
                                     className={classes.iconButton} 
                                     onClick={handleClickOpen}
@@ -584,7 +594,7 @@ export default function CodewordSet(props) {
                                     edit
                                 </Button> */}
                                 <SimpleDialog data={state} open={open} onClose={handleClickClose} render={render} />
-                                <Tooltip title="Delete Course">
+                                <Tooltip title="Delete codeword set">
                                 <IconButton 
                                     className={classes.iconButtonDelete} 
                                     onClick={handleDeleteConfirmation}
@@ -725,6 +735,7 @@ export default function CodewordSet(props) {
                     </DialogActions>
                 </Dialog>
             </Container>
+            }
         </div>
     );
 

@@ -138,7 +138,7 @@ export default function InstructorDashboard() {
     const [courseData, setCourseData] = useState([{}])
     const [codewordsetData, setCodewordsetData] = useState([{}])
     const [openCodeword, setOpenCodeword] = useState()
-
+  
     const handleCodewordClickOpen = () =>{
         setOpenCodeword(true)
     }
@@ -244,14 +244,26 @@ export default function InstructorDashboard() {
         ></CodewordsetCard>
     })
     return (
+       
         <div className={classes.root}>
+             {loading?     <Grid container
+            spacing={0}
+            alignItems="center"
+            justify="center"
+            style={{ minHeight: '100vh' }}>
+            <CircularProgress className={classes.progress} />
+        </Grid>
+        :
+        <div>
             <AppBar position="static" className={classes.appBar}>
+
+
+                        
                 <Tabs variant='fullWidth' centered={true} value={value} onChange={handleChange} aria-label="simple tabs example" >
                     <Tab label="Course" {...a11yProps(0)} />
                     <Tab label="Codeword" {...a11yProps(1)} />
                 </Tabs>
             </AppBar>
-            {loading && <CircularProgress size={68} className={classes.fabProgress} />}
             <TabPanel value={value} index={0}>
 
                 <Button variant="contained" color="primary" className={classes.button} onClick={handleClickOpen}>
@@ -287,7 +299,8 @@ export default function InstructorDashboard() {
 
                 </Grid>
         </TabPanel>
-
+        </div>
+                }
         </div>
 
     );
