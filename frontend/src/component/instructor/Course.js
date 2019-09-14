@@ -5,8 +5,10 @@ import Appbar from '../MyAppBar'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red, grey } from '@material-ui/core/colors';
-import { Paper, Grid, Box, Button, Container, CssBaseline, Snackbar, Tooltip,
-    IconButton,CircularProgress, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText} from '@material-ui/core';
+import {
+    Paper, Grid, Box, Button, Container, CssBaseline, Snackbar, Tooltip, Link,
+    IconButton, CircularProgress, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText
+} from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
 import { makeStyles } from '@material-ui/core/styles';
@@ -130,12 +132,12 @@ const useStyles = makeStyles(theme => ({
         marginTop: 5
 
     },
-    iconButton:{
+    iconButton: {
         background: grey[300],
         margin: theme.spacing(1),
         color: grey[900]
     },
-    iconButtonDelete:{
+    iconButtonDelete: {
         background: grey[300],
         margin: theme.spacing(1),
         color: red[900]
@@ -156,7 +158,7 @@ export default function Course(props) {
     })
 
     const [snack, setSnack] = useState({
-        message:'',
+        message: '',
         open: false
     })
     const [table, setTable] = useState({
@@ -169,7 +171,7 @@ export default function Course(props) {
     const [open, setOpen] = useState(false)
     const [render, setRender] = useState(false)
     const [disableEdit, setDisableEdit] = useState(false)
-    const [cannotAssignError ,setCannotAssignError] = useState(false)
+    const [cannotAssignError, setCannotAssignError] = useState(false)
     const [deleteConfirmation, setDeleteConfirmation] = useState()
     const [loading, setLoading] = useState(false)
     useEffect(() => {
@@ -210,11 +212,11 @@ export default function Course(props) {
                     endSurvey: course.PostSurveyURL == '' ? 'Unpublished' : course.PostSurveyURL,
                     isAssigned: course.isAssigned,
                     codewordset: (!course.codewordSet.codewordSetName || course.codewordSet.codewordSetName == '')
-                                 ? 'Not Assigned' : course.codewordSet.codewordSetName,
+                        ? 'Not Assigned' : course.codewordSet.codewordSetName,
                     ack: ack + '/' + course.students.length
                 })
-                
-                if(course.isAssigned){
+
+                if (course.isAssigned) {
                     setDisableEdit(true)
                 }
 
@@ -225,8 +227,8 @@ export default function Course(props) {
                 console.log(error)
             })
     }, [render])
-    
-  
+
+
     const [redirect, setRedirect] = useState(false);
     const handleCardClick = () => {
         console.log('click working')
@@ -238,14 +240,14 @@ export default function Course(props) {
     }
 
     const handleMessageClose = () => {
-        
+
         setSnack({
             message: '',
             open: false
-        })      
+        })
     }
-    
-    const handleDeleteClose = value =>{
+
+    const handleDeleteClose = value => {
         setDeleteConfirmation(false)
     }
     const addCourseRow = (resolve, newData) => {
@@ -257,26 +259,26 @@ export default function Course(props) {
         const headers = {
             'token': sessionStorage.getItem('token')
         };
-        console.log(newData)   
+        console.log(newData)
         API.post('dashboard/addstudent', data, { headers: headers }).then(response => {
             console.log(response.data)
-            if(response.data.code == 200){
+            if (response.data.code == 200) {
                 setSnack({
                     message: response.data.message,
                     open: true
                 })
-            const data = [...table.data];
-            data.push(newData);
-            setTable({ ...table, data });
-            console.log('render'+render)
-            setRender(!render)
+                const data = [...table.data];
+                data.push(newData);
+                setTable({ ...table, data });
+                console.log('render' + render)
+                setRender(!render)
                 resolve()
-            }else{
+            } else {
                 setSnack({
                     message: response.data.message,
                     open: true
                 })
-            resolve()
+                resolve()
             }
         })
     }
@@ -292,10 +294,10 @@ export default function Course(props) {
         const headers = {
             'token': sessionStorage.getItem('token')
         };
-        console.log(newData)   
+        console.log(newData)
         API.post('dashboard/editstudent', data, { headers: headers }).then(response => {
             console.log(response.data)
-            if(response.data.code == 200){
+            if (response.data.code == 200) {
                 setSnack({
                     message: response.data.message,
                     open: true
@@ -303,14 +305,14 @@ export default function Course(props) {
                 const data = [...table.data];
                 data[data.indexOf(oldData)] = newData;
                 setTable({ ...table, data });
-            setRender(!render)
+                setRender(!render)
                 resolve()
-            }else{
+            } else {
                 setSnack({
                     message: response.data.message,
                     open: true
                 })
-            resolve()
+                resolve()
             }
         })
     }
@@ -322,10 +324,10 @@ export default function Course(props) {
         }
         const headers = {
             'token': sessionStorage.getItem('token')
-        };  
+        };
         API.post('dashboard/deletestudent', data, { headers: headers }).then(response => {
             console.log(response.data)
-            if(response.data.code == 200){
+            if (response.data.code == 200) {
                 setSnack({
                     message: response.data.message,
                     open: true
@@ -335,12 +337,12 @@ export default function Course(props) {
                 setTable({ ...table, data });
                 setRender(!render)
                 resolve();
-            }else{
+            } else {
                 setSnack({
                     message: response.data.message,
                     open: true
                 })
-            resolve()
+                resolve()
             }
         })
     }
@@ -353,63 +355,63 @@ export default function Course(props) {
         setOpen(false)
     };
 
-    const handleDeleteConfirmation = value =>{
+    const handleDeleteConfirmation = value => {
         console.log(state.codewordSet)
         setDeleteConfirmation(true)
     }
     const handleAssign = value => {
         console.log(state.codewordset)
-        if(state.codewordset == 'Not Assigned' || state.codewordset == '' || !state.codewordset){
+        if (state.codewordset == 'Not Assigned' || state.codewordset == '' || !state.codewordset) {
             setCannotAssignError(true)
-        }else{
-        var studentEmails = table.data.map((item)=>{
-            return item.email
-        })
-        const headers = {
-            'token': sessionStorage.getItem('token')
-        };  
-        API.post('dashboard/assignCourse', {id: props.match.params.id, studentEmails: studentEmails }, { headers: headers }).then(response => {
-            
-            if(response.data.code == 200){
-                setSnack({
-                    open: true,
-                    message: 'Course Assigned'
-                })
-                setDisableEdit(true)
-                setRender(!render)
-            }else{
-                setSnack({
-                    open: true,
-                    message: response.data.message
-                }) 
-            }
-        })
-    }
+        } else {
+            var studentEmails = table.data.map((item) => {
+                return item.email
+            })
+            const headers = {
+                'token': sessionStorage.getItem('token')
+            };
+            API.post('dashboard/assignCourse', { id: props.match.params.id, studentEmails: studentEmails }, { headers: headers }).then(response => {
+
+                if (response.data.code == 200) {
+                    setSnack({
+                        open: true,
+                        message: 'Course Assigned'
+                    })
+                    setDisableEdit(true)
+                    setRender(!render)
+                } else {
+                    setSnack({
+                        open: true,
+                        message: response.data.message
+                    })
+                }
+            })
+        }
     }
 
-    const handleAssignErrorClose = () =>{
+    const handleAssignErrorClose = () => {
         setCannotAssignError(false)
     }
-    const handleDeleteCourse = value =>{
-        var studentEmails = table.data.map((item)=>{
+    const handleDeleteCourse = value => {
+        var studentEmails = table.data.map((item) => {
             return item.email
         })
         const headers = {
             'token': sessionStorage.getItem('token')
-        };  
-        API.post('dashboard/deleteCourse', {id: props.match.params.id, studentEmails: studentEmails }, { headers: headers }).then(response => {
-            
-            if(response.data.code == 200){
+        };
+        API.post('dashboard/deleteCourse', { id: props.match.params.id, studentEmails: studentEmails }, { headers: headers }).then(response => {
+
+            if (response.data.code == 200) {
                 setSnack({
                     open: true,
                     message: 'Course Deleted'
                 })
                 setRedirect(true)
-            }else{
+            } else {
                 setSnack({
                     open: true,
                     message: response.data.message
-                }) 
+                })
             }
         })
     }
@@ -431,7 +433,7 @@ export default function Course(props) {
         return (
             <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
                 <DialogTitle id="simple-dialog-title">Edit Course</DialogTitle>
-                <EditCourse data = {data} onClose={handleClose}></EditCourse>
+                <EditCourse data={data} onClose={handleClose}></EditCourse>
             </Dialog>
         );
     }
@@ -445,53 +447,53 @@ export default function Course(props) {
     return (
         <div>
             <Appbar isLoggedIn={true}></Appbar>
-           
-             {loading?     <Grid container
-            spacing={0}
-            alignItems="center"
-            justify="center"
-            style={{ minHeight: '100vh' }}>
-            <CircularProgress className={classes.progress} />
-        </Grid>
-        :
-            <Container component="main" maxWidth='lg'>
-                <CssBaseline />
-                <div className={classes.root}>
 
-                    <Box className={classes.header} >
-                        <Grid container >
-                            <Grid item sm={6}>
-                                <Grid container direction="column" >
-                                    <Grid item>
-                                        <Typography component="div">
-                                            <Box fontSize="h6.fontSize" fontWeight="fontWeightBold" m={1}>
-                                                {state.courseName}
-                                            </Box>
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item>
-                                        <Grid container>
-                                            <Grid item>
-                                                <Typography variant="caption" className={classes.title}>
-                                                    Start Date: {state.startDate}
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item>
-                                                <Typography variant="caption" className={classes.title}>
-                                                    End date: {state.endDate}
-                                                </Typography>
-                                            </Grid>
+            {loading ? <Grid container
+                spacing={0}
+                alignItems="center"
+                justify="center"
+                style={{ minHeight: '100vh' }}>
+                <CircularProgress className={classes.progress} />
+            </Grid>
+                :
+                <Container component="main" maxWidth='lg'>
+                    <CssBaseline />
+                    <div className={classes.root}>
 
+                        <Box className={classes.header} >
+                            <Grid container >
+                                <Grid item sm={6}>
+                                    <Grid container direction="column" >
+                                        <Grid item>
+                                            <Typography component="div">
+                                                <Box fontSize="h6.fontSize" fontWeight="fontWeightBold" m={1}>
+                                                    {state.courseName}
+                                                </Box>
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item>
+                                            <Grid container>
+                                                <Grid item>
+                                                    <Typography variant="caption" className={classes.title}>
+                                                        Start Date: {state.startDate}
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <Typography variant="caption" className={classes.title}>
+                                                        End date: {state.endDate}
+                                                    </Typography>
+                                                </Grid>
+
+                                            </Grid>
                                         </Grid>
                                     </Grid>
                                 </Grid>
-                            </Grid>
-                            <Grid item sm={3}>
+                                <Grid item sm={3}>
 
-                            </Grid>
-                            <Grid item sm={3}>
+                                </Grid>
+                                <Grid item sm={3}>
 
-                                {/* <Button
+                                    {/* <Button
                                     variant="contained"
                                     color="primary"
                                     size="medium"
@@ -502,17 +504,17 @@ export default function Course(props) {
                                     
                                     assign
                                 </Button> */}
-                                <Tooltip title="Assign Course">
-                                <IconButton 
-                                    className={classes.iconButton} 
-                                    onClick={handleAssign}
-                                    disabled={disableEdit}
-                                    >
-                                    <LockIcon fontSize="large"/>
-                                </IconButton>
-                                </Tooltip>
+                                    <Tooltip title="Assign Course">
+                                        <IconButton
+                                            className={classes.iconButton}
+                                            onClick={handleAssign}
+                                            disabled={disableEdit}
+                                        >
+                                            <LockIcon fontSize="large" />
+                                        </IconButton>
+                                    </Tooltip>
 
-                                {/* <Button
+                                    {/* <Button
                                     type="submit"
                                     variant="contained"
                                     color="primary"
@@ -523,18 +525,18 @@ export default function Course(props) {
                                     >
                                     edit
                                 </Button> */}
-                                <Tooltip title="Edit course">
-                                <IconButton 
-                                    className={classes.iconButton} 
-                                    onClick={handleClickOpen}
-                                   // disabled={disableEdit}
-                                    >
-                                    <EditIcon fontSize="large"/>
-                                </IconButton>
-                                </Tooltip>
-                                <SimpleDialog data={state} open={open} onClose={handleClickClose} render={render} />
+                                    <Tooltip title="Edit course">
+                                        <IconButton
+                                            className={classes.iconButton}
+                                            onClick={handleClickOpen}
+                                        // disabled={disableEdit}
+                                        >
+                                            <EditIcon fontSize="large" />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <SimpleDialog data={state} open={open} onClose={handleClickClose} render={render} />
 
-                                {/* <Button
+                                    {/* <Button
                                     type="submit"
                                     variant="contained"
                                     color="primary"
@@ -544,159 +546,166 @@ export default function Course(props) {
                                     delete
                                 </Button> */}
 
-                                <Tooltip title="Delete course">
-                                <IconButton 
-                                    className={classes.iconButtonDelete} 
-                                    onClick={handleDeleteConfirmation}
+                                    <Tooltip title="Delete course">
+                                        <IconButton
+                                            className={classes.iconButtonDelete}
+                                            onClick={handleDeleteConfirmation}
+                                        >
+                                            <DeleteForeverIcon fontSize="large" />
+                                        </IconButton>
+                                    </Tooltip>
+                                </Grid>
+                            </Grid>
+                        </Box>
+
+                        <div border={1} className={classes.course}>
+                            <Grid container >
+                                <Grid item sm={6} md={6} lg={6}>
+                                    <Grid container direction="column">
+                                        <Grid item xs={12} >
+                                            <Typography component="div">
+                                                <Box fontSize="h6.body" fontWeight="fontWeightBold" m={1}>
+                                                    Acknowledged: {state.ack}
+                                                </Box>
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={12} >
+                                            <Typography component="div">
+                                                <Box fontSize="h6.body" fontWeight="fontWeightBold" m={1}>
+                                                    Codeword Set: {state.codewordset}
+                                                </Box>
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item sm={6} md={6} lg={6}>
+                                    <Grid container direction="column">
+                                        <Grid item xs={12} >
+
+                                            {state.startSurvey != 'Unpublished' &&
+                                                <Link onClick={event => event.stopPropagation()} target="_blank" href={state.startSurvey} variant="body2" className={classes.link}>
+                                                    <Typography component="div">
+                                                        <Box fontSize="h6.body" fontWeight="fontWeightBold" m={1}>
+                                                            Start Survey
+                                            </Box>
+                                                    </Typography>
+                                                </Link>}
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            {state.endSurvey != 'Unpublished' &&
+                                                <Link onClick={event => event.stopPropagation()} target="_blank" href={state.endSurvey} variant="body2" className={classes.link}>
+                                                    <Typography component="div">
+                                                        <Box fontSize="h6.body" fontWeight="fontWeightBold" m={1}>
+                                                            End Survey
+                                            </Box>
+                                                    </Typography>
+                                                </Link>}
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+
+                        </div>
+                        <div className={classes.table}>
+                            <MaterialTable
+                                icons={tableIcons}
+                                title="Students"
+                                columns={table.columns}
+                                data={table.data}
+                                options={{
+                                    actionsColumnIndex: -1,
+                                    headerStyle: {
+                                        fontSize: 15
+                                    }
+                                }}
+                                editable={{
+
+                                    onRowAdd: newData =>
+                                        new Promise(resolve => {
+                                            addCourseRow(resolve, newData)
+
+                                        }),
+                                    onRowUpdate: (newData, oldData) =>
+                                        new Promise(resolve => {
+                                            updateCourseRow(resolve, newData, oldData)
+
+                                        }),
+                                    onRowDelete: oldData =>
+                                        new Promise(resolve => {
+                                            deleteCourseRow(resolve, oldData)
+                                        }),
+
+                                }}
+                            />
+                            <Snackbar
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'left',
+                                }}
+                                open={snack.open}
+                                autoHideDuration={2000}
+                                variant="success"
+                                onClose={handleMessageClose}
+                                message={snack.message}
+                                action={[
+                                    <IconButton
+                                        key="close"
+                                        aria-label="Close"
+                                        color="inherit"
+                                        className={classes.close}
+                                        onClick={handleMessageClose}
                                     >
-                                    <DeleteForeverIcon fontSize="large"/>
-                                </IconButton>
-                                </Tooltip>
-                            </Grid>
-                        </Grid>
-                    </Box>
+                                        <CloseIcon />
+                                    </IconButton>,
+                                ]}
+                            ></Snackbar>
 
-                    <div border={1} className={classes.course}>
-                        <Grid container >
-                            <Grid item sm={6} md={6} lg={6}>
-                                <Grid container direction="column">
-                                    <Grid item xs={12} >
-                                        <Typography component="div">
-                                            <Box fontSize="h6.body" fontWeight="fontWeightBold" m={1}>
-                                                Acknowledged: {state.ack}
-                                            </Box>
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12} >
-                                        <Typography component="div">
-                                            <Box fontSize="h6.body" fontWeight="fontWeightBold" m={1}>
-                                                Codeword Set: {state.codewordset}
-                                            </Box>
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                            <Grid item sm={6} md={6} lg={6}>
-                                <Grid container direction="column">
-                                    <Grid item xs={12} >
-                                        <Typography component="div">
-                                            <Box fontSize="h6.body" fontWeight="fontWeightBold" m={1}>
-                                                Start Survey: {state.startSurvey}
-                                            </Box>
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography component="div">
-                                            <Box fontSize="h6.body" fontWeight="fontWeightBold" m={1}>
-                                                End Survey: {state.endSurvey}
-                                            </Box>
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-
+                        </div>
                     </div>
-                    <div className={classes.table}>
-                        <MaterialTable
-                            icons={tableIcons}
-                            title="Students"
-                            columns={table.columns}
-                            data={table.data}
-                            options={{
-                                actionsColumnIndex: -1,
-                                headerStyle: {
-                                    fontSize: 15
-                                }
-                            }}
-                            editable={{
-                                
-                                onRowAdd: newData =>
-                                    new Promise(resolve => {
-                                        addCourseRow(resolve, newData)
-                                     
-                                    }),
-                                onRowUpdate: (newData, oldData) =>
-                                    new Promise(resolve => {
-                                        updateCourseRow(resolve, newData, oldData)
-                                      
-                                    }),
-                                onRowDelete: oldData =>
-                                    new Promise(resolve => {
-                                        deleteCourseRow(resolve, oldData)
-                                    }),
-
-                            }}
-                        />
-                        <Snackbar
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
-                            }}
-                            open={snack.open}
-                            autoHideDuration={2000}
-                            variant="success"
-                            onClose={handleMessageClose}
-                            message={snack.message}
-                            action={[
-                                <IconButton
-                                    key="close"
-                                    aria-label="Close"
-                                    color="inherit"
-                                    className={classes.close}
-                                    onClick={handleMessageClose}
-                                >
-                                    <CloseIcon />
-                                </IconButton>,
-                            ]}
-                        ></Snackbar>
-
-                    </div>
-                </div>
-                <Dialog
-                    open={cannotAssignError}
-                    onClose={handleAssignErrorClose}
-                    aria-labelledby="alert-dialog-slide-title"
-                    aria-describedby="alert-dialog-slide-description"
-                >
-                    <DialogTitle id="alert-dialog-slide-title">{"Error"}</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-slide-description">
-                        You cannot assign course untill you set the codeword set.
+                    <Dialog
+                        open={cannotAssignError}
+                        onClose={handleAssignErrorClose}
+                        aria-labelledby="alert-dialog-slide-title"
+                        aria-describedby="alert-dialog-slide-description"
+                    >
+                        <DialogTitle id="alert-dialog-slide-title">{"Error"}</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-slide-description">
+                                You cannot assign course untill you set the codeword set.
                         </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleAssignErrorClose} color="secondary">
-                            OK
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleAssignErrorClose} color="secondary">
+                                OK
                          </Button>
-                    </DialogActions>
-                </Dialog>
-                <Dialog
-                    open={deleteConfirmation}
-                    onClose={handleDeleteClose}
-                    aria-labelledby="alert-dialog-slide-title"
-                    aria-describedby="alert-dialog-slide-description"
-                >
-                    <DialogTitle id="alert-dialog-slide-title">{"Warning"}</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-slide-description">
-                        Are you sure you want to delete this codeword set?
+                        </DialogActions>
+                    </Dialog>
+                    <Dialog
+                        open={deleteConfirmation}
+                        onClose={handleDeleteClose}
+                        aria-labelledby="alert-dialog-slide-title"
+                        aria-describedby="alert-dialog-slide-description"
+                    >
+                        <DialogTitle id="alert-dialog-slide-title">{"Warning"}</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-slide-description">
+                                Are you sure you want to delete this codeword set?
                         </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleDeleteClose} color="secondary">
-                            NO
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleDeleteClose} color="secondary">
+                                NO
                          </Button>
-                        <Button onClick={handleDeleteCourse} color="primary">
-                            YES
+                            <Button onClick={handleDeleteCourse} color="primary">
+                                YES
                         </Button>
-                    </DialogActions>
-                </Dialog>
+                        </DialogActions>
+                    </Dialog>
 
-               
 
-            </Container>
-             }
+
+                </Container>
+            }
         </div>
     );
 
