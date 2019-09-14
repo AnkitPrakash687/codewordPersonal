@@ -8,7 +8,7 @@ import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red } from '@material-ui/core/colors';
-import { Paper, Grid } from '@material-ui/core';
+import { Paper, Grid, CircularProgress } from '@material-ui/core';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button'
@@ -54,7 +54,7 @@ export default function StudentDashboard() {
 
     const [value, setValue] = useState(0);
     const [open, setOpen] = useState(false)
-
+    const [loading, setLoading] = useState(false)
     const classes = useStyles();
     function TabPanel(props) {
         const { children, value, index, ...other } = props;
@@ -101,7 +101,7 @@ export default function StudentDashboard() {
 
     const [courseData, setCourseData] = useState([{}])
     useEffect(() => {
-
+        setLoading(true)
         console.log('inside effect')
         const headers = {
             'token': sessionStorage.getItem('token')
@@ -147,6 +147,7 @@ export default function StudentDashboard() {
                     console.log("****result******")
                     console.log(result)
                     setCourseData(result)
+                    setLoading(false)
                 }
             })
                 .catch(error => {
@@ -173,7 +174,16 @@ export default function StudentDashboard() {
     })
 
     return (
-        <div className={classes.root}>
+         <div className={classes.root}>
+             {loading? <Grid container
+            spacing={0}
+            alignItems="center"
+            justify="center"
+            style={{ minHeight: '100vh' }}>
+            <CircularProgress className={classes.progress} />
+        </Grid>
+        :
+        <div>
             <AppBar position="static" className={classes.appBar}>
                 <Tabs variant='fullWidth' centered={true} value={value} onChange={handleChange} aria-label="simple tabs example" >
                     <Tab label="" {...a11yProps(0)} />
@@ -191,9 +201,10 @@ export default function StudentDashboard() {
 
             </TabPanel>
 
-
+</div>
+             }
         </div>
-
+                
     );
 
 }
