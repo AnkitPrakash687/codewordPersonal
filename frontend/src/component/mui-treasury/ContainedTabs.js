@@ -17,7 +17,7 @@ import { breakpoints } from '@material-ui/system';
   const useTabStyles = makeStyles(theme => {
       
     const defaultBgColor = '#81c784';
-    const defaultSelectedBgColor = '#dcedc8';
+    const defaultSelectedBgColor = '#4caf50';
     const defaultMinWidth = {
       xs: 160,
     };
@@ -60,7 +60,7 @@ import { breakpoints } from '@material-ui/system';
         },
         '&:hover': {
           '&:not($selected)': {
-            backgroundColor: "#9ccc65"
+            backgroundColor: "#66bb6a"
              
           },
           '&::before': {
