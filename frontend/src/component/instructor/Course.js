@@ -643,7 +643,10 @@ export default function Course(props) {
                                     actionsColumnIndex: -1,
                                     headerStyle: {
                                         fontSize: 15
-                                    }
+                                    },
+                                    emptyRowsWhenPaging: false,
+                                    exportButton: true,
+                                    exportAllData: true
                                 }}
                                 editable={{ onRowAdd: !disableEdit ? newData =>
                                         new Promise(resolve => {

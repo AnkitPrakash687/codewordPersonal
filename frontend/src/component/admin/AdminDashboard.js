@@ -38,7 +38,8 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import LockIcon from '@material-ui/icons/Lock';
 import ListAltIcon from '@material-ui/icons/ListAlt';
-
+import AddCodewordSet from '../codewordset/AddCodewordSet'
+import CodewordsetCard from '../codewordset/CodewordsetCard'
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
     Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -152,7 +153,7 @@ export default function AdminDashboard() {
     const [instructorRequest, setInstructorRequest] = useState();
     const [table, setTable] = useState({
         columns: [
-            { title: 'id', field: 'id', hidden:true},
+            { title: 'id', field: 'id', hidden:true, export:false},
             { title: 'Name', field: 'name', cellStyle: {width: 100} },
             { title: 'Email', field: 'email', cellStyle: {width: 100} }
         ],
@@ -165,8 +166,6 @@ export default function AdminDashboard() {
     }
 
 
-
-
     const handleMessageClose = value => {
         setSnack({ status: false })
     };
@@ -175,6 +174,15 @@ export default function AdminDashboard() {
 
     const [courseData, setCourseData] = useState([{}])
     const [render, setRender] = useState(false)
+    const [openCodeword, setOpenCodeword] = useState()
+  
+    const handleCodewordClickOpen = () =>{
+        setOpenCodeword(true)
+    }
+
+    const handleCodewordClose = () => {
+        setOpenCodeword(false)
+    }
     useEffect(() => {
         setLoading(true)
         console.log('inside effect')
@@ -203,6 +211,36 @@ export default function AdminDashboard() {
             
 
     }, [render])
+
+    useEffect(() => {
+
+        console.log('inside effect')
+        const headers = {
+            'token': sessionStorage.getItem('token')
+        };
+        API.get('dashboard/getcodewordset', { headers: headers }).then(response => {
+            console.log('👉 Returned data in :', response);
+            let data = response.data.data
+            let result = []
+            console.log('********* Codeword Set admin')
+            console.log(data)
+            data.map((item)=>{
+                console.log(item)
+                result.push({
+                    id: item.id,
+                    codewordSetName: item.codewordSetName,
+                    count: item.count,
+                    isPublished: item.isPublished
+                })
+            })
+            setCodewordsetData(result)
+        })
+            .catch(error => {
+                console.log(error)
+          
+            })
+
+    }, [])
 
     const handleAcceptRequest = (resolve, rowData) => {
         const headers = {
@@ -245,8 +283,15 @@ export default function AdminDashboard() {
             }
         })
     }
-    const listCourses = courseData.map((course) => {
-        return true
+    const [codewordsetData, setCodewordsetData] = useState([])
+    const listCodewordSet = codewordsetData.map((item) => {
+        // console.log('*******codeworset*******')
+        // console.log(item)
+        return <CodewordsetCard id={item.id}
+            codewordSetName={item.codewordSetName}
+            count={item.count}
+            isPublished = {item.isPublished}
+        ></CodewordsetCard>
     })
 
     return (
@@ -290,7 +335,8 @@ export default function AdminDashboard() {
                                     fontSize: 15
                                 },
                                 emptyRowsWhenPaging: false,
-                                exportButton: true
+                                exportButton: true,
+                                exportAllData: true
                             }}
                             actions={[
                                 {
@@ -330,13 +376,25 @@ export default function AdminDashboard() {
                     </TabPanel>
                     <TabPanel value={value} index={2}>
 
+                           
+            <Button variant="contained" color="primary" className={classes.button} onClick={handleCodewordClickOpen}>
+                    Add codeword Set
+            </Button>
+           
+            <Dialog  fullWidth={true} disableBackdropClick={true} onClose={handleCodewordClose} aria-labelledby="simple-dialog-title" open={openCodeword}>    
+                 <div>
+                 <DialogTitle id="simple-dialog-title">Add Codeword Set</DialogTitle>
+                <AddCodewordSet onClose={handleCodewordClose}></AddCodewordSet>
+                </div>         
+            </Dialog>
+               <Grid container spacing={3}>
 
+                    {
+                        listCodewordSet.length > 0 &&
+                        listCodewordSet
+                    }
 
-                        <Grid container spacing={3}>
-
-
-
-                        </Grid>
+                </Grid>
                     </TabPanel>
 
                 </Container>

@@ -654,7 +654,10 @@ export default function CodewordSet(props) {
                                         actionsColumnIndex: -1,
                                         headerStyle: {
                                             fontSize: 15
-                                        }
+                                        },
+                                        emptyRowsWhenPaging: false,
+                                        exportButton: true,
+                                        exportAllData: true
                                     }}
                                     editable={{
                                         onRowAdd: newData =>
