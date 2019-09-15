@@ -23,8 +23,8 @@ var signUp = (req,res) => {
                 last_name: body.lastName.trim(),
                 email_id: body.email,
                 password: body.password,
-                is_active: !body.instructor,
-                role: body.instructor?'instructor':'student',
+                instructor_role_request: body.instructor,
+                role: 'student',
                 create_at: date.toISOString(),
                 updated_at: date.toISOString()
             });

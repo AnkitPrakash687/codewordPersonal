@@ -185,9 +185,7 @@ export default function StudentDashboard() {
         :
         <div>
             <AppBar position="static" className={classes.appBar}>
-                <Tabs variant='fullWidth' centered={true} value={value} onChange={handleChange} aria-label="simple tabs example" >
-                    <Tab label="" {...a11yProps(0)} />
-                </Tabs>
+    
             </AppBar>
             <TabPanel value={value} index={0}>
 

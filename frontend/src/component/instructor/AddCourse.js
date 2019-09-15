@@ -246,7 +246,7 @@ export default function AddCourse(props) {
             console.log('👉 Returned data in :', response);
             if (response.data.code == 200) {
                 
-                if(response.data.invalidRecords.length > 0){
+                if(response.data.length > 0){
                     setInvalidRecord(true)
                     setState({...state, reRender:true})
                 }else{
