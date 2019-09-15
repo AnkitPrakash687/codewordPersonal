@@ -71,12 +71,13 @@ export default function InstructorDashboard() {
                 aria-labelledby={`simple-tab-${index}`}
                 {...other}
             >
-                <Box bgcolor={lightGreen[100]} 
+                <Box bgcolor={lightGreen[100]}
                 style={ {
                     borderBottomLeftRadius: 10,
                     borderBottomRightRadius: 10,
-                    borderTopRightRadius: 10
-                }} minheight={500} p={3}>{children}</Box>
+                    borderTopRightRadius: 10,
+
+                }} minHeight={400} p={3}>{children}</Box>
             </Typography>
         );
     }

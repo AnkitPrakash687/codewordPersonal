@@ -132,8 +132,7 @@ export default function AdminDashboard() {
                     style={{
                         borderBottomLeftRadius: 10,
                         borderBottomRightRadius: 10,
-                        borderTopRightRadius: 10
-                    }} minheight={500} p={3}>{children}</Box>
+                    }} minHeight={450} p={3}>{children}</Box>
             </Typography>
         );
     }
