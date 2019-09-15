@@ -143,7 +143,7 @@ export default function StudentDashboard() {
                 })
         })
        
-    }, [render])
+    }, [])
 
   const handleInstructorRequest = () =>{
     const headers = {
@@ -157,7 +157,8 @@ export default function StudentDashboard() {
                 status: true,
                 message: 'Request Sent!'
             })
-            setRender(!render)
+            setInstructorRequest(true)
+            
         }
     })
   }
