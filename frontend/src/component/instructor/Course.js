@@ -154,6 +154,7 @@ export default function Course(props) {
         endSurvey: '',
         isAssigned: '',
         codewordset: '',
+        codewordCount: 0,
         ack: ''
     })
 
@@ -213,6 +214,8 @@ export default function Course(props) {
                     startSurvey: course.PreSurveyURL == '' ? 'Unpublished' : course.PreSurveyURL,
                     endSurvey: course.PostSurveyURL == '' ? 'Unpublished' : course.PostSurveyURL,
                     isAssigned: course.isAssigned,
+                    codewordCount: (course.codewordSet.codewords && course.codewordSet.codewords.length > 0 ) ? 
+                                    course.codewordSet.codewords.length : 0,
                     codewordset: (!course.codewordSet.codewordSetName || course.codewordSet.codewordSetName == '')
                         ? 'Not Assigned' : course.codewordSet.codewordSetName,
                     ack: ack + '/' + course.students.length
@@ -265,6 +268,14 @@ export default function Course(props) {
         setDeleteConfirmation(false)
     }
     const addCourseRow = (resolve, newData) => {
+
+        if(state.codewordCount < table.data.length){
+            setSnack({
+                message: 'Select larger codeword set',
+                open: true
+            })
+            resolve()
+        }else{
         var data = {
             id: state.id,
             email: newData.email,
@@ -296,6 +307,7 @@ export default function Course(props) {
             }
         })
     }
+}
 
     const updateCourseRow = (resolve, newData, oldData) => {
         var data = {
@@ -329,6 +341,7 @@ export default function Course(props) {
                 resolve()
             }
         })
+    
     }
 
     const deleteCourseRow = (resolve, oldData) => {
