@@ -152,6 +152,7 @@ export default function AdminDashboard() {
     const [instructorRequest, setInstructorRequest] = useState();
     const [table, setTable] = useState({
         columns: [
+            { title: 'id', field: 'id', hidden:true},
             { title: 'Name', field: 'name', cellStyle: {width: 100} },
             { title: 'Email', field: 'email', cellStyle: {width: 100} }
         ],
@@ -189,7 +190,7 @@ export default function AdminDashboard() {
             setTable({
                 ...table,
                 data: data.map((user)=>{
-                    return {name: user.name, email: user.email}
+                    return {id: user.id, name: user.name, email: user.email}
                 })
             })
             setLoading(false)
@@ -203,20 +204,44 @@ export default function AdminDashboard() {
 
     }, [render])
 
-    const handleInstructorRequest = () => {
+    const handleAcceptRequest = (resolve, rowData) => {
         const headers = {
             'token': sessionStorage.getItem('token')
         };
 
-        API.post('dashboard/instructorRequest', {}, { headers: headers }).then(response => {
+        API.post('dashboard/acceptRequest', {id: rowData.id}, { headers: headers }).then(response => {
             console.log(response.data)
             if (response.data.code == '200') {
                 setSnack({
                     status: true,
-                    message: 'Request Sent!'
+                    message: 'Request accepted!'
                 })
-                setInstructorRequest(true)
+                const data = [...table.data];
+                data.splice(data.indexOf(rowData), 1);
+                setTable({ ...table, data });
+                //setRender(!render)
+                resolve();
+            }
+        })
+    }
 
+    const handleDeclineRequest = (resolve, rowData) => {
+        const headers = {
+            'token': sessionStorage.getItem('token')
+        };
+
+        API.post('dashboard/declineRequest', {id: rowData.id}, { headers: headers }).then(response => {
+            console.log(response.data)
+            if (response.data.code == '200') {
+                setSnack({
+                    status: true,
+                    message: 'Request declined!'
+                })
+                const data = [...table.data];
+                data.splice(data.indexOf(rowData), 1);
+                setTable({ ...table, data });
+                //setRender(!render)
+                resolve();
             }
         })
     }
@@ -263,7 +288,9 @@ export default function AdminDashboard() {
                                 actionsColumnIndex: 0,
                                 headerStyle: {
                                     fontSize: 15
-                                }
+                                },
+                                emptyRowsWhenPaging: false,
+                                exportButton: true
                             }}
                             actions={[
                                 {
@@ -271,7 +298,7 @@ export default function AdminDashboard() {
                                     tooltip: 'Accept',
                                     onClick: (event, rowData) =>
                                         new Promise(resolve =>{
-
+                                            handleAcceptRequest(resolve, rowData)
                                         })
                                     
                                 },
@@ -280,7 +307,7 @@ export default function AdminDashboard() {
                                     tooltip: 'Decline',
                                     onClick: (event, rowData) =>
                                         new Promise(resolve =>{
-                                                
+                                            handleDeclineRequest(resolve, rowData)  
                                         })
                                     
                                 }

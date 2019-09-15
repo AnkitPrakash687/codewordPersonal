@@ -52,4 +52,6 @@ router.post('/upadatecodewordset', codewordsetController.upadatecodewordset)
 router.post('/checkUsers', usersController.checkUsers)
 router.post('/instructorRequest', usersController.instructorRequest)
 router.get('/requests', usersController.requests)
+router.post('/acceptRequest', usersController.acceptRequest)
+router.post('/declineRequest', usersController.declineRequest)
 module.exports = router;
