@@ -77,7 +77,8 @@ var details = (req,res) => {
     console.log('user'+user);        
     return res.send({email_id: user.email_id, 
         name: user.first_name + ' '+ user.last_name, 
-        role:user.role});
+        role:user.role,
+        instructorRequest: user.instructor_role_request});
     });
 }
 module.exports.details = details;
@@ -188,3 +189,27 @@ const checkUsers = (req,res) =>{
 }
 
 module.exports.checkUsers = checkUsers
+
+var instructorRequest = (req,res) =>{
+   // var body = _.pick(req.body,['studentEmails']);
+   console.log('working request')
+   console.log(req.session.id)
+   UserModel.updateOne({_id: req.session.id}, 
+    {
+        $set:{
+            instructor_role_request: true
+        }
+    }
+    ,(error, user)=>{
+
+        if(error){
+            console.log(error)
+            return  res.status(400).send("Error");
+        }
+        return res.json({ code: 200, message: true});
+   })
+    
+
+}
+
+module.exports.instructorRequest = instructorRequest

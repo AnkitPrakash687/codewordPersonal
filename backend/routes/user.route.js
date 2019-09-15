@@ -50,4 +50,5 @@ router.post('/publishCodeworset', codewordsetController.publishCodeworset)
 router.post('/deleteCodewordset', codewordsetController.deleteCodewordset)
 router.post('/upadatecodewordset', codewordsetController.upadatecodewordset)
 router.post('/checkUsers', usersController.checkUsers)
+router.post('/instructorRequest', usersController.instructorRequest)
 module.exports = router;

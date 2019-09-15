@@ -8,7 +8,8 @@ import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, grey, red } from '@material-ui/core/colors';
-import { Paper, Grid, CircularProgress, Container, CssBaseline } from '@material-ui/core';
+import { Paper, Grid, CircularProgress, Container, CssBaseline, Snackbar, IconButton } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close'
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button'
@@ -62,7 +63,10 @@ export default function StudentDashboard() {
 
 
     const [value, setValue] = useState(0);
-    const [open, setOpen] = useState(false)
+    const [snack, setSnack] = useState({
+        status: false,
+        message: ''
+    })
     const [loading, setLoading] = useState(false)
     const [instructorRequest,setInstructorRequest] = useState();
     const classes = useStyles();
@@ -72,15 +76,16 @@ export default function StudentDashboard() {
     }
 
 
-    const handleClickOpen = () => {
-        setOpen(true)
-    }
+  
 
-    const handleClose = value => {
-        setOpen(false)
+    const handleMessageClose = value => {
+        setSnack({status:false})
     };
 
+
+
     const [courseData, setCourseData] = useState([{}])
+    const [render, setRender] = useState(false)
     useEffect(() => {
         setLoading(true)
         console.log('inside effect')
@@ -98,8 +103,9 @@ export default function StudentDashboard() {
             // }
         })
         .then(user => {
-
-            setInstructorRequest(user.instructor_role_request)
+            console.log('*******user request')
+            console.log(user)
+            setInstructorRequest(user.instructorRequest)
             API.get('dashboard/getStudentCourses', { headers: headers }).then(response => {
                 console.log('👉 Returned data in :', response);
     
@@ -137,15 +143,22 @@ export default function StudentDashboard() {
                 })
         })
        
-    }, [])
+    }, [render])
 
   const handleInstructorRequest = () =>{
     const headers = {
         'token': sessionStorage.getItem('token')
     };
 
-    API.get('dashboard/instructorRequest', { headers: headers }).then(response => {
-
+    API.post('dashboard/instructorRequest', {},{ headers: headers }).then(response => {
+        console.log(response.data)
+        if(response.data.code == '200'){
+            setSnack({
+                status: true,
+                message: 'Request Sent!'
+            })
+            setRender(!render)
+        }
     })
   }
     const listCourses = courseData.map((course) => {
@@ -200,6 +213,8 @@ export default function StudentDashboard() {
                         <Grid container >
                            <Grid item sm={12}> 
                         <Box display="flex" justifyContent="flex-end">
+
+                            { !instructorRequest &&
                         <Button
                             size="small"
                             className={classes.button}
@@ -212,6 +227,7 @@ export default function StudentDashboard() {
                                 </Box>
                                 </Typography>
                     </Button>
+                            }
                         </Box>
                         </Grid>
                         </Grid>
@@ -229,6 +245,29 @@ export default function StudentDashboard() {
           
             </Container>
              }
+
+<Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                open={snack.status}
+                autoHideDuration={2000}
+                variant="success"
+                onClose={handleMessageClose}
+                message={snack.message}
+                action={[
+                    <IconButton
+                        key="close"
+                        aria-label="Close"
+                        color="inherit"
+                        className={classes.close}
+                        onClick={handleMessageClose}
+                    >
+                        <CloseIcon />
+                    </IconButton>,
+                ]}
+            ></Snackbar>
         </div>
                 
     );
