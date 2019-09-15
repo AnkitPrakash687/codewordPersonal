@@ -87,12 +87,7 @@ export default function InstructorDashboard() {
         value: PropTypes.any.isRequired,
     };
 
-    function a11yProps(index) {
-        return {
-            id: `simple-tab-${index}`,
-            'aria-controls': `simple-tabpanel-${index}`,
-        };
-    }
+ 
     const [render, setRender] = useState(false);
     const [renderCodewordSet, setRenderCodewordSet] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -260,14 +255,7 @@ export default function InstructorDashboard() {
         </Grid>
         :
         <div>
-           
 
-
-                        
-                {/* <Tabs variant='fullWidth' centered={true} value={value} onChange={handleChange} aria-label="simple tabs example" >
-                    <Tab label="Course" {...a11yProps(0)} />
-                    <Tab label="Codeword" {...a11yProps(1)} />
-                </Tabs> */}
         <ContainedTabs
         style={{ alignSelf: 'flex-center',  }}
         tabs={[
@@ -277,8 +265,6 @@ export default function InstructorDashboard() {
         value={value}
         onChange={handleChange}
       >
-             {/* <Tab label="Course" {...a11yProps(0)} />
-                    <Tab label="Codeword" {...a11yProps(1)} /> */}
       </ContainedTabs>
 
                     

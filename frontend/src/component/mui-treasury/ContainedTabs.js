@@ -19,7 +19,7 @@ import { breakpoints } from '@material-ui/system';
     const defaultBgColor = '#81c784';
     const defaultSelectedBgColor = '#4caf50';
     const defaultMinWidth = {
-      xs: 160,
+      xs: 120,
     };
     const getTextColor = color => {
       if (Color(color).isLight()) return theme.primary;
@@ -33,7 +33,7 @@ import { breakpoints } from '@material-ui/system';
       }) => ({
           borderTopLeftRadius: 10 ,
           borderTopRightRadius: 10,
-        minWidth: 160,
+        minWidth: 40,
         opacity: 1,
         overflow: 'initial',
         color: grey[100],
