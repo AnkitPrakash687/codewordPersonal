@@ -3,7 +3,7 @@ import React, { useState, Component, useEffect } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, grey } from '@material-ui/core/colors';
-import { Paper, Grid, Button, Zoom, IconButton, Tooltip} from '@material-ui/core';
+import { Paper, Grid, Button, Zoom, IconButton, Tooltip, Box, Link} from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
 import { makeStyles } from '@material-ui/core/styles';
@@ -32,6 +32,11 @@ const useStyles = makeStyles(theme => ({
         margin: 10,
         background: grey[200]
     },
+    survey:{
+        marginLeft: 10,
+        marginRight: 10,
+        padding:10
+    },
     title: {
         padding: theme.spacing(1)
     },
@@ -48,6 +53,15 @@ export default function CourseCard(props) {
     const [reveal, setReveal] = useState(props.isRevealed)
     const [codeword, setCodeword] = useState(props.codeword)
     const [tooltip, setTooltip] = useState("Copy")
+    const LightTooltip = withStyles(theme => ({
+        tooltip: {
+          backgroundColor: theme.palette.common.white,
+          color: 'rgba(0, 0, 0, 0.87)',
+          boxShadow: theme.shadows[1],
+          fontSize: 11,
+        },
+      }))(Tooltip);
+
     const handleClickReveal = () => {
 
         const headers = {
@@ -84,9 +98,13 @@ export default function CourseCard(props) {
 
                 <div className={classes.appBar}>
                     <AppBar position="static" className={classes.appBar}>
-                        <Typography variant="h6" className={classes.title}>
-                            {props.courseName}
+                        {
+                        <LightTooltip title={props.courseName} placement="top-start">
+                        <Typography noWrap variant="h6" className={classes.title}>
+                            {props.courseName} 
                         </Typography>
+                        </LightTooltip>
+                        }
                     </AppBar>
                 </div>
 
@@ -116,22 +134,31 @@ export default function CourseCard(props) {
                         </Grid>
                     }
                 </Paper>
-                <Grid className={classes.dates} container spacing={0}>
-                    <Grid item xs={12} sm={6} md={6} lg={6}>
-                        <Typography variant="caption" className={classes.title}>
-                            Start date: {props.startDate}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={6} lg={6}>
-                        <Typography variant="caption" className={classes.title}>
-                            End Date: {props.endDate}
-                        </Typography>
-                    </Grid>
-                </Grid>
-
-
+                {(props.startSurvey != 'Unpublished' || props.endSurvey != 'Unpublished') &&
+                <Paper className={classes.survey}>
+              <Box display="flex" justifyContent="space-between">
+                        { props.startSurvey != 'Unpublished'?
+                       <Box display="flex" >
+                        <Link onClick={event => event.stopPropagation()} target="_blank" href={props.startSurvey} variant="body2" className={classes.startSurvey}>
+                         Start Survey
+                      </Link>
+                      </Box>
+                        :false
+                        }
+                        { props.endSurvey != 'Unpublished'?
+                     <Box display="flex" >
+                        <Link onClick={event => event.stopPropagation()} target="_blank" href={props.endSurvey} variant="body2" className={classes.link}>
+                         End Survey
+                      </Link>
+                   </Box>
+                        :false
+                        }
+                     
+                     </Box>
+                    </Paper>
+                }
             </Paper>
-
+                    
         </Grid>
 
     );

@@ -7,8 +7,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import { withStyles } from '@material-ui/core/styles';
-import { green, lightGreen, red } from '@material-ui/core/colors';
-import { Paper, Grid, CircularProgress } from '@material-ui/core';
+import { green, lightGreen, grey, red } from '@material-ui/core/colors';
+import { Paper, Grid, CircularProgress, Container, CssBaseline } from '@material-ui/core';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button'
@@ -19,13 +19,19 @@ const useStyles = makeStyles(theme => ({
     root: {
         margin: 30,
         flexGrow: 1,
-        backgroundColor: theme.palette.background.paper,
+        backgroundColor: theme.palette.white,
+    },
+    menuBar:{
+        minHeight: 60,
+        background: green[500]
     },
     appBar: {
         background: green[600]
     },
     paper: {
-        paddingBottom: 20
+        minHeight: 500,
+        padding: 20,
+        background: lightGreen[200]
     },
     paper2: {
         padding: 20,
@@ -45,7 +51,10 @@ const useStyles = makeStyles(theme => ({
 
     },
     button: {
-        marginBottom: theme.spacing(2)
+        margin: theme.spacing(2),
+        textTransform: "none",
+        color: grey[300]
+
     }
 }));
 
@@ -55,37 +64,9 @@ export default function StudentDashboard() {
     const [value, setValue] = useState(0);
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [instructorRequest,setInstructorRequest] = useState();
     const classes = useStyles();
-    function TabPanel(props) {
-        const { children, value, index, ...other } = props;
-
-        return (
-            <Typography
-                component="div"
-                role="tabpanel"
-                hidden={value !== index}
-                id={`simple-tabpanel-${index}`}
-                aria-labelledby={`simple-tab-${index}`}
-                {...other}
-            >
-                <Box bgcolor={lightGreen[100]} height={500} p={3}>{children}</Box>
-            </Typography>
-        );
-    }
-
-    TabPanel.propTypes = {
-        children: PropTypes.node,
-        index: PropTypes.any.isRequired,
-        value: PropTypes.any.isRequired,
-    };
-
-    function a11yProps(index) {
-        return {
-            id: `simple-tab-${index}`,
-            'aria-controls': `simple-tabpanel-${index}`,
-        };
-    }
-    
+   
     const handleChange = (event, newValue) => {
         setValue(newValue);
     }
@@ -118,7 +99,7 @@ export default function StudentDashboard() {
         })
         .then(user => {
 
-
+            setInstructorRequest(user.instructor_role_request)
             API.get('dashboard/getStudentCourses', { headers: headers }).then(response => {
                 console.log('👉 Returned data in :', response);
     
@@ -158,7 +139,15 @@ export default function StudentDashboard() {
        
     }, [])
 
-  
+  const handleInstructorRequest = () =>{
+    const headers = {
+        'token': sessionStorage.getItem('token')
+    };
+
+    API.get('dashboard/instructorRequest', { headers: headers }).then(response => {
+
+    })
+  }
     const listCourses = courseData.map((course) => {
         return <Card id={course.id}
             courseName={course.courseName}
@@ -183,23 +172,62 @@ export default function StudentDashboard() {
             <CircularProgress className={classes.progress} />
         </Grid>
         :
-        <div>
-            <AppBar position="static" className={classes.appBar}>
-    
-            </AppBar>
-            <TabPanel value={value} index={0}>
+//         <div>
+//             <AppBar position="static" className={classes.appBar}>
+//                 <Tabs variant='fullWidth' centered={true} value={value} onChange={handleChange} aria-label="simple tabs example" >
+//                     <Tab label="" {...a11yProps(0)} />
+//                 </Tabs>
+//             </AppBar>
+//             <TabPanel value={value} index={0}>
 
-                <Grid container spacing={3}>
+//                 <Grid container spacing={3}>
 
-                    {
-                        listCourses
-                    }
+//                     {
+//                         listCourses
+//                     }
 
-                </Grid>
+//                 </Grid>
 
-            </TabPanel>
+//             </TabPanel>
 
-</div>
+// </div>
+             
+
+
+            <Container component="main" maxWidth='lg'>
+                    <CssBaseline />
+                    <Paper className={classes.menuBar}>
+                        <Grid container >
+                           <Grid item sm={12}> 
+                        <Box display="flex" justifyContent="flex-end">
+                        <Button
+                            size="small"
+                            className={classes.button}
+                            disabled = {instructorRequest}
+                            onClick={handleInstructorRequest}
+                        >
+                            <Typography fontFamily="-apple-system" component="div">
+                                  <Box  m={1}>
+                                    Request Instructor Privilege
+                                </Box>
+                                </Typography>
+                    </Button>
+                        </Box>
+                        </Grid>
+                        </Grid>
+                    </Paper>
+                <Paper className  className={classes.paper}>
+                    
+                    <Grid container spacing={3}>
+
+                        {
+                            listCourses
+                        }
+
+                    </Grid>
+                </Paper>  
+          
+            </Container>
              }
         </div>
                 
