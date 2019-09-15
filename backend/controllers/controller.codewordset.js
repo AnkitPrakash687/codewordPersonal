@@ -378,16 +378,23 @@ const deleteCodewordset = (req, res) =>{
     var body = _.pick(req.body,['id'])
     console.log('*************delete codewordset**********')
     console.log(body.id)
-    Codewordset.deleteOne({_id:body.id}, 
-        (error, deletedCodewordSet)=>{
-        if(error){
+    Codewordset.findOne({_id:body.id}, (error, codewordset)=>{
 
-            return res.json({ code: 400, message: error });
+        if(codewordset.createdBy != req.session.email){
+            return res.json({ code: 400, message: 'Cannot delete admin codeword set' });
         }
-
-        return res.json({ code: 200, message: 'Codeword set finalized' });
-    }
-    )
+        Codewordset.deleteOne({_id:body.id}, 
+            (error, deletedCodewordSet)=>{
+            if(error){
+    
+                return res.json({ code: 400, message: error });
+            }
+    
+            return res.json({ code: 200, message: 'Codeword set deleted' });
+        }
+        )
+    })
+   
 }
 module.exports.deleteCodewordset = deleteCodewordset
 

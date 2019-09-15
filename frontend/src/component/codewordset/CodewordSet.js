@@ -427,7 +427,7 @@ export default function CodewordSet(props) {
             if (response.data.code == 200) {
                 setSnack({
                     open: true,
-                    message: 'Course Deleted'
+                    message: response.data.message
                 })
                 setRedirect(true)
             } else {
