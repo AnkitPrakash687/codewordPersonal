@@ -37,6 +37,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import LockIcon from '@material-ui/icons/Lock';
 import ListAltIcon from '@material-ui/icons/ListAlt';
+import MyAppBar from '../MyAppBar';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -474,7 +475,7 @@ export default function Course(props) {
     return (
         <div>
          
-            <AppBar></AppBar>
+            <MyAppBar/>
             {loading ? <Grid container
                 spacing={0}
                 alignItems="center"

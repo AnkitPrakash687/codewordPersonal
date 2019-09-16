@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red, grey } from '@material-ui/core/colors';
 import {
     Paper, Grid, Button, FormControl, InputLabel,
-    MenuItem, OutlinedInput, Select, Box, Snackbar, IconButton
+    MenuItem, OutlinedInput, Select, Box, Snackbar, IconButton, CircularProgress
 } from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
@@ -45,6 +45,18 @@ const useStyles = makeStyles(theme => ({
     title: {
         padding: 10
     },
+    wrapper: {
+        margin: theme.spacing(1),
+        position: 'relative',
+      },
+      buttonProgress: {
+        color: green[500],
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        marginTop: -12,
+        marginLeft: -12,
+      },
     banner1: {
         background: lightGreen[200],
         paddingLeft: 20
@@ -127,6 +139,7 @@ export default function EditCourse(props) {
     const [disableUpdate, setDisableUpdate] = useState('true')
     const [labelWidth, setLabelWidth] = React.useState(0);
     const [disableField, setDisableField] = useState(false)
+    const [loading, setLoading] = useState(false)
     React.useEffect(() => {
         setLabelWidth(inputLabel.current.offsetWidth);
         if(props.data.isAssigned){
@@ -252,7 +265,7 @@ export default function EditCourse(props) {
     }
 
     const handleClose = () => {
-        console.log(props.data)
+      //  console.log(props.data)
         props.onClose()
     }
 
@@ -277,6 +290,7 @@ export default function EditCourse(props) {
     }])
     useEffect(() => {
         console.log('getdata')
+        setLoading(true)
         const headers = {
             'Content-Type': 'application/json',
             'token':  state.token
@@ -293,11 +307,13 @@ export default function EditCourse(props) {
                     )
                     SetPublishedCodewordset(response.data.data.filter((item)=>{
                         if(item.isPublished){
-                            return {codewordSetName: item.codewordSetName}
+                            return {codewordSetName: item.codewordSetName,
+                                count: item.codewords.length}
                         }
                     }
                     ))
                     console.log(response.data.data)
+                    setLoading(false)
             }
         })
 
@@ -332,7 +348,7 @@ export default function EditCourse(props) {
                         ref={fileLabel}
                         onChange={handleFileChange}
                     />
-                    <label htmlFor="text-button-file">
+                    {/* <label htmlFor="text-button-file">
                         <Grid container spacing={1}>
                             <Grid item xs={8} sm={8} md={8} lg={8}>
                                 <TextField fullWidth="true" className={classes.textField}
@@ -351,7 +367,7 @@ export default function EditCourse(props) {
                             </Grid>
                         </Grid>
 
-                    </label>
+                    </label> */}
 
                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                         <Grid container spacing={5}>
@@ -390,13 +406,13 @@ export default function EditCourse(props) {
 
                         </Grid>
                     </MuiPickersUtilsProvider>
-
+                    <div className={classes.wrapper}>
                     <FormControl margin='dense' fullWidth="true" variant="outlined" className={classes.formControl}>
                         <InputLabel ref={inputLabel} htmlFor="outlined-age-simple">
                             Codeword Set
-        </InputLabel>
+                    </InputLabel>
                         <Select
-                             disabled={disableField}
+                             disabled={disableField || loading}
                             value={course.codewordSet}
                             onChange={handleChange('codewordSet')}
                             input={<OutlinedInput labelWidth={labelWidth} name="Codeword Set" id="outlined-age-simple" />}
@@ -405,10 +421,14 @@ export default function EditCourse(props) {
                                 <em>None</em>
                             </MenuItem>
                             {publishedCodewordset.map((codewordSet)=>{
-                                return <MenuItem value={codewordSet.codewordSetName}>{codewordSet.codewordSetName}</MenuItem>
+                                return <MenuItem value={codewordSet.codewordSetName}>{
+                                    codewordSet.codewordSetName + ' (' + codewordSet.count + ')'
+                                }</MenuItem>
                             })}
                         </Select>
-                    </FormControl>
+                    </FormControl> 
+                    {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+                    </div>
                     <TextField className={classes.textField}
                         variant="outlined"
                         fullWidth
