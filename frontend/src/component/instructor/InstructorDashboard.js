@@ -147,6 +147,8 @@ export default function InstructorDashboard() {
 
     const handleCodewordClose = () => {
         setOpenCodeword(false)
+        setRender(!render)
+        setValue(1)
     }
     useEffect(() => {
 

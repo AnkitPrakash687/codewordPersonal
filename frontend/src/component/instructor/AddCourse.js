@@ -161,7 +161,7 @@ export default function AddCourse(props) {
                 ))
                SetPublishedCodewordset(response.data.data.filter((item)=>{
                     if(item.isPublished){
-                        return {codewordSetName: item.codewordSetName}
+                        return {codewordSetName: item.codewordSetName, count: item.codewords.length}
                     }
                 }
                 ))
@@ -440,7 +440,8 @@ export default function AddCourse(props) {
                                 <em>None</em>
                             </MenuItem>
                             {publishedCodewordset.map((codewordSet) => {
-                                return <MenuItem value={codewordSet.codewordSetName}>{codewordSet.codewordSetName}</MenuItem>
+                                return <MenuItem value={codewordSet.codewordSetName}>{codewordSet.codewordSetName 
+                                    +' ('+ codewordSet.count + ')'}</MenuItem>
                             })}
                         </Select>
                     </FormControl>
