@@ -255,12 +255,14 @@ let editStudent = (req, res) => {
             return res.json({ code: 400, message: 'Course does not exist' });
         } else {
             var duplicate = false
+            if(body.oldEmail != body.newEmail){
             for (var i in course.students) {
                 if (course.students[i].email == body.newEmail) {
                     console.log(course.students[i].email + '==' + body.email)
                     duplicate = true
                 }
             }
+        }
             if (duplicate) {
                 return res.json({ code: 400, message: 'Student already exist' });
             }
@@ -269,7 +271,7 @@ let editStudent = (req, res) => {
             for (var i in newStudents) {
                 if (newStudents[i].email == body.oldEmail) {
                     newStudents[i].email = body.newEmail
-                    // newStudents[i].name = body.newName
+                     newStudents[i].name = body.newName
                 }
             }
 
