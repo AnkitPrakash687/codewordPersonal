@@ -20,7 +20,8 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import clsx from 'clsx';
-
+import MyAppBar from '../component/MyAppBar'
+import {green} from '@material-ui/core/colors'
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -48,6 +49,10 @@ const useStyles = makeStyles(theme => ({
   },
   submit: {
     margin: theme.spacing(1, 0, 2),
+    background: green[500],
+    "&:hover": {
+      backgroundColor: "green"
+  }
   },
 }));
 
@@ -139,6 +144,8 @@ export default function Signup() {
     let validation = validator.validate(state)  //
 
   return (
+    <div>
+      <MyAppBar></MyAppBar>
     <Grid   container
     spacing={0}
     alignItems="center"
@@ -234,10 +241,13 @@ export default function Signup() {
             type="submit"
             fullWidth
             variant="contained"
-            color="primary"
             className={classes.submit}
           >
-            Sign Up
+              <Typography component="div">
+                    <Box fontWeight="bold">
+                    Sign UP 
+                    </Box>
+                  </Typography>
           </Button>
 
           <Snackbar
@@ -277,5 +287,6 @@ export default function Signup() {
       </Paper>
     </Container>
     </Grid>
+    </div>
   );
 }

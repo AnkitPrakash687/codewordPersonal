@@ -23,6 +23,7 @@ import history from '../history'
 import App from '../App';
 import { AppBar } from '@material-ui/core';
 import MyAppBar from '../component/MyAppBar'
+import {green} from '@material-ui/core/colors'
 const useStyles = theme => ({
   '@global': {
     body: {
@@ -48,6 +49,10 @@ const useStyles = theme => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+    background: green[500],
+    "&:hover": {
+      backgroundColor: "green"
+  }
   },
 });
 
@@ -188,10 +193,14 @@ class SignIn extends Component {
                   type="submit"
                   fullWidth
                   variant="contained"
-                  color="primary"
                   className={classes.submit}
                 >
-                  Sign IN
+                  <Typography component="div">
+                    <Box fontWeight="bold">
+                    Sign IN 
+                    </Box>
+                  </Typography>
+                  
           </Button>
                 <Grid container>
                   <Grid item xs>
