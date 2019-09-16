@@ -296,7 +296,7 @@ export default function Course(props) {
                 data.push(newData);
                 setTable({ ...table, data });
                 console.log('render' + render)
-                setRender(!render)
+               // setRender(!render)
                 resolve()
             } else {
                 setSnack({
@@ -331,7 +331,7 @@ export default function Course(props) {
                 const data = [...table.data];
                 data[data.indexOf(oldData)] = newData;
                 setTable({ ...table, data });
-                setRender(!render)
+                //setRender(!render)
                 resolve()
             } else {
                 setSnack({
@@ -362,7 +362,7 @@ export default function Course(props) {
                 const data = [...table.data];
                 data.splice(data.indexOf(oldData), 1);
                 setTable({ ...table, data });
-                setRender(!render)
+               // setRender(!render)
                 resolve();
             } else {
                 setSnack({

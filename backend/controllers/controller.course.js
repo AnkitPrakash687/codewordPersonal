@@ -205,7 +205,7 @@ module.exports.getCourses = getCourses;
 
 let addStudent = (req, res) => {
 
-    var body = _.pick(req.body, ['id', 'email']);
+    var body = _.pick(req.body, ['id', 'email', 'name']);
     CourseModel.findOne({ _id: body.id }, (err, course) => {
 
         if (!course) {
@@ -224,6 +224,7 @@ let addStudent = (req, res) => {
             var newStudents = course.students
 
             newStudents.push({
+                name: body.name,
                 email: body.email,
                 isRevealed: false,
                 codeword: ""
