@@ -275,7 +275,7 @@ export default function AddCodewordSet(props) {
             message: "Codeword Set created!",
             reRender: true
         })
-        props.onClose()
+       
     }
     const handleClose = () => {
        
