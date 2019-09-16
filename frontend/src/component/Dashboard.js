@@ -54,7 +54,7 @@ import {withRouter} from 'react-router-dom'
         const { match, location, history } = this.props;
     return(
         <div>
-              <Appbar isLoggedIn = {true}></Appbar> 
+         
             {this.state.role == 'admin'?
             <Admin></Admin>:
             this.state.role == 'instructor'?

@@ -40,6 +40,7 @@ import LockIcon from '@material-ui/icons/Lock';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import AddCodewordSet from '../codewordset/AddCodewordSet'
 import CodewordsetCard from '../codewordset/CodewordsetCard'
+import MyAppBar from '../MyAppBar'
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
     Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -294,6 +295,8 @@ export default function AdminDashboard() {
     })
 
     return (
+        <div>
+            <MyAppBar></MyAppBar>
         <div className={classes.root}>
             {loading ? <Grid container
                 spacing={0}
@@ -421,6 +424,7 @@ export default function AdminDashboard() {
                     </IconButton>,
                 ]}
             ></Snackbar>
+        </div>
         </div>
 
     );

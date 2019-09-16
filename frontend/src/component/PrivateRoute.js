@@ -1,5 +1,4 @@
 import React from 'react';
-import AppBar from './MyAppBar'
 import { Route, Redirect, withRouter } from 'react-router-dom';
 
 const PrivateRoute = ({ component: Component, ...rest }) => (

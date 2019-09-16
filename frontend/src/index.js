@@ -10,8 +10,10 @@ import * as serviceWorker from './serviceWorker';
 import { Provider } from "react-redux";
 import store from "./store/index";
 import history from './history'
+import AppBar from './component/MyAppBar'
 ReactDOM.render((
    <Router history={history}>
+   
      <App/>
     </Router>
   ), document.getElementById('root'))

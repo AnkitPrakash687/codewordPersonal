@@ -15,6 +15,7 @@ import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button'
 import API from '../../utils/API'
 import Card from './CourseCard'
+import MyAppBar from '../MyAppBar';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -70,20 +71,16 @@ export default function StudentDashboard() {
     })
     const [loading, setLoading] = useState(false)
     const [instructorRequest,setInstructorRequest] = useState();
+    const [isInstructor, setIsInstructor] = useState(false)
     const classes = useStyles();
    
     const handleChange = (event, newValue) => {
         setValue(newValue);
     }
 
-
-  
-
     const handleMessageClose = value => {
         setSnack({status:false})
     };
-
-
 
     const [courseData, setCourseData] = useState([{}])
     const [render, setRender] = useState(false)
@@ -106,6 +103,9 @@ export default function StudentDashboard() {
         .then(user => {
             console.log('*******user request')
             console.log(user)
+            if(user.role == 'instructor'){
+                setIsInstructor(true)
+            }
             setInstructorRequest(user.instructorRequest)
             API.get('dashboard/getStudentCourses', { headers: headers }).then(response => {
                 console.log('👉 Returned data in :', response);
@@ -178,6 +178,8 @@ export default function StudentDashboard() {
     })
 
     return (
+        <div>
+            <MyAppBar/>
          <div className={classes.root}>
              {loading? <Grid container
             spacing={0}
@@ -186,29 +188,7 @@ export default function StudentDashboard() {
             style={{ minHeight: '100vh' }}>
             <CircularProgress className={classes.progress} />
         </Grid>
-        :
-//         <div>
-//             <AppBar position="static" className={classes.appBar}>
-//                 <Tabs variant='fullWidth' centered={true} value={value} onChange={handleChange} aria-label="simple tabs example" >
-//                     <Tab label="" {...a11yProps(0)} />
-//                 </Tabs>
-//             </AppBar>
-//             <TabPanel value={value} index={0}>
-
-//                 <Grid container spacing={3}>
-
-//                     {
-//                         listCourses
-//                     }
-
-//                 </Grid>
-
-//             </TabPanel>
-
-// </div>
-             
-
-
+        :            
             <Container component="main" maxWidth='lg'>
                     <CssBaseline />
                     <Paper className={classes.menuBar}>
@@ -216,7 +196,7 @@ export default function StudentDashboard() {
                            <Grid item sm={12}> 
                         <Box display="flex" justifyContent="flex-end">
 
-                            { !instructorRequest &&
+                            { !instructorRequest && !isInstructor &&
                         <Button
                             size="small"
                             className={classes.button}
@@ -228,7 +208,7 @@ export default function StudentDashboard() {
                                     Request Instructor Privilege
                                 </Box>
                                 </Typography>
-                    </Button>
+                        </Button>
                             }
                         </Box>
                         </Grid>
@@ -248,7 +228,7 @@ export default function StudentDashboard() {
             </Container>
              }
 
-<Snackbar
+            <Snackbar
                 anchorOrigin={{
                     vertical: 'bottom',
                     horizontal: 'left',
@@ -270,6 +250,7 @@ export default function StudentDashboard() {
                     </IconButton>,
                 ]}
             ></Snackbar>
+        </div>
         </div>
                 
     );

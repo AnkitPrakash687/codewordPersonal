@@ -3,6 +3,7 @@ import { green, lightGreen, red, grey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import API from '../../utils/API'
 import { List, Grid, ListItem, ListItemText, Chip, Paper } from '@material-ui/core';
+import MyAppBar from '../MyAppBar';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -57,6 +58,8 @@ export default function ReportCard(props) {
 
     }
     return (
+        <div>
+            
         <List dense={true}>
            {chipData.length > 1 &&
             <Paper className={classes.paper}>
@@ -78,6 +81,7 @@ export default function ReportCard(props) {
             </Paper>
            }
         </List>
+        </div>
     )
 }
 

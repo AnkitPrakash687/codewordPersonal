@@ -20,7 +20,9 @@ import CloseIcon from '@material-ui/icons/Close';
 import Dashboard from './Dashboard';
 import { withStyles } from '@material-ui/core/styles';
 import history from '../history'
-
+import App from '../App';
+import { AppBar } from '@material-ui/core';
+import MyAppBar from '../component/MyAppBar'
 const useStyles = theme => ({
   '@global': {
     body: {
@@ -125,7 +127,7 @@ class SignIn extends Component {
     const { classes } = this.props;
   
     if (this.state.isLoggedIn) {
-      history.push('/')
+     
       return <Redirect to={{
         pathname: '/',
         email: { id: '123' }
@@ -134,6 +136,8 @@ class SignIn extends Component {
     }
 
     return (
+      <div>
+        <MyAppBar/>
       <Grid container
         spacing={0}
         alignItems="center"
@@ -233,6 +237,7 @@ class SignIn extends Component {
         </Container>
 
       </Grid>
+      </div>
     );
 
 

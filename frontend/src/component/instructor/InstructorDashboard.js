@@ -19,6 +19,7 @@ import AddCourse from './AddCourse'
 import {CircularProgress} from '@material-ui/core'
 import API from '../../utils/API'
 import ContainedTabs from '../mui-treasury/ContainedTabs'
+import MyAppBar from '../MyAppBar'
 const useStyles = makeStyles(theme => ({
     root: {
         margin: 30,
@@ -245,7 +246,9 @@ export default function InstructorDashboard() {
         ></CodewordsetCard>
     })
     return (
-       
+       <div>
+
+       <MyAppBar/>
         <div className={classes.root}>
              {loading?     <Grid container
             spacing={0}
@@ -256,7 +259,7 @@ export default function InstructorDashboard() {
         </Grid>
         :
         <div>
-
+        
         <ContainedTabs
         style={{ alignSelf: 'flex-center',  }}
         tabs={[
@@ -307,6 +310,7 @@ export default function InstructorDashboard() {
         </TabPanel>
         </div>
                 }
+        </div>
         </div>
 
     );

@@ -11,6 +11,7 @@ import Signup from './component/Signup'
 import CodewordSet from './component/codewordset/CodewordSet'
 //import history from './helper/history'
 import PrivateRoute from './component/PrivateRoute'
+import StudentDashboard from './component/student/StudentDashboard';
 
 class App extends Component {
 
@@ -27,6 +28,7 @@ class App extends Component {
         <PrivateRoute exact path="/" component={Dashboard} />
         <PrivateRoute exact path="/course/:id" component={Course} />
         <PrivateRoute exact path="/codewordset/:id" component={CodewordSet} />
+        <PrivateRoute path="/studentview" component={StudentDashboard}/>
         <Route path="/signin" component={Login} />
         <Route path="/signup" component={Signup} />
     </Router>

@@ -78,7 +78,9 @@ var details = (req,res) => {
     return res.send({email_id: user.email_id, 
         name: user.first_name + ' '+ user.last_name, 
         role:user.role,
-        instructorRequest: user.instructor_role_request});
+        instructorRequest: user.instructor_role_request,
+        role: user.role
+    });
     });
 }
 module.exports.details = details;

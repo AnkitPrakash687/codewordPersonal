@@ -39,6 +39,7 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import LockIcon from '@material-ui/icons/Lock';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import EditCodewordSet from './EditCodewordSet';
+import MyAppBar from '../MyAppBar';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -495,7 +496,9 @@ export default function CodewordSet(props) {
 
     return (
         <div>
-            <Appbar isLoggedIn={true}></Appbar>
+            <MyAppBar></MyAppBar>
+        <div>
+            
             {loading?<Grid container
             spacing={0}
             alignItems="center"
@@ -739,6 +742,7 @@ export default function CodewordSet(props) {
                 </Dialog>
             </Container>
             }
+        </div>
         </div>
     );
 

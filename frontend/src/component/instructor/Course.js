@@ -473,8 +473,8 @@ export default function Course(props) {
 
     return (
         <div>
-            <Appbar isLoggedIn={true}></Appbar>
-
+         
+            <AppBar></AppBar>
             {loading ? <Grid container
                 spacing={0}
                 alignItems="center"
