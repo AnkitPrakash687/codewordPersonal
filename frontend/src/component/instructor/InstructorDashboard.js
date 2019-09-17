@@ -152,6 +152,9 @@ export default function InstructorDashboard() {
     }
     useEffect(() => {
 
+        console.log('***************window size*************')
+        console.log(window.innerWidth)
+
         setLoading(true)
         console.log('inside effect')
         const headers = {

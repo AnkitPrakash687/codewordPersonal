@@ -3,14 +3,16 @@ import React, { useState, Component, useEffect } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red } from '@material-ui/core/colors';
-import { Paper, Grid } from '@material-ui/core';
+import { Paper, Grid, Tooltip, Link, Box } from '@material-ui/core';
 import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
 import { makeStyles } from '@material-ui/core/styles';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import { Redirect } from "react-router-dom";
 import history from '../../history'
-import {Link, Box} from  '@material-ui/core'
+
+
+
 const useStyles = makeStyles(theme => ({
     root: {
         margin: 30,
@@ -100,19 +102,36 @@ export default function CourseCard(props) {
         return <Redirect to={'/course/' + props.id}></Redirect>
     }
 
+    const LightTooltip = withStyles(theme => ({
+        tooltip: {
+          backgroundColor: green[500],
+          color: 'rgba(0, 0, 0, 0.87)',
+          boxShadow: theme.shadows[1],
+          fontSize: 13,
+        },
+      }))(Tooltip);
+
     return (
 
         <Grid item xs={12} sm={3} md={3} lg={3}>
               <CardActionArea onClick={handleCardClick}>
                 <Paper className={classes.paper}>
               
-                    <div className={classes.appBar}>
+                    <Grid  container className={classes.appBar}>
                         <AppBar position="static" className={classes.appBar}>
+                            { window.innerWidth > 400?
+                            <LightTooltip title={props.courseName}  enterDelay={500} placement="top-start">
                             <Typography noWrap variant="body1" className={classes.title}>
                                 {props.courseName}
                             </Typography>
+                            </LightTooltip>
+                            :
+                            <Typography variant="body1" className={classes.title}>
+                            {props.courseName}
+                            </Typography>
+                    }
                         </AppBar>
-                    </div>
+                    </Grid>
                    
                     <div className={classes.clickable} onClick={handleCardClick}>
                     <Grid container>
