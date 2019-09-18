@@ -10,17 +10,17 @@ var courseStudentController = require('../controllers/controller.coursestudent')
 var instructordasrboard=require('../controllers/controller.instructordahsboard')
 const bodyParser = require('body-parser');
 let multer = require('multer')
-const tokencheck = require('../middleware/tokencheck')
+
 router.use(bodyParser.json());
 
-router.all('*', tokencheck.tokencheck)
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.json('codeword')
 });
 
-
-router.get('/details', usersController.details);
+router.post('/signup', usersController.signUp);
+router.post('/signin', usersController.signIn);
+router.post('/details', usersController.details);
 router.post('/validateEmail', usersController.validateEmail);
 router.post('/sendmail', usersController.tempPassword);
 router.post('/changepassword', usersController.changePassword);

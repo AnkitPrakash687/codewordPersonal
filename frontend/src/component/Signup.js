@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
 
 
 
-export default function Signup() {
+export default function SignIn() {
   
     const classes = useStyles();
     const [state, setState] = useState({
@@ -81,7 +81,7 @@ export default function Signup() {
     console.log(validation)
     if (validation.isValid) {
          try {
-            const response = await API.post('auth/signup', data);
+            const response = await API.post('/signup', data);
             console.log('👉 Returned data:', response);
             console.log(response.data.code)
             if(response.data.code == 200){
@@ -266,7 +266,7 @@ export default function Signup() {
       </Snackbar>
           <Grid container>
             <Grid item xs>
-              <Link to="/signin" variant="body2">
+              <Link to="/login" variant="body2">
                 Already have an Account?Login
               </Link>
             </Grid>

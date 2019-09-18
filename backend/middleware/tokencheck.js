@@ -23,8 +23,7 @@ var tokencheck = (req,res,next) => {
         next();
      });
     } else{
-      res.status(400)
-        .json({message: "Invalid auth token provided."})
+      next();
       }
   };
         

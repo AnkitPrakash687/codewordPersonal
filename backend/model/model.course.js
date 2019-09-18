@@ -10,9 +10,15 @@ var CourseModel = mongoose.model('courseModel', {
     unique: true,
     minlength: 5
    },
-   status:{
-    isAssigned:{type: Boolean},
-    codewordSetName:{type: String}
+   emailKey:{
+    type: String,
+    required: true,
+    minlength: 3
+   },
+   codeWordSetName:{
+    type: String,
+    required: true,
+    minlength: 5
    },
    Startdate: {
     type: String,
