@@ -8,27 +8,31 @@ var CourseModel = mongoose.model('courseModel', {
     required: true,
     trim: true,
     unique: true,
-    minlength: 5
+    index:true
    },
-   emailKey:{
-    type: String,
-    required: true,
-    minlength: 3
+   createdBy:{type: String},
+   students:[
+      {
+      name: {type: String},
+      email:{type:String, unique:true},
+      isRevealed:{type: Boolean},
+      codeword:{type: String}
+      }
+   ],
+   codewordSet:{
+      codewordSetName:{type:String},
+      codewords:[
+         {type: String, min:3}
+      ]
    },
-   codeWordSetName:{
-    type: String,
-    required: true,
-    minlength: 5
+   isAssigned:{
+      type:Boolean
    },
    Startdate: {
-    type: String,
-    required: true,
-    minlength: 5
+    type: Date
    },
    Enddate: {
-    type: String,
-    required: true,
-    minlength: 5
+    type: Date
    },
    PreSurveyURL: {
     type: String

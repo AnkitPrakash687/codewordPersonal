@@ -4,7 +4,7 @@ import API from "../utils/API";
 import Admin from './admin/AdminDashboard'
 import Student from './student/StudentDashboard'
 import Instructor from './instructor/InstructorDashboard'
-import AppBar from './MyAppBar'
+import Appbar from './MyAppBar'
 import {withRouter} from 'react-router-dom'
 
  class Dashboard extends Component{
@@ -54,13 +54,12 @@ import {withRouter} from 'react-router-dom'
         const { match, location, history } = this.props;
     return(
         <div>
-            <AppBar isLoggedIn = {true}></AppBar>
-        
+         
             {this.state.role == 'admin'?
             <Admin></Admin>:
             this.state.role == 'instructor'?
-            <Instructor></Instructor>:
-            <Student></Student>}
+            <Instructor></Instructor>:this.state.role == 'student'?
+            <Student></Student>:false}
         </div>
     );
     }

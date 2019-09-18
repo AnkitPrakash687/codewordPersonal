@@ -1,26 +1,37 @@
 import Typography from '@material-ui/core/Typography';
-import React, { useState, Component } from 'react';
+import React, { useState, Component, useEffect } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red } from '@material-ui/core/colors';
-import { Paper, Grid } from '@material-ui/core';
-import {withRouter} from 'react-router-dom'
+import { Paper, Grid, Tooltip, Link, Box } from '@material-ui/core';
+import { withRouter } from 'react-router-dom'
 import API from '../../utils/API'
-const useStyles = theme => ({
+import { makeStyles } from '@material-ui/core/styles';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import { Redirect } from "react-router-dom";
+import history from '../../history'
+
+
+
+const useStyles = makeStyles(theme => ({
     root: {
         margin: 30,
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
     },
     appBar: {
+        borderRadius: 5,
         background: green[600]
     },
     paper: {
-        paddingBottom: 20
+        borderRadius: 5,
+        paddingBottom: 20,
+        maxWidth: 300,
+        minWidth:200
     },
     paper2: {
-        padding: 20,
-        margin: 20,
+        padding: 10,
+        margin: 10,
         background: lightGreen[200]
     },
     title: {
@@ -28,110 +39,164 @@ const useStyles = theme => ({
     },
     banner1: {
         background: lightGreen[200],
-        paddingLeft: 20
+        padding: 5,
+        marginTop: 5
     },
     banner2: {
         background: red[200],
-        padding: 10
+        padding: 5,
+        marginTop: 5
 
-    }
-});
- class CourseCard extends Component{
-
-    constructor(props){
-        super(props);
-    this.state = {
-        role:'',
-        token: sessionStorage.getItem('token')
-      }
-    }
-
-     async getData(){
-        console.log('getdata')
-        const headers = {
-            'Content-Type': 'application/json',
-            'token':  this.state.token
-          };
-         
-        console.log(headers)
-         try {
-            const response = await API.get('dashboard/details', {headers});
-            console.log('👉 Returned data in :', response);
-            console.log(response.data)
-            if(response.status == 200){
-            this.setState( {
-              id: response.data.email_id,   
-              role: response.data.role,
-              name: response.data.first_name + ' ' + response.data.last_name
-            })
-            console.log('dashbaord : '+ this.state.role)
-            
-        }else {
-        
+    },
+    startSurvey:{
+       marginRight: theme.spacing(1)
+    },
+    clickable:{
+        "&:hover":{
+            cursor: "pointer"
         }
-          } catch (e) {
-            console.log(`😱 Axios request failed: ${e}`);
-          }
-      //  }
-    
+    }
+}));
+export default function CourseCard(props) {
+    const classes = useStyles();
+    const [state, setState] = useState({
+        role: '',
+        token: sessionStorage.getItem('token')
+    })
+
+    useEffect(() => {
+        // console.log('getdata')
+        // const headers = {
+        //     'Content-Type': 'application/json',
+        //     'token':  this.state.token
+        //   };
+
+        // console.log(headers)
+        //  try {
+        //     const response = await API.get('dashboard/details', {headers});
+        //     console.log('👉 Returned data in :', response);
+        //     console.log(response.data)
+        //     if(response.status == 200){
+        //     this.setState( {
+        //       id: response.data.email_id,   
+        //       role: response.data.role,
+        //       name: response.data.first_name + ' ' + response.data.last_name
+        //     })
+        //     console.log('dashbaord : '+ this.state.role)
+
+        // }else {
+
+        // }
+        //   } catch (e) {
+        //     console.log(`😱 Axios request failed: ${e}`);
+        //   }
+    })
+    const [redirect, setRedirect] = useState(false);
+    const handleCardClick = () => {
+        console.log('click working')
+        setRedirect(true)
+
+    }
+    if (redirect) {
+        history.push('/course'+props.id)
+        return <Redirect to={'/course/' + props.id}></Redirect>
     }
 
-    componentDidMount(){
-    //    this.getData()
-    }
-    render(){
-       
-        const {classes} = this.props
-    return(
+    const LightTooltip = withStyles(theme => ({
+        tooltip: {
+          backgroundColor: green[500],
+          color: 'rgba(0, 0, 0, 0.87)',
+          boxShadow: theme.shadows[1],
+          fontSize: 13,
+        },
+      }))(Tooltip);
+
+    return (
+
         <Grid item xs={12} sm={3} md={3} lg={3}>
-        <Paper className={classes.paper}>
-            <div className={classes.appBar}>
-                <AppBar position="static" className={classes.appBar}>
-                    <Typography variant="h6" className={classes.title}>
-                        44618-01/05-19Su PROJECT MGMT IN BUS & TECH
-                    </Typography>
-                </AppBar>
-            </div>
+              <CardActionArea onClick={handleCardClick}>
+                <Paper className={classes.paper}>
+              
+                    <Grid  container className={classes.appBar}>
+                        <AppBar position="static" className={classes.appBar}>
+                            { window.innerWidth > 400?
+                            <LightTooltip title={props.courseName}  enterDelay={500} placement="top-start">
+                            <Typography noWrap variant="body1" className={classes.title}>
+                                {props.courseName}
+                            </Typography>
+                            </LightTooltip>
+                            :
+                            <Typography variant="body1" className={classes.title}>
+                            {props.courseName}
+                            </Typography>
+                    }
+                        </AppBar>
+                    </Grid>
+                   
+                    <div className={classes.clickable} onClick={handleCardClick}>
+                    <Grid container>
+                        <Grid item xs ={2} sm={2}></Grid>
+                        <Grid item>
+                    <Box display="flex">
+                       
+                    <Paper className={classes.paper2}>
+                        
+                        <Typography variant="h8" >
+                            Aknowledged: {props.ack}
+                        </Typography>
+                        <Box display="flex" >
+                        { props.startSurvey != 'Unpublished'?
+                        <Link onClick={event => event.stopPropagation()} target="_blank" href={props.startSurvey} variant="body2" className={classes.startSurvey}>
+                         Start Survey
+                      </Link>
+                        :false
+                        }
+                        { props.endSurvey != 'Unpublished'?
+                        <Link onClick={event => event.stopPropagation()} target="_blank" href={props.endSurvey} variant="body2" className={classes.link}>
+                         End Survey
+                      </Link>
+                       
+                        :false
+                        }
+                      </Box>
+                    </Paper>
+                  
+                    </Box>
+                    </Grid>
+                    <Grid item xs={2} sm={2}></Grid>
+                    </Grid>
+                    </div>
+                  
+                    <Grid className={classes.dates} container spacing={0}>
+                        <Grid item xs={12} sm={6} md={6} lg={6}>
+                            <Typography variant="caption" className={classes.title}>
+                                Start date: {props.startDate}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={6} lg={6}>
+                            <Typography variant="caption" className={classes.title}>
+                                End Date: {props.endDate}
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                    {(props.isAssigned) ?
+                        <Paper className={classes.banner1}>
 
-            <Paper className={classes.paper2}>
-                <Typography variant="h8" className={classes.title}>
-                    Aknowledged:
-                    </Typography><br></br>
-                <Typography variant="h8" className={classes.title}>
-                    Start Survey:
-                    </Typography><br></br>
-                <Typography variant="h8" className={classes.title}>
-                    End Survey
+                            <Typography variant="h8" className={classes.title}>
+                                CODEWORD ASSIGNED
                     </Typography>
-            </Paper>
-            <Grid  container spacing={0}>
-            <Grid   item xs={12} sm={6} md={6} lg={6}>
-            <Typography align="center" variant="button" className={classes.title}>
-                Start date: 06/12/2019
-            </Typography>
-           </Grid>
-           <Grid item xs={12} sm={6} md={6} lg={6}>
-            <Typography align="right" variant="button" className={classes.title}>
-                End Date: 09/12/2019
-            </Typography>
-            </Grid>
-            </Grid>
-            {1 == 2 ?
-                <Paper className={classes.banner1}>
-
-                    <Typography variant="h8" className={classes.title}>
-                        CODEWORD ASSIGNED
+                        </Paper> :
+                        <Paper className={classes.banner2}>
+                            <Typography variant="h8" className={classes.title}>
+                                CODEWORD NOT ASSIGNED
                     </Typography>
-                </Paper> :
-                <Paper className={classes.banner2}>
-                    <Typography variant="h8" className={classes.title}>
-                        CODEWORD NOT ASSIGNED
-                    </Typography>
+                        </Paper>
+                    }
+                   
                 </Paper>
-            }
-        </Paper>
-    </Grid>
+                </CardActionArea>
+        </Grid>
+
     );
-    }
+
 }
-export default withStyles(useStyles)(CourseCard);
