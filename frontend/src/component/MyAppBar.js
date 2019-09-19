@@ -1,19 +1,16 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
 import Button from '@material-ui/core/Button';
-import green from '@material-ui/core/colors/green';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { Redirect } from "react-router-dom"
-
-const useStyles = theme => ({
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import { green, lightGreen, red } from '@material-ui/core/colors';
+import {Redirect} from 'react-router-dom'
+import history from '../history'
+import API from '../utils/API'
+const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
   },
@@ -24,99 +21,91 @@ const useStyles = theme => ({
     flexGrow: 1,
   },
   appBar:{
-      background: green[600]
+    background: green[500]
+  },
+  button:{
+    margin: theme.spacing(1)
   }
-  
-});
+}));
 
+export default function MyAppBar(props) {
+  const classes = useStyles();
 
-class MyAppBar extends Component{
-
-  constructor(props){
-    super(props)
-    this.state = {
-      isLoggedIn:this.props.isLoggedIn,
-      anchorEl:null,
-      logout:false
-    }
-
-  }
-
-render(){
- const {classes} = this.props
-  //const [auth, setAuth] = React.useState(true);
+  const [logout, setLogout] = useState(false)
+  const [studentView, setStudentView] = useState(false)
+  const [token, setToken] = useState(sessionStorage.getItem('token'))
+  const [isInstructor, setIsInstructor] = useState(false)
+  const [render, setRender] = useState(false)
+  const handleLogout = () =>{
  
-
-  const open = Boolean(this.state.anchorEl); 
-
-
-  const logout = (event) => {
-   sessionStorage.removeItem('token')
-  this.setState({
-    logout: true
-  })
-   }
-
-  function handleMenu(event) {
-    this.setState({
-      anchorEl: (event.currentTarget)
-  })
-}
-
-  function handleClose() {
-    this.setState({
-      anchorEl: null
-  })
+    sessionStorage.removeItem('token')
+    setLogout(true)
   }
 
-  if(this.state.logout){
-    return (<Redirect to='/'></Redirect>)
+ const handleStudentView = () =>{
+ 
+   setStudentView(true)
+ }
+
+ useEffect(()=>{
+
+  console.log(token)
+  if(token != null){
+  const headers = {
+    'token': token
+  };
+
+  API.get('dashboard/details', { headers: headers }).then(response => {
+    console.log("me***********AppBAr")
+    console.log(response.data)
+   
+          var user = response.data
+          if(user.role == 'instructor'){
+              setIsInstructor(true)
+          }
+        
+        
+    })
   }
+  },[])
+    
+    if(logout){
+      return <Redirect to="/"></Redirect>
+    }else if(studentView){
+      history.push('/studentview')
+      return <Redirect to="/studentview"></Redirect>
+    }
+  
 
   return (
     <div className={classes.root}>
-    
       <AppBar position="static" className={classes.appBar}>
         <Toolbar>
+        
           <Typography variant="h6" className={classes.title}>
             CODEWORD
           </Typography>
-          { this.state.isLoggedIn? 
-            <div>
-              <IconButton
-                aria-label="Account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenu}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={this.state.anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={open}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
-              </Menu>
-              <Button onClick={logout} color="inherit">Logout</Button>
-            </div>
-          :null}
+          {token != null && isInstructor &&
+          <Button 
+          color="inherit"
+          onClick={handleStudentView}
+          className={classes.button}
+          >
+            Student View
+          </Button>
+          }
+          {token != null &&
+          <Button 
+          color="inherit"
+          className={classes.button}
+          onClick={handleLogout}
+          >
+            Logout
+          </Button>
+          }
         </Toolbar>
+        
       </AppBar>
     </div>
   );
- }
 }
-export default withStyles(useStyles)(MyAppBar);

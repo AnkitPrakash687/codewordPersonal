@@ -1,5 +1,5 @@
 import Typography from '@material-ui/core/Typography';
-import React, { useState, Component } from 'react';
+import React, { useState, Component, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -9,9 +9,18 @@ import Box from '@material-ui/core/Box';
 import { withStyles } from '@material-ui/core/styles';
 import { green, lightGreen, red } from '@material-ui/core/colors';
 import { Paper, Grid } from '@material-ui/core';
-import Card from './CourseCard'
-
-const useStyles = theme => ({
+import CourseCard from './CourseCard'
+import CodewordsetCard from '../codewordset/CodewordsetCard'
+import AddCodewordSet from '../codewordset/AddCodewordSet'
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from '@material-ui/core/Dialog';
+import Button from '@material-ui/core/Button'
+import AddCourse from './AddCourse'
+import {CircularProgress} from '@material-ui/core'
+import API from '../../utils/API'
+import ContainedTabs from '../mui-treasury/ContainedTabs'
+import MyAppBar from '../MyAppBar'
+const useStyles = makeStyles(theme => ({
     root: {
         margin: 30,
         flexGrow: 1,
@@ -31,90 +40,284 @@ const useStyles = theme => ({
     title: {
         padding: 10
     },
-    banner1: {
-        background: lightGreen[200],
-        paddingLeft: 20
-    },
-    banner2: {
-        background: red[200],
-        padding: 10
-
+ 
+    fabProgress: {
+        color: green[500],
+        position: 'absolute',
+        top: -6,
+        left: -6,
+        zIndex: 1,
+      },
+    button: {
+        marginBottom: theme.spacing(2)
     }
-});
+}));
 
-class InstructorDashboard extends Component {
+export default function InstructorDashboard() {
 
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            value: 0
-        }
-    }
+    const [value, setValue] = useState(0);
+    const [open, setOpen] = useState(false)
 
-    render() {
-        const { classes } = this.props
-        function TabPanel(props) {
-            const { children, value, index, ...other } = props;
-
-            return (
-                <Typography
-                    component="div"
-                    role="tabpanel"
-                    hidden={value !== index}
-                    id={`simple-tabpanel-${index}`}
-                    aria-labelledby={`simple-tab-${index}`}
-                    {...other}
-                >
-                    <Box bgcolor={lightGreen[100]} height={500} p={3}>{children}</Box>
-                </Typography>
-            );
-        }
-
-        TabPanel.propTypes = {
-            children: PropTypes.node,
-            index: PropTypes.any.isRequired,
-            value: PropTypes.any.isRequired,
-        };
-
-        function a11yProps(index) {
-            return {
-                id: `simple-tab-${index}`,
-                'aria-controls': `simple-tabpanel-${index}`,
-            };
-        }
-
-        const handleChange = (event, newValue) => {
-            this.setState({ value: newValue });
-        }
+    const classes = useStyles();
+    function TabPanel(props) {
+        const { children, value, index, ...other } = props;
 
         return (
-            <div className={classes.root}>
-                <AppBar position="static" className={classes.appBar}>
-                    <Tabs variant='fullWidth' centered={true} value={this.state.value} onChange={handleChange} aria-label="simple tabs example" >
-                        <Tab label="Course" {...a11yProps(0)} />
-                        <Tab label="Codeword" {...a11yProps(1)} />
-                    </Tabs>
-                </AppBar>
-                <TabPanel value={this.state.value} index={0}>
-                    <Grid container spacing={3}>
+            <Typography
+                component="div"
+                role="tabpanel"
+                hidden={value !== index}
+                id={`simple-tabpanel-${index}`}
+                aria-labelledby={`simple-tab-${index}`}
+                {...other}
+            >
+                <Box bgcolor={lightGreen[100]}
+                style={ {
+                    borderBottomLeftRadius: 10,
+                    borderBottomRightRadius: 10,
+                    borderTopRightRadius: 10,
 
-                        <Card></Card>
-                        <Card></Card>
-                        <Card></Card>
-                        <Card></Card>
-
-                    </Grid>
-
-                </TabPanel>
-                <TabPanel value={this.state.value} index={1}>
-                    Item Two
-        </TabPanel>
-
-            </div>
-
+                }} minHeight={400} p={3}>{children}</Box>
+            </Typography>
         );
     }
-}
 
-export default withStyles(useStyles)(InstructorDashboard)
+    TabPanel.propTypes = {
+        children: PropTypes.node,
+        index: PropTypes.any.isRequired,
+        value: PropTypes.any.isRequired,
+    };
+
+ 
+    const [render, setRender] = useState(false);
+    const [renderCodewordSet, setRenderCodewordSet] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    }
+
+    function SimpleDialog(props) {
+
+        const { onClose, open, render } = props;
+
+        const handleClose = (error) => {
+            console.log('render   ' + render)
+            setRender(!render)
+            onClose();
+        }
+
+        function handleListItemClick(value) {
+            onClose(value);
+        }
+        
+        return (
+
+            <Dialog fullWidth={true} disableBackdropClick={true} onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>    
+                 <div>
+                 <DialogTitle id="simple-dialog-title">Add Course</DialogTitle>
+                <AddCourse onClose={handleClose}></AddCourse>
+                </div>         
+            </Dialog>
+        );
+    }
+
+    SimpleDialog.propTypes = {
+        onClose: PropTypes.func.isRequired,
+        open: PropTypes.bool.isRequired,
+        render: PropTypes.bool.isRequired,
+
+    };
+
+    const handleClickOpen = () => {
+        setOpen(true)
+    }
+
+    const handleClose = value => {
+        setOpen(false)
+    };
+
+    const [courseData, setCourseData] = useState([{}])
+    const [codewordsetData, setCodewordsetData] = useState([{}])
+    const [openCodeword, setOpenCodeword] = useState()
+  
+    const handleCodewordClickOpen = () =>{
+        setOpenCodeword(true)
+    }
+
+    const handleCodewordClose = () => {
+        setOpenCodeword(false)
+        setRenderCodewordSet(!renderCodewordSet)
+        setValue(1)
+    }
+    useEffect(() => {
+
+        console.log('***************window size*************')
+        console.log(window.innerWidth)
+
+        setLoading(true)
+        console.log('inside effect')
+        const headers = {
+            'token': sessionStorage.getItem('token')
+        };
+        API.get('dashboard/getCourseList', { headers: headers }).then(response => {
+            console.log('👉 Returned data in :', response);
+
+            if (response.status == 200) {
+                console.log(response.data)
+                var data = response.data.data
+                var result = []
+                data.map((course) => {
+                    var ack = 0
+                    ack = course.students.reduce((acc, item) => {
+                        if (item.isRevealed) {
+                            return acc + 1
+                        } else {
+                            return acc + 0
+                        }
+                    }, 0)
+                    result.push({
+                        id: course._id,
+                        courseName: course.courseNameKey,
+                        startDate: (course.Startdate.toString()).substring(0, 10),
+                        endDate: (course.Enddate.toString()).substring(0, 10),
+                        startSurvey: course.PreSurveyURL == '' ? 'Unpublished' : course.PreSurveyURL,
+                        endSurvey: course.PostSurveyURL == '' ? 'Unpublished' : course.PostSurveyURL,
+                        isAssigned: course.isAssigned,
+                        'ack': ack + '/' + course.students.length
+                    })
+                })
+
+                console.log(result)
+                setCourseData(result)
+                setLoading(false)
+            }
+        })
+            .catch(error => {
+                console.log(error)
+          
+            })
+
+    }, [render])
+
+
+    useEffect(() => {
+
+        console.log('inside effect')
+        const headers = {
+            'token': sessionStorage.getItem('token')
+        };
+        API.get('dashboard/getcodewordset', { headers: headers }).then(response => {
+            console.log('👉 Returned data in :', response);
+            let data = response.data.data
+            let result = []
+            data.map((item)=>{
+                console.log(item)
+                result.push({
+                    id: item.id,
+                    codewordSetName: item.codewordSetName,
+                    count: item.count,
+                    isPublished: item.isPublished
+                })
+            })
+            setCodewordsetData(result)
+        })
+            .catch(error => {
+                console.log(error)
+          
+            })
+
+    }, [renderCodewordSet])
+
+    const listCourses = courseData.map((course) => {
+        return <CourseCard id={course.id}
+            courseName={course.courseName}
+            ack={course.ack}
+            startDate={course.startDate}
+            endDate={course.endDate}
+            startSurvey={course.startSurvey}
+            endSurvey={course.endSurvey}
+            isAssigned={course.isAssigned}
+        ></CourseCard>
+    })
+
+    const listCodewordSet = codewordsetData.map((item) => {
+        // console.log('*******codeworset*******')
+        // console.log(item)
+        return <CodewordsetCard id={item.id}
+            codewordSetName={item.codewordSetName}
+            count={item.count}
+            isPublished = {item.isPublished}
+        ></CodewordsetCard>
+    })
+    return (
+       <div>
+
+       <MyAppBar/>
+        <div className={classes.root}>
+             {loading?     <Grid container
+            spacing={0}
+            alignItems="center"
+            justify="center"
+            style={{ minHeight: '100vh' }}>
+            <CircularProgress className={classes.progress} />
+        </Grid>
+        :
+        <div>
+        
+        <ContainedTabs
+        style={{ alignSelf: 'flex-center',  }}
+        tabs={[
+          { label: 'Course' },
+          { label: 'Codeword' }
+        ]}
+        value={value}
+        onChange={handleChange}
+      >
+
+      </ContainedTabs>
+
+                    
+            <TabPanel value={value} index={0}>
+
+                <Button variant="contained" color="primary" className={classes.button} onClick={handleClickOpen}>
+                    Add Course
+                </Button>
+                <SimpleDialog open={open} onClose={handleClose} render={render} />
+
+                <Grid container spacing={3}>
+
+                    {
+                        listCourses
+                    }
+
+                </Grid>
+
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+            <Button variant="contained" color="primary" className={classes.button} onClick={handleCodewordClickOpen}>
+                    Add codeword Set
+            </Button>
+           
+            <Dialog  fullWidth={true} disableBackdropClick={true} onClose={handleCodewordClose} aria-labelledby="simple-dialog-title" open={openCodeword}>    
+                 <div>
+                 <DialogTitle id="simple-dialog-title">Add Codeword Set</DialogTitle>
+                <AddCodewordSet onClose={handleCodewordClose}></AddCodewordSet>
+                </div>         
+            </Dialog>
+               <Grid container spacing={3}>
+
+                    {
+                        listCodewordSet
+                    }
+
+                </Grid>
+        </TabPanel>
+        </div>
+                }
+        </div>
+        </div>
+
+    );
+
+}

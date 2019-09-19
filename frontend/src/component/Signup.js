@@ -20,7 +20,8 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import clsx from 'clsx';
-
+import MyAppBar from '../component/MyAppBar'
+import {green} from '@material-ui/core/colors'
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -48,6 +49,10 @@ const useStyles = makeStyles(theme => ({
   },
   submit: {
     margin: theme.spacing(1, 0, 2),
+    background: green[500],
+    "&:hover": {
+      backgroundColor: "green"
+  }
   },
 }));
 
@@ -55,7 +60,7 @@ const useStyles = makeStyles(theme => ({
 
 
 
-export default function SignIn() {
+export default function Signup() {
   
     const classes = useStyles();
     const [state, setState] = useState({
@@ -81,7 +86,7 @@ export default function SignIn() {
     console.log(validation)
     if (validation.isValid) {
          try {
-            const response = await API.post('/signup', data);
+            const response = await API.post('auth/signup', data);
             console.log('👉 Returned data:', response);
             console.log(response.data.code)
             if(response.data.code == 200){
@@ -139,6 +144,8 @@ export default function SignIn() {
     let validation = validator.validate(state)  //
 
   return (
+    <div>
+      <MyAppBar></MyAppBar>
     <Grid   container
     spacing={0}
     alignItems="center"
@@ -234,10 +241,13 @@ export default function SignIn() {
             type="submit"
             fullWidth
             variant="contained"
-            color="primary"
             className={classes.submit}
           >
-            Sign Up
+              <Typography component="div">
+                    <Box fontWeight="bold">
+                    Sign UP 
+                    </Box>
+                  </Typography>
           </Button>
 
           <Snackbar
@@ -266,7 +276,7 @@ export default function SignIn() {
       </Snackbar>
           <Grid container>
             <Grid item xs>
-              <Link to="/login" variant="body2">
+              <Link to="/signin" variant="body2">
                 Already have an Account?Login
               </Link>
             </Grid>
@@ -277,5 +287,6 @@ export default function SignIn() {
       </Paper>
     </Container>
     </Grid>
+    </div>
   );
 }

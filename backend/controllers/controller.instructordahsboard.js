@@ -8,13 +8,16 @@ var { CourseModel } = require('../model/model.course');
 const fs = require('fs')
 
 let getcourse = (req,res) => {
-    var body = _.pick(req.body,['courseNameKey','email','codeWordSet','Startdate','Enddate','PreSurveyURL','PostSurveyURL']);
-
-    CourseModel.findOne({courseName: body.courseNameKey}, function (err, Course) {
+   // var body = _.pick(req.body,['courseNameKey','email','codeWordSet','Startdate','Enddate','PreSurveyURL','PostSurveyURL']);
+    var id = req.params.id
+    console.log(id)
+    CourseModel.findOne({_id: id}, function (err, course) {
         if(err){
-            return res.json({ code: 200, message: 'Course Doesnt Exist'});
+            return res.json({ code: 404, message: 'Course Doesnt Exist'});
+        }else if(course.createdBy != req.session.email){
+            return res.json({ code: 400, message: 'Unauthorized'});
         }
-        return Course;
+        return res.json({ code: 200, data: course});
     })
 }
 module.exports.getcourse = getcourse;
