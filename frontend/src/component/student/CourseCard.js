@@ -134,8 +134,8 @@ export default function CourseCard(props) {
                         </Grid>
                     }
                 </Paper>
-                {(props.startSurvey != 'Unpublished' || props.endSurvey != 'Unpublished') &&
-                <Paper className={classes.survey}>
+               
+                <div className={classes.survey}>
               <Box display="flex" justifyContent="space-between">
                         { props.startSurvey != 'Unpublished'?
                        <Box display="flex" >
@@ -143,7 +143,7 @@ export default function CourseCard(props) {
                          Start Survey
                       </Link>
                       </Box>
-                        :false
+                        :<Typography variant="body">Start Survey</Typography>
                         }
                         { props.endSurvey != 'Unpublished'?
                      <Box display="flex" >
@@ -151,12 +151,12 @@ export default function CourseCard(props) {
                          End Survey
                       </Link>
                    </Box>
-                        :false
+                        :<Typography variant="body">End Survey</Typography>
                         }
                      
                      </Box>
-                    </Paper>
-                }
+                    </div>
+                
             </Paper>
                     
         </Grid>

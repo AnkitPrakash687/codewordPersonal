@@ -496,24 +496,8 @@ let assignCourse = (req, res) => {
                 return res.json({ code: 400, message: err });
             }
             console.log('assigned*************************************')
-            console.log(updateCourse)
-            console.log(body.studentEmails)
-            UserModel.updateMany({email_id:{$in:body.studentEmails}}, 
-                {$push: {courses:{
-                    course_id: body.id
-                }}}, (error, updatedUser)=>{
-                    console.log('user*************************************')
-                    if(error){
-                        return res.json({ code: 400, message: err });
-                    }
-                    console.log(updatedUser)
-                    return res.json({ code: 200, message: 'Course Assigned' })
-                })
-    
-        })
-
-      
-        
+            return res.json({ code: 200, message: 'Course Assigned' })
+        })       
 
 }
 
@@ -521,22 +505,16 @@ module.exports.assignCourse = assignCourse
 
 let getStudentCourses = (req,res) =>{
 
-       UserModel.findOne({email_id: req.session.email}, (error, user)=>{
-           if(error){
-            return res.json({ code: 400, message: e });
-           }
-           console.log(user)
-           var courseList = user.courses.map((item)=>{
-               return item.course_id
-           })
-           console.log(courseList)
-           CourseModel.find({$and:[{ _id: {$in: courseList} }, {isAssigned: true}]}, function (err, courses) {
-            console.log(courses)
-            return res.json({ code: 200, data: courses });   
-        }).catch((e) => {
-            return res.json({ code: 400, message: e });
-        })
-       })
+    CourseModel.find({
+        isAssigned: true,
+        students: {$elemMatch: {email: req.session.email}}
+    }, (error, courses) => {
+        if(error){
+            return res.json({ code: 400, message: error });
+        }
+        return res.json({ code: 200, data: courses });
+    }
+    )
          
 }
 

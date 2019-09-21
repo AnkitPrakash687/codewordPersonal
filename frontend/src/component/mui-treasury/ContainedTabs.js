@@ -5,6 +5,7 @@
   import { makeStyles, ThemeProvider } from '@material-ui/styles';
   import Tabs from '@material-ui/core/Tabs';
   import Tab from '@material-ui/core/Tab';
+  import {AppBar} from '@material-ui/core'
   import { green, lightGreen, red, grey } from '@material-ui/core/colors';
 import { breakpoints } from '@material-ui/system';
 
@@ -31,8 +32,7 @@ import { breakpoints } from '@material-ui/system';
         minWidth = defaultMinWidth,
         selectedBgColor = defaultSelectedBgColor
       }) => ({
-          borderTopLeftRadius: 10 ,
-          borderTopRightRadius: 10,
+    
         minWidth: 40,
         opacity: 1,
         overflow: 'initial',
@@ -93,11 +93,13 @@ import { breakpoints } from '@material-ui/system';
     const tabsClasses = useTabsStyles(props);
     const tabClasses = useTabStyles({ ...tabProps, ...tabStyle });
     return (
-      <Tabs {...props} classes={tabsClasses}>
+    
+      <Tabs variant="fullWidth" {...props} classes={tabsClasses}>
         {tabs.map(tab => (
           <Tab key={tab.label} {...tabProps} {...tab} classes={tabClasses} />
         ))}
       </Tabs>
+
     );
   };
   

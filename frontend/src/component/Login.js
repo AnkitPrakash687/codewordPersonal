@@ -23,7 +23,7 @@ import history from '../history'
 import App from '../App';
 import { AppBar } from '@material-ui/core';
 import MyAppBar from '../component/MyAppBar'
-import {green} from '@material-ui/core/colors'
+import {green, grey, lightGreen} from '@material-ui/core/colors'
 const useStyles = theme => ({
   '@global': {
     body: {
@@ -32,7 +32,11 @@ const useStyles = theme => ({
   },
   root: {
     padding: theme.spacing(3, 2),
-    margin: theme
+    margin: theme,
+    borderStyle:"solid",
+    border: 2,
+    borderColor: lightGreen[300],
+    background: lightGreen[100]
   },
   paper: {
     display: 'flex',
@@ -41,7 +45,7 @@ const useStyles = theme => ({
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: green[500],
   },
   form: {
     width: '100%', // Fix IE 11 issue.

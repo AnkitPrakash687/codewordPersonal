@@ -255,14 +255,7 @@ export default function InstructorDashboard() {
 
        <MyAppBar/>
         <div className={classes.root}>
-             {loading?     <Grid container
-            spacing={0}
-            alignItems="center"
-            justify="center"
-            style={{ minHeight: '100vh' }}>
-            <CircularProgress className={classes.progress} />
-        </Grid>
-        :
+            
         <div>
         
         <ContainedTabs
@@ -285,6 +278,14 @@ export default function InstructorDashboard() {
                 </Button>
                 <SimpleDialog open={open} onClose={handleClose} render={render} />
 
+                {loading?     <Grid container
+            spacing={0}
+            alignItems="center"
+            justify="center"
+            style={{ minHeight: '100vh' }}>
+            <CircularProgress className={classes.progress} />
+        </Grid>
+        :
                 <Grid container spacing={3}>
 
                     {
@@ -292,7 +293,7 @@ export default function InstructorDashboard() {
                     }
 
                 </Grid>
-
+                }
             </TabPanel>
             <TabPanel value={value} index={1}>
             <Button variant="contained" color="primary" className={classes.button} onClick={handleCodewordClickOpen}>
@@ -305,6 +306,14 @@ export default function InstructorDashboard() {
                 <AddCodewordSet onClose={handleCodewordClose}></AddCodewordSet>
                 </div>         
             </Dialog>
+            {loading?     <Grid container
+            spacing={0}
+            alignItems="center"
+            justify="center"
+            style={{ minHeight: '100vh' }}>
+            <CircularProgress className={classes.progress} />
+        </Grid>
+        :
                <Grid container spacing={3}>
 
                     {
@@ -312,9 +321,10 @@ export default function InstructorDashboard() {
                     }
 
                 </Grid>
+            }
         </TabPanel>
         </div>
-                }
+                
         </div>
         </div>
 
