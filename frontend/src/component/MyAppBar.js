@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import {Link} from '@material-ui/core'
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import { green, lightGreen, red } from '@material-ui/core/colors';
+import { green, lightGreen, grey } from '@material-ui/core/colors';
 import {Redirect} from 'react-router-dom'
 import history from '../history'
 import API from '../utils/API'
@@ -29,19 +30,34 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function MyAppBar(props) {
+
+  const TitleButton = withStyles(theme => ({
+    root: {
+      backgroundColor: green[500],
+      color: grey[100],
+      fontSize: 20,
+      "&:hover": {
+        backgroundColor: green[500]
+    }
+    },
+  }))(Button);
   const classes = useStyles();
 
   const [logout, setLogout] = useState(false)
   const [studentView, setStudentView] = useState(false)
   const [token, setToken] = useState(sessionStorage.getItem('token'))
   const [isInstructor, setIsInstructor] = useState(false)
-  const [render, setRender] = useState(false)
+  const [redirect, setRedirect] = useState(false)
   const handleLogout = () =>{
  
     sessionStorage.removeItem('token')
     setLogout(true)
   }
 
+  const handleRedirect = () =>{
+ 
+    setRedirect(true)
+  }
  const handleStudentView = () =>{
  
    setStudentView(true)
@@ -74,16 +90,21 @@ export default function MyAppBar(props) {
     }else if(studentView){
       history.push('/studentview')
       return <Redirect to="/studentview"></Redirect>
+    }else if(redirect){
+      // history.push('/')
+      // return <Redirect to="/"></Redirect>
     }
-  
 
   return (
     <div className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
-        <Toolbar>
-        
+        <Toolbar>       
           <Typography variant="h6" className={classes.title}>
+            <Link underline="none" href='/'>
+            <TitleButton onClick={handleRedirect }>
             CODEWORD
+            </TitleButton>
+            </Link>
           </Typography>
           {token != null && isInstructor &&
           <Button 
