@@ -396,14 +396,7 @@ export default function AdminDashboard() {
         <div>
             <MyAppBar></MyAppBar>
         <div className={classes.root}>
-            {loading ? <Grid container
-                spacing={0}
-                alignItems="center"
-                justify="center"
-                style={{ minHeight: '100vh' }}>
-                <CircularProgress className={classes.progress} />
-            </Grid>
-                :
+            
                 <Container component="main" maxWidth='lg'>
                     <CssBaseline />
                     <ContainedTabs
@@ -421,6 +414,14 @@ export default function AdminDashboard() {
 
                     <TabPanel value={value} index={0}>
 
+
+                   { loading ? <Grid container
+                spacing={0}
+                alignItems="center"
+                justify="center"
+                style={{ minHeight: '100vh' }}>
+                <CircularProgress className={classes.progress} />
+            </Grid>:
                     <Grid container>
                         <Grid item sm={3}></Grid>
                         <Grid item xs={12} sm={5}>
@@ -463,10 +464,17 @@ export default function AdminDashboard() {
                         </Grid>
                         <Grid item sm={3}></Grid>
                         </Grid>
+                   }
                     </TabPanel>
                     <TabPanel value={value} index={1}>
 
-
+                  {  loading ? <Grid container
+                spacing={0}
+                alignItems="center"
+                justify="center"
+                style={{ minHeight: '100vh' }}>
+                <CircularProgress className={classes.progress} />
+            </Grid>:
 
                     <Grid container>
                         <Grid item sm={2}></Grid>
@@ -497,6 +505,7 @@ export default function AdminDashboard() {
                         </Grid>
                         <Grid item sm={2}></Grid>
                         </Grid>
+                  }
                     </TabPanel>
                     <TabPanel value={value} index={2}>
 
@@ -511,6 +520,13 @@ export default function AdminDashboard() {
                 <AddCodewordSet onClose={handleCodewordClose}></AddCodewordSet>
                 </div>         
             </Dialog>
+            {loading ? <Grid container
+                spacing={0}
+                alignItems="center"
+                justify="center"
+                style={{ minHeight: '100vh' }}>
+                <CircularProgress className={classes.progress} />
+            </Grid>:
                <Grid container spacing={3}>
 
                     {
@@ -519,10 +535,11 @@ export default function AdminDashboard() {
                     }
 
                 </Grid>
+            }
                     </TabPanel>
 
                 </Container>
-            }
+            
 
             <Snackbar
                 anchorOrigin={{
