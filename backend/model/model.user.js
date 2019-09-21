@@ -34,6 +34,7 @@ var UserModel = mongoose.model('UserModel', {
     },
     last_login: {
         type: Date,
+        default: new Date()
     },
     instructor_role_request:{type:Boolean},
     courses: [

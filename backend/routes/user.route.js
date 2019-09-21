@@ -54,4 +54,6 @@ router.post('/instructorRequest', usersController.instructorRequest)
 router.get('/requests', usersController.requests)
 router.post('/acceptRequest', usersController.acceptRequest)
 router.post('/declineRequest', usersController.declineRequest)
+router.get('/getAllUsers', usersController.getAllUsers)
+router.post('deleteUser', usersController.deleteUser)
 module.exports = router;

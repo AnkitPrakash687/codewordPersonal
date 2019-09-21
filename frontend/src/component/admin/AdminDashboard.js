@@ -41,6 +41,8 @@ import ListAltIcon from '@material-ui/icons/ListAlt';
 import AddCodewordSet from '../codewordset/AddCodewordSet'
 import CodewordsetCard from '../codewordset/CodewordsetCard'
 import MyAppBar from '../MyAppBar'
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+const moment = require('moment')
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
     Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -159,6 +161,35 @@ export default function AdminDashboard() {
         ],
         data: [],
     })
+
+    const [tableUsers, setTableUsers] = useState({
+        columns: [
+            { title: 'id', field: 'id', hidden:true, export:false},
+            { title: 'Name', field: 'name', cellStyle: {width: 100} },
+            { title: 'Email', field: 'email', cellStyle: {width: 100} },
+            { title: 'Role', field: 'role', cellStyle: {width: 100}},
+            { title: 'Status', field: 'status', cellStyle: {width: 100},
+              render: rowData => {
+                    if(rowData){
+                        return <Typography component="div">
+                            <Box color="green" fontWeight="bold">
+                                Active
+                            </Box>
+                        </Typography>
+                    }
+                    else{
+                        return (<Typography component="div">
+                        <Box color="green" fontWeight="bold">
+                            Inactive
+                        </Box>
+                    </Typography>)
+                    }
+              }  
+            }
+
+        ],
+        data: [],
+    })
     const classes = useStyles();
 
     const handleChange = (event, newValue) => {
@@ -184,6 +215,8 @@ export default function AdminDashboard() {
         setOpenCodeword(false)
     }
     useEffect(() => {
+
+        if(value == 0){
         setLoading(true)
         console.log('inside effect')
         const headers = {
@@ -208,9 +241,45 @@ export default function AdminDashboard() {
                         console.log(error)
 
                     })
-            
+    }
+    else if(value == 1){
+        setLoading(true)
+        console.log('inside effect')
+        const headers = {
+            'token': sessionStorage.getItem('token')
+        };
 
-    }, [render])
+        API.get('dashboard/getAllUsers', { headers: headers }).then(response => {
+            console.log("me***********")
+            var data = response.data.data
+            console.log(data)
+            console.log('*********MOMENT***************')
+           // var date = moment(data[1].last_login)
+           // console.log(date)
+           // console.log( moment(moment() - moment(data[1].last_login)).format('D'))
+            setTableUsers({
+                ...tableUsers,
+                data: data.map((user)=>{
+                    return {
+                        id: user.id, 
+                        name: user.first_name + ' '+user.last_name, 
+                        email: user.email_id,
+                        role: user.role,
+                        status: moment(moment() - moment(user.last_login)).format('D') < 365 ? true: false
+                    }
+                })
+            })
+
+            setLoading(false)
+
+        })
+        .catch(error => {
+                        console.log(error)
+
+                    })
+    }  
+
+    }, [render, value])
 
     useEffect(() => {
 
@@ -263,6 +332,34 @@ export default function AdminDashboard() {
         })
     }
 
+    const deleteUserRow = (resolve, oldData) => {
+        var data = {
+            id: oldData.id,
+        }
+        const headers = {
+            'token': sessionStorage.getItem('token')
+        };
+        API.post('dashboard/deleteUser', data, { headers: headers }).then(response => {
+            console.log(response.data)
+            if (response.data.code == 200) {
+                setSnack({
+                    message: response.data.message,
+                    open: true
+                })
+                const data = [...tableUsers.data];
+                data.splice(data.indexOf(oldData), 1);
+                setTableUsers({ ...table, data });
+                setRender(!render)
+                resolve();
+            } else {
+                setSnack({
+                    message: response.data.message,
+                    open: true
+                })
+                resolve()
+            }
+        })
+    }
     const handleDeclineRequest = (resolve, rowData) => {
         const headers = {
             'token': sessionStorage.getItem('token')
@@ -370,10 +467,34 @@ export default function AdminDashboard() {
 
 
 
-                        <Grid container spacing={3}>
+                    <Grid container>
+                        <Grid item sm={2}></Grid>
+                        <Grid item xs={12} sm={8}>
+                        <MaterialTable
+                            icons={tableIcons}
+                            title="Users"
+                            columns={tableUsers.columns}
+                            data={tableUsers.data}
+                            options={{
+                                actionsColumnIndex: -1,
+                                headerStyle: {
+                                    fontSize: 15
+                                },
+                                emptyRowsWhenPaging: false,
+                                exportButton: true,
+                                exportAllData: true
+                            }}
+                            editable={{
 
-
-
+                                onRowDelete: tableUsers.status ? oldData =>
+                                    new Promise(resolve => {
+                                        deleteUserRow(resolve, oldData)
+                                    }):null,
+                            }}
+                               
+                        />
+                        </Grid>
+                        <Grid item sm={2}></Grid>
                         </Grid>
                     </TabPanel>
                     <TabPanel value={value} index={2}>

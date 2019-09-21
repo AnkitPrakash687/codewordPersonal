@@ -58,7 +58,22 @@ var signIn = (req,res) => {
                     if(err){
                         return res.json({ code: 401, message: 'Unable to generate and update Token'});
                     }
-                    return res.json({ code: 200, message: 'Signed in successfully. Redirecting.', token: newToken, role: User.role });
+                    UserModel.updateOne({email_id: body.email}, 
+                        {
+                            $set: {
+                                last_login: new Date()
+                            }
+                        }, (err, User)=>{
+                        if(err){
+                            return res.json({ code: 401, message: 'Something went wrong'});
+                        }
+                        return res.json({ 
+                            code: 200, 
+                            message: 'Signed in successfully. Redirecting.', 
+                            token: newToken,
+                            role: User.role });
+                        })
+                   
                 })
             }else{
                 return res.json({ code: 401, message: 'Invalid Password'})
@@ -315,3 +330,48 @@ var requests = (req,res) =>{
  }
  
  module.exports.declineRequest = declineRequest
+
+ var getAllUsers = (req, res) =>{
+
+    UserModel.findOne({email_id: req.session.email}, (error, user)=>{
+        if(error){
+            return res.json({ code: 400, message: 'Something went wrong'});
+        }
+        if(user.role === 'admin'){
+            UserModel.find({role:{$in:['student', 'instructor']}}, (error, users)=>{
+                if(error){
+                    return res.json({ code: 400, message: 'Something went wrong'});
+                }
+                return res.json({ code: 200, data:users});
+            })
+        }
+        else{
+            return res.json({ code: 400, message: 'Unauthorized'});
+        }
+    })
+ }
+
+ module.exports.getAllUsers = getAllUsers
+
+ var deleteUser = (req, res) =>{
+    var body = _.pick(req.body, ['id'])
+
+    UserModel.findOne({email_id: req.session.email}, (error, user)=>{
+        if(error){
+            return res.json({ code: 400, message: 'Something went wrong'});
+        }
+        if(user.role === 'admin'){
+            UserModel.deleteOne({_id: body.id}, (error, deletedUsers)=>{
+                if(error){
+                    return res.json({ code: 400, message: 'Something went wrong'});
+                }
+                return res.json({ code: 200, message: 'User deleted successfully'});
+            })
+        }
+        else{
+            return res.json({ code: 400, message: 'Unauthorized'});
+        }
+    })
+ }
+
+ module.exports.deleteUser = deleteUser
