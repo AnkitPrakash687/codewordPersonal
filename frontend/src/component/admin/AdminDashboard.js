@@ -170,7 +170,7 @@ export default function AdminDashboard() {
             { title: 'Role', field: 'role', cellStyle: {width: 100}},
             { title: 'Status', field: 'status', cellStyle: {width: 100},
               render: rowData => {
-                    if(rowData){
+                    if(rowData.status){
                         return <Typography component="div">
                             <Box color="green" fontWeight="bold">
                                 Active
@@ -179,7 +179,7 @@ export default function AdminDashboard() {
                     }
                     else{
                         return (<Typography component="div">
-                        <Box color="green" fontWeight="bold">
+                        <Box color="red" fontWeight="bold">
                             Inactive
                         </Box>
                     </Typography>)
@@ -261,15 +261,16 @@ export default function AdminDashboard() {
                 ...tableUsers,
                 data: data.map((user)=>{
                     return {
-                        id: user.id, 
+                        id: user._id, 
                         name: user.first_name + ' '+user.last_name, 
                         email: user.email_id,
                         role: user.role,
-                        status: moment(moment() - moment(user.last_login)).format('D') < 365 ? true: false
+                        status: moment().diff(moment(user.last_login), 'days') < 365 ? true: false
                     }
                 })
+              
             })
-
+           
             setLoading(false)
 
         })
@@ -348,8 +349,8 @@ export default function AdminDashboard() {
                 })
                 const data = [...tableUsers.data];
                 data.splice(data.indexOf(oldData), 1);
-                setTableUsers({ ...table, data });
-                setRender(!render)
+                setTableUsers({ ...tableUsers, data });
+                //setRender(!render)
                 resolve();
             } else {
                 setSnack({
@@ -485,11 +486,11 @@ export default function AdminDashboard() {
                                 exportAllData: true
                             }}
                             editable={{
-
-                                onRowDelete: tableUsers.status ? oldData =>
+                                isDeletable: rowData => !rowData.status,
+                                onRowDelete: oldData => 
                                     new Promise(resolve => {
                                         deleteUserRow(resolve, oldData)
-                                    }):null,
+                                    }),
                             }}
                                
                         />

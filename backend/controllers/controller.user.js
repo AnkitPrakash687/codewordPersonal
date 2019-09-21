@@ -355,7 +355,7 @@ var requests = (req,res) =>{
 
  var deleteUser = (req, res) =>{
     var body = _.pick(req.body, ['id'])
-
+    console.log(body)
     UserModel.findOne({email_id: req.session.email}, (error, user)=>{
         if(error){
             return res.json({ code: 400, message: 'Something went wrong'});
