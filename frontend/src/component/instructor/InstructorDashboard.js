@@ -7,8 +7,9 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import { withStyles } from '@material-ui/core/styles';
-import { green, lightGreen, red } from '@material-ui/core/colors';
-import { Paper, Grid } from '@material-ui/core';
+import { green, lightGreen, grey } from '@material-ui/core/colors';
+import { Paper, Grid, Fab, Tooltip } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
 import CourseCard from './CourseCard'
 import CodewordsetCard from '../codewordset/CodewordsetCard'
 import AddCodewordSet from '../codewordset/AddCodewordSet'
@@ -20,6 +21,7 @@ import {CircularProgress} from '@material-ui/core'
 import API from '../../utils/API'
 import ContainedTabs from '../mui-treasury/ContainedTabs'
 import MyAppBar from '../MyAppBar'
+import { light } from '@material-ui/core/styles/createPalette';
 const useStyles = makeStyles(theme => ({
     root: {
         margin: 30,
@@ -49,12 +51,25 @@ const useStyles = makeStyles(theme => ({
         zIndex: 1,
       },
     button: {
-        marginBottom: theme.spacing(2)
+        marginBottom: theme.spacing(2),
+        background: green[500],
+        "&:hover": {
+            backgroundColor: "green"
+        }
+
     }
 }));
 
 export default function InstructorDashboard() {
 
+    const LightTooltip = withStyles(theme => ({
+        tooltip: {
+          backgroundColor: lightGreen[200],
+          color: 'rgba(0, 0, 0, 0.87)',
+          boxShadow: theme.shadows[1],
+          fontSize: 13,
+        },
+      }))(Tooltip);
 
     const [value, setValue] = useState(0);
     const [open, setOpen] = useState(false)
@@ -273,9 +288,14 @@ export default function InstructorDashboard() {
                     
             <TabPanel value={value} index={0}>
 
-                <Button variant="contained" color="primary" className={classes.button} onClick={handleClickOpen}>
+                {/* <Button variant="contained" color="primary" className={classes.button} onClick={handleClickOpen}>
                     Add Course
-                </Button>
+                </Button> */}
+                <LightTooltip title="Add Course" placement="right">
+            <Fab  aria-label="add" className={classes.button} onClick={handleClickOpen}>
+                <AddIcon />
+            </Fab>
+            </LightTooltip>
                 <SimpleDialog open={open} onClose={handleClose} render={render} />
 
                 {loading?     <Grid container
@@ -296,10 +316,14 @@ export default function InstructorDashboard() {
                 }
             </TabPanel>
             <TabPanel value={value} index={1}>
-            <Button variant="contained" color="primary" className={classes.button} onClick={handleCodewordClickOpen}>
+            {/* <Button variant="contained" color="primary" className={classes.button} onClick={handleCodewordClickOpen}>
                     Add codeword Set
-            </Button>
-           
+            </Button> */}
+            <LightTooltip title="Add Codeword set" placement="right">
+            <Fab  aria-label="add" className={classes.button} onClick={handleCodewordClickOpen}>
+                <AddIcon />
+            </Fab>
+            </LightTooltip>
             <Dialog  fullWidth={true} disableBackdropClick={true} onClose={handleCodewordClose} aria-labelledby="simple-dialog-title" open={openCodeword}>    
                  <div>
                  <DialogTitle id="simple-dialog-title">Add Codeword Set</DialogTitle>

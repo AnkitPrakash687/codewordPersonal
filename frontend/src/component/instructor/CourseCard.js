@@ -149,14 +149,14 @@ export default function CourseCard(props) {
                         <Link onClick={event => event.stopPropagation()} target="_blank" href={props.startSurvey} variant="body2" className={classes.startSurvey}>
                          Start Survey
                       </Link>
-                        :false
+                        :<Typography className={classes.startSurvey} variant="body2">Start Survey</Typography>
                         }
                         { props.endSurvey != 'Unpublished'?
                         <Link onClick={event => event.stopPropagation()} target="_blank" href={props.endSurvey} variant="body2" className={classes.link}>
                          End Survey
                       </Link>
                        
-                        :false
+                        :<Typography className={classes.startSurvey} variant="body2">End Survey</Typography>
                         }
                       </Box>
                     </Paper>
