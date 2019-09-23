@@ -29,23 +29,18 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.common.white,
     },
   },
-  root: {
+  root:{
+    background: green[500]
+  },
+  paper: {
     padding: theme.spacing(1, 1),
     margin: theme,
-    background: grey[100]
-  },
-  
-  paper: {
+    background: grey[100],
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
   },
-  media:{
-    padding: theme.spacing(1),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
-  },
+ 
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
@@ -152,7 +147,7 @@ export default function Signup() {
     let validation = validator.validate(state)  //
 
   return (
-    <div>
+    <div className={classes.root}>
       
     <Grid   container
     spacing={0}
@@ -161,8 +156,8 @@ export default function Signup() {
     style={{ minHeight: '100vh' }}>
     <Container component="main" maxWidth="xs">
          <CssBaseline />
-        <Paper className={classes.root}>
-          <div  className={classes.media}>
+        <Paper className={classes.paper}>
+      
         <img 
            
             src={logo}
@@ -171,8 +166,8 @@ export default function Signup() {
               height: 'auto'
             }}
           />
-          </div>
-      <div className={classes.paper}>
+        
+  
      
         <Typography component="h1" variant="h5">
           Sign UP
@@ -302,7 +297,7 @@ export default function Signup() {
           
           </Grid>
         </form>
-      </div>
+    
       </Paper>
     </Container>
     </Grid>
