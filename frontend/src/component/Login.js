@@ -50,7 +50,7 @@ const useStyles = theme => ({
   },
   media:{
     height: "auto",
-    width: '50%'
+    width: '70%'
   },
   title:{
     padding: theme.spacing(1),
