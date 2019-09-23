@@ -21,8 +21,8 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import clsx from 'clsx';
 import MyAppBar from '../component/MyAppBar'
-import {green} from '@material-ui/core/colors'
-
+import {green, grey} from '@material-ui/core/colors'
+import logo from '../static/images/logo_1.png'
 const useStyles = makeStyles(theme => ({
   '@global': {
     body: {
@@ -31,7 +31,8 @@ const useStyles = makeStyles(theme => ({
   },
   root: {
     padding: theme.spacing(1, 1),
-    margin: theme
+    margin: theme,
+    background: grey[100]
   },
   
   paper: {
@@ -39,11 +40,18 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     alignItems: 'center',
   },
+  media:{
+    padding: theme.spacing(1),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
+    padding: theme.spacing(2),
     width: '100%', // Fix IE 11 issue.
     marginTop: theme.spacing(0),
   },
@@ -145,7 +153,7 @@ export default function Signup() {
 
   return (
     <div>
-      <MyAppBar></MyAppBar>
+      
     <Grid   container
     spacing={0}
     alignItems="center"
@@ -154,12 +162,23 @@ export default function Signup() {
     <Container component="main" maxWidth="xs">
          <CssBaseline />
         <Paper className={classes.root}>
+          <div  className={classes.media}>
+        <img 
+           
+            src={logo}
+            style={{
+              width:'50%',
+              height: 'auto'
+            }}
+          />
+          </div>
       <div className={classes.paper}>
-      
+     
         <Typography component="h1" variant="h5">
           Sign UP
         </Typography>
         <form onSubmit={handleSubmit.bind(this)} className={classes.form} >
+       
         <TextField  className={classes.textField}
             variant="outlined"
             required

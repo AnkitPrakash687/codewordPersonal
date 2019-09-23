@@ -176,7 +176,6 @@ class SignIn extends Component {
           <img 
             className={classes.media}
             src={logo}
-            title="Paella dish"
           />
           </div>
               <Typography component="h1" variant="h5">
